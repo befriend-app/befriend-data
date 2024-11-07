@@ -1,5 +1,4 @@
 const cache = require('../../services/cache');
-const db = require('../../services/db');
 const { loadScriptEnv, isProdApp } = require('../../services/shared');
 const cacheService = require('../../services/cache');
 
@@ -81,7 +80,7 @@ function main(is_me) {
 
         if (is_me) {
             try {
-                await require('../../sources/activity_types').main();
+                // await require('../../sources/activity_types').main();
             } catch (e) {
                 console.error(e);
             }

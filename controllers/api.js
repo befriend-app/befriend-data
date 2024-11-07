@@ -7,8 +7,7 @@ module.exports = {
             try {
                 let conn = await dbService.conn();
 
-                let items = await conn('activity_types')
-                    .orderBy('parent_activity_type_id');
+                let items = await conn('activity_types');
 
                 let id_token_dict = {};
 
@@ -74,6 +73,30 @@ module.exports = {
 
                     item.parent_token = parent_token;
                 }
+
+                res.json(
+                    {
+                        items: items,
+                    },
+                    200,
+                );
+            } catch(e) {
+                console.error(e);
+                res.json("Error retrieving data", 400);
+            }
+
+            resolve();
+        });
+    },
+    getActivityVenueCategories: function (req, res) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let conn = await dbService.conn();
+
+                let items = await conn('activity_type_venues AS atv')
+                    .join('activity_types AS at', 'at.id', '=', 'atv.activity_type_id')
+                    .join('venues_categories AS vc', 'vc.id', '=', 'atv.venue_category_id')
+                    .select('activity_type_token', 'category_token', 'atv.sort_position', 'atv.is_active', 'atv.updated');
 
                 res.json(
                     {

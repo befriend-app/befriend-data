@@ -37,6 +37,18 @@ router.get('/venues-categories', function (req, res, next) {
     });
 });
 
+router.get('/activities-venue-categories', function (req, res, next) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            await apiController.getActivityVenueCategories(req, res);
+        } catch (e) {
+            console.error(e);
+        }
+
+        resolve();
+    });
+});
+
 router.get('/countries', function (req, res, next) {
     return new Promise(async (resolve, reject) => {
         try {
