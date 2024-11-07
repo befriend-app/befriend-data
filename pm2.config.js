@@ -3,7 +3,7 @@ let home_dir = __dirname;
 module.exports = {
     apps: [
         {
-            name: 'befriend_backend',
+            name: 'befriend_data',
             script: 'server.js',
             instances: '1',
             exec_mode: 'fork',
