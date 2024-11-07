@@ -255,6 +255,8 @@ function main() {
                                 country_id: country.id,
                                 state_name: state,
                                 state_short: state_short,
+                                created: timeNow(),
+                                updated: timeNow()
                             });
 
                             state_db = states_dict[country.country_code][state_short] = {
@@ -314,6 +316,8 @@ function main() {
                             bbox_lat_max_1000: lat_max_1000,
                             bbox_lon_min_1000: lon_min_1000,
                             bbox_lon_max_1000: lon_max_1000,
+                            created: timeNow(),
+                            updated: timeNow()
                         };
 
                         //prevent duplicate cities in same state

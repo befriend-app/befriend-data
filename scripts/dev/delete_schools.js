@@ -37,7 +37,7 @@ function main(is_me) {
             let tables = ['persons_schools', 'schools'];
 
             for (let table of tables) {
-                // await knex(table).delete();
+                await knex(table).delete();
             }
 
             let keys = await cacheService.getKeys(`${cacheService.keys.school('')}*`);
@@ -50,8 +50,6 @@ function main(is_me) {
         }
 
         if (is_me) {
-            // await require('../../data/me_sections/add_schools').main();
-
             process.exit();
         }
 

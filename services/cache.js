@@ -1,107 +1,15 @@
 const redis = require('redis');
+const { timeNow } = require('./shared');
 
 module.exports = {
     conn: null,
-    publisher: null,
     keys: {
-        ws: 'ws:messages',
-        activity_types: `activity_types`,
-        activity_type_default: `activity_type:default`,
-        countries: `countries`,
-        cities_population: `cities:by_population`,
-        me_sections: `sections:me`,
-        instruments: `instruments`,
-        instruments_common: `instruments:common`,
-        activity: function (activity_token) {
-            return `activities:${activity_token}`;
-        },
-        activity_type: function (token) {
-            return `activity_types:${token}`;
-        },
-        activity_type_venue_categories: function (token) {
-            return `activity_types:venue_categories:${token}`;
-        },
-        place_fsq: function (fsq_id) {
-            return `places:fsq:${fsq_id}`;
-        },
-        city: function (id) {
-            return `cities:${id}`;
-        },
-        cities_country: function (code) {
-            return `cities:country:${code}`;
-        },
-        cities_prefix: function (prefix) {
-            return `cities:prefix:${prefix}`;
-        },
-        state: function (id) {
-            return `states:${id}`;
-        },
-        country: function (id) {
-            return `countries:${id}`;
-        },
         session: function (session) {
-            return `session:api:${session}`;
+            return `session:data:${session}`;
         },
-        exchange_keys: function (token) {
-            return `networks:keys:exchange:${token}`;
-        },
-        address_geo: function (address_id) {
-            return `address:geo:${address_id}`;
-        },
-        travel_times: function (token) {
-            return `activities:travel:${token}`;
-        },
-        person: function (person_token_or_email) {
-            if (!person_token_or_email) {
-                person_token_or_email = '';
-            }
-
-            person_token_or_email = person_token_or_email.toLowerCase();
-
-            return `persons:${person_token_or_email}`;
-        },
-        person_login_tokens: function (person_token) {
-            if (!person_token) {
-                person_token = '';
-            }
-
-            person_token = person_token.toLowerCase();
-
-            return `persons:${person_token}:login_tokens`;
-        },
-        person_devices: function (person_token) {
-            return `persons:devices:${person_token}`;
-        },
-        city_country_prefix: function (country_code, prefix) {
-            return `cities:country:${country_code}:${prefix}`;
-        },
-        places_category_city: function (category_id, city_id) {
-            return `places:category:${category_id}:city:${city_id}`;
-        },
-        person_sections: function (person_token) {
-            return `persons:sections:${person_token}`;
-        },
-        person_sections_data: function (person_token, data_name) {
-            return `persons:sections:data:${data_name}:${person_token}`;
-        },
-        instrument: function (token) {
-            return `instruments:${token}`;
-        },
-        instruments_prefix: function (prefix) {
-            return `instruments:prefix:${prefix}`;
-        },
-        movie: function (token) {
-            return `movies:${token}`;
-        },
-        movies_prefix: function (prefix) {
-            return `movies:prefix:${prefix}`;
-        },
-        school: function (school_id_or_token) {
-            return `schools:${school_id_or_token}`;
-        },
-        schools_country_prefix: function (code, prefix) {
-            return `schools:country:${code}:${prefix}`;
-        },
+        cities_offset: function(offset) {
+            return `cities:offset:${offset}`;
+        }
     },
     init: function () {
         return new Promise(async (resolve, reject) => {
@@ -118,15 +26,6 @@ module.exports = {
                 await module.exports.conn.connect();
             } catch (e) {
                 return reject(e);
-            }
-
-            //setup publisher
-            module.exports.publisher = module.exports.conn.duplicate();
-
-            try {
-                await module.exports.publisher.connect();
-            } catch (e) {
-                console.error(e);
             }
 
             module.exports.conn.on('error', function (er) {
