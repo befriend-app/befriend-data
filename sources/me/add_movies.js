@@ -4,9 +4,7 @@ const dbService = require('../../services/db');
 
 loadScriptEnv();
 
-const RESULTS_PER_PAGE = 20;
 const MAX_PAGES = 500;
-const MOVIES_PER_YEAR = RESULTS_PER_PAGE * MAX_PAGES;
 
 function fetchMoviesForDateRange(startDate, endDate) {
     return new Promise(async (resolve, reject) => {
@@ -16,8 +14,6 @@ function fetchMoviesForDateRange(startDate, endDate) {
                 Authorization: `Bearer ${process.env.TMDB_API_KEY}`,
             },
         };
-
-        let conn = await dbService.conn();
 
         let current_page = 1;
         let hasMorePages = true;

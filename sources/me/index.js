@@ -3,12 +3,10 @@ function main() {
         try {
             console.log('Loading me data');
 
-            await require('./me_sections/add_sections').main();
-            await require('./me_sections/add_instruments').main();
-            await require('./me_sections/add_movies').main();
-            await require('./me_sections/add_schools').main();
-
-            await require('./me_sections/index_schools').main();
+            await require('./add_sections').main();
+            await require('./add_instruments').main();
+            await require('./add_movies').main();
+            await require('./add_schools').main();
         } catch (e) {
             console.error(e);
         }

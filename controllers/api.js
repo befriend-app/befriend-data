@@ -253,9 +253,9 @@ module.exports = {
                         res.json(
                             {
                                 timestamp: timeNow(),
-                                items: cache_data,
                                 next_offset: cache_data.length ? offset + limit : null,
                                 has_more: !!cache_data.length,
+                                items: cache_data,
                             },
                             200
                         );
@@ -327,9 +327,9 @@ module.exports = {
                 res.json(
                     {
                         timestamp: timeNow(),
-                        items: items,
                         next_offset: hasMore ? offset + limit : null,
                         has_more: hasMore,
+                        items: items,
                     },
                     200
                 );

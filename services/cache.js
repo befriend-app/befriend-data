@@ -1,5 +1,4 @@
 const redis = require('redis');
-const { timeNow } = require('./shared');
 
 module.exports = {
     conn: null,
@@ -424,90 +423,6 @@ module.exports = {
                 console.error(e);
                 return reject();
             }
-        });
-    },
-    prefixIndexer: function (items, score_key, keyGenerators) {
-        const { mainKey, prefixKey } = keyGenerators;
-
-        let batchSize = 5000;
-        let logFrequency = 1000;
-        let pipeline = module.exports.conn.multi();
-
-        function getScore(item) {
-            if (score_key.includes('is_')) {
-                return item[score_key] ? 1 : 0;
-            } else if (score_key in item) {
-                return item[score_key];
-            }
-
-            return 0;
-        }
-
-        function getId(item) {
-            return item.token || item.id?.toString();
-        }
-
-        function addPrefixToIndex(prefix, item, keyGenerator) {
-            pipeline.zAdd(keyGenerator(prefix), [
-                {
-                    value: getId(item),
-                    score: getScore(item),
-                },
-            ]);
-        }
-
-        function indexItem(item) {
-            const nameLower = item.name?.toLowerCase() || '';
-
-            if (mainKey) {
-                pipeline.hSet(mainKey(getId(item)), item);
-            }
-
-            // Index full name prefixes
-            for (let i = 1; i <= nameLower.length; i++) {
-                const prefix = nameLower.slice(0, i);
-                addPrefixToIndex(prefix, item, prefixKey);
-            }
-
-            // Index individual word prefixes
-            nameLower.split(' ').forEach((word) => {
-                for (let i = 1; i <= word.length; i++) {
-                    const prefix = word.slice(0, i);
-                    addPrefixToIndex(prefix, item, prefixKey);
-                }
-            });
-        }
-
-        return new Promise(async (resolve, reject) => {
-            for (let i = 0; i < items.length; i++) {
-                let item = items[i];
-
-                if (i % logFrequency === 0) {
-                    console.log({ loop: i, total: items.length });
-                }
-
-                try {
-                    indexItem(item);
-
-                    // Execute pipeline in batches
-                    if ((i + 1) % batchSize === 0) {
-                        await pipeline.execAsPipeline();
-                        pipeline = module.exports.conn.multi();
-                    }
-                } catch (e) {
-                    console.error(e);
-                }
-            }
-
-            if (items.length > 0) {
-                try {
-                    await pipeline.execAsPipeline();
-                } catch (e) {
-                    console.error(e);
-                }
-            }
-
-            resolve();
         });
     },
 };

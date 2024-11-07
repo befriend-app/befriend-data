@@ -1,35 +1,7 @@
-const axios = require('axios');
 const { loadScriptEnv, timeNow, generateToken } = require('../../services/shared');
 const dbService = require('../../services/db');
-const cacheService = require('../../services/cache');
 
 loadScriptEnv();
-
-function indexInstruments() {
-    return new Promise(async (resolve, reject) => {
-        try {
-            let conn = await dbService.conn();
-
-            let instruments = await conn('instruments')
-                .orderBy('is_common', 'desc')
-                .orderBy('name', 'asc');
-
-            let instruments_common = instruments.filter((item) => item.is_common);
-
-            await cacheService.setCache(cacheService.keys.instruments, instruments);
-            await cacheService.setCache(cacheService.keys.instruments_common, instruments_common);
-
-            await cacheService.prefixIndexer(instruments, 'popularity', {
-                mainKey: cacheService.keys.instrument,
-                prefixKey: cacheService.keys.instruments_prefix,
-            });
-        } catch (e) {
-            console.error(e);
-        }
-
-        resolve();
-    });
-}
 
 function main() {
     return new Promise(async (resolve, reject) => {
@@ -54,9 +26,6 @@ function main() {
                 }
             }
 
-            //index
-            await indexInstruments();
-
             resolve();
         } catch (e) {
             console.error(e);
@@ -68,7 +37,6 @@ function main() {
 
 module.exports = {
     main: main,
-    index: indexInstruments,
     data: [
         {
             token: 'oz1cmtk73vljcaorqt5b',
