@@ -8,6 +8,7 @@ module.exports = {
         activity_venue_categories: `activity_venue_categories`,
         countries: `countries`,
         states: `states`,
+        sections: `sections`,
         instruments: `instruments`,
         session: function (session) {
             return `session:data:${session}`;
