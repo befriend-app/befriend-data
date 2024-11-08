@@ -6,7 +6,7 @@ function main() {
             await require('./add_sections').main();
             await require('./add_instruments').main();
             await require('./add_movies').main();
-            await require('./add_schools').main();
+            await require('../schools/add_schools').main();
         } catch (e) {
             console.error(e);
         }

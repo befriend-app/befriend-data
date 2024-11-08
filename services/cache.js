@@ -6,9 +6,9 @@ module.exports = {
         session: function (session) {
             return `session:data:${session}`;
         },
-        cities_offset: function(offset) {
+        cities_offset: function (offset) {
             return `cities:offset:${offset}`;
-        }
+        },
     },
     init: function () {
         return new Promise(async (resolve, reject) => {
@@ -97,7 +97,7 @@ module.exports = {
             }
         });
     },
-    hGetAll: function(key) {
+    hGetAll: function (key) {
         return new Promise(async (resolve, reject) => {
             //init conn in case first time
             if (!module.exports.conn) {

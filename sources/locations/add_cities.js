@@ -200,7 +200,7 @@ function main() {
 
                         try {
                             city = JSON.parse(line);
-                        } catch(e) {
+                        } catch (e) {
                             console.error(e);
                             continue;
                         }
@@ -256,7 +256,7 @@ function main() {
                                 state_name: state,
                                 state_short: state_short,
                                 created: timeNow(),
-                                updated: timeNow()
+                                updated: timeNow(),
                             });
 
                             state_db = states_dict[country.country_code][state_short] = {
@@ -317,7 +317,7 @@ function main() {
                             bbox_lon_min_1000: lon_min_1000,
                             bbox_lon_max_1000: lon_max_1000,
                             created: timeNow(),
-                            updated: timeNow()
+                            updated: timeNow(),
                         };
 
                         //prevent duplicate cities in same state

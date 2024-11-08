@@ -159,13 +159,13 @@ function normalizePort(val) {
 
 function pathExists(p) {
     return new Promise(async (resolve, reject) => {
-         fs.access(p, fs.constants.F_OK, function(err) {
-            if(err) {
+        fs.access(p, fs.constants.F_OK, function (err) {
+            if (err) {
                 return resolve(false);
             }
 
             return resolve(true);
-         });
+        });
     });
 }
 
@@ -178,15 +178,16 @@ function timeNow(seconds) {
 }
 
 module.exports = {
-    cloneObj: cloneObj,
-    generateToken: generateToken,
-    getDistanceMeters: getDistanceMeters,
-    getMetersFromMilesOrKm: getMetersFromMilesOrKm,
-    getRepoRoot: getRepoRoot,
-    isProdApp: isProdApp,
-    joinPaths: joinPaths,
-    loadScriptEnv: loadScriptEnv,
-    normalizePort: normalizePort,
-    pathExists: pathExists,
-    timeNow: timeNow,
+    cloneObj,
+    generateToken,
+    getDistanceMeters,
+    getMetersFromMilesOrKm,
+    getRepoRoot,
+    isNumeric,
+    isProdApp,
+    joinPaths,
+    loadScriptEnv,
+    normalizePort,
+    pathExists,
+    timeNow,
 };
