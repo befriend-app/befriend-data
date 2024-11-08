@@ -1,16 +1,31 @@
 const cacheService = require('../services/cache');
 const dbService = require('../services/db');
 const { timeNow } = require('../services/shared');
+const { getObj, setCache } = require('../services/cache');
 
 module.exports = {
     batchLimit: 50000, //changing this value affects cache
-    cache: {
+    data: {
         countries: null,
-        states: null,
+        states: null
     },
     getActivityTypes: function (req, res) {
         return new Promise(async (resolve, reject) => {
             try {
+                //use cache
+                let cache_data = await getObj(cacheService.keys.activity_types);
+
+                if(cache_data) {
+                    res.json(
+                        {
+                            items: cache_data,
+                        },
+                        200,
+                    );
+
+                    return resolve();
+                }
+
                 let conn = await dbService.conn();
 
                 let items = await conn('activity_types');
@@ -37,6 +52,13 @@ module.exports = {
                     item.parent_token = parent_token;
                 }
 
+                //set cache
+                try {
+                    await setCache(cacheService.keys.activity_types, items);
+                } catch(e) {
+                    console.error(e);
+                }
+
                 res.json(
                     {
                         items: items,
@@ -54,6 +76,20 @@ module.exports = {
     getVenuesCategories: function (req, res) {
         return new Promise(async (resolve, reject) => {
             try {
+                //use cache
+                let cache_data = await getObj(cacheService.keys.venues_categories);
+
+                if(cache_data) {
+                    res.json(
+                        {
+                            items: cache_data,
+                        },
+                        200,
+                    );
+
+                    return resolve();
+                }
+
                 let conn = await dbService.conn();
 
                 let items = await conn('venues_categories');
@@ -80,6 +116,13 @@ module.exports = {
                     item.parent_token = parent_token;
                 }
 
+                //set cache
+                try {
+                    await setCache(cacheService.keys.venues_categories, items);
+                } catch(e) {
+                    console.error(e);
+                }
+
                 res.json(
                     {
                         items: items,
@@ -97,6 +140,20 @@ module.exports = {
     getActivityVenueCategories: function (req, res) {
         return new Promise(async (resolve, reject) => {
             try {
+                //use cache
+                let cache_data = await getObj(cacheService.keys.activity_venue_categories);
+
+                if(cache_data) {
+                    res.json(
+                        {
+                            items: cache_data,
+                        },
+                        200,
+                    );
+
+                    return resolve();
+                }
+
                 let conn = await dbService.conn();
 
                 let items = await conn('activity_type_venues AS atv')
@@ -109,6 +166,13 @@ module.exports = {
                         'atv.is_active',
                         'atv.updated',
                     );
+
+                //set cache
+                try {
+                    await setCache(cacheService.keys.activity_venue_categories, items);
+                } catch(e) {
+                    console.error(e);
+                }
 
                 res.json(
                     {
@@ -127,6 +191,20 @@ module.exports = {
     getCountries: function (req, res) {
         return new Promise(async (resolve, reject) => {
             try {
+                //use cache
+                let cache_data = await getObj(cacheService.keys.countries);
+
+                if(cache_data) {
+                    res.json(
+                        {
+                            items: cache_data,
+                        },
+                        200,
+                    );
+
+                    return resolve();
+                }
+
                 let conn = await dbService.conn();
 
                 let items = await conn('open_countries')
@@ -145,6 +223,20 @@ module.exports = {
                         'updated',
                     );
 
+                //set cache
+                try {
+                    await setCache(cacheService.keys.countries, items);
+                } catch(e) {
+                    console.error(e);
+                }
+
+                res.json(
+                    {
+                        items: items,
+                    },
+                    200,
+                );
+
                 res.json(
                     {
                         items: items,
@@ -162,7 +254,22 @@ module.exports = {
     getStates: function (req, res) {
         return new Promise(async (resolve, reject) => {
             try {
+                //use cache
+                let cache_data = await getObj(cacheService.keys.states);
+
+                if(cache_data) {
+                    res.json(
+                        {
+                            items: cache_data,
+                        },
+                        200,
+                    );
+
+                    return resolve();
+                }
+
                 let conn = await dbService.conn();
+
                 let items = await conn('open_states AS os')
                     .join('open_countries AS oc', 'oc.id', '=', 'os.country_id')
                     .orderBy('country_code', 'asc')
@@ -175,6 +282,13 @@ module.exports = {
                         'os.lon',
                         'os.updated',
                     );
+
+                //set cache
+                try {
+                    await setCache(cacheService.keys.states, items);
+                } catch(e) {
+                    console.error(e);
+                }
 
                 res.json(
                     {
@@ -193,8 +307,8 @@ module.exports = {
     getCities: function (req, res) {
         function allCountries() {
             return new Promise(async (resolve, reject) => {
-                if (module.exports.cache.countries) {
-                    return resolve(module.exports.cache.countries);
+                if (module.exports.data.countries) {
+                    return resolve(module.exports.data.countries);
                 }
 
                 try {
@@ -208,7 +322,7 @@ module.exports = {
                         countries_dict[country.id] = country;
                     }
 
-                    module.exports.cache.countries = countries_dict;
+                    module.exports.data.countries = countries_dict;
 
                     return resolve(countries_dict);
                 } catch (e) {
@@ -220,8 +334,8 @@ module.exports = {
 
         function allStates() {
             return new Promise(async (resolve, reject) => {
-                if (module.exports.cache.states) {
-                    return resolve(module.exports.cache.states);
+                if (module.exports.data.states) {
+                    return resolve(module.exports.data.states);
                 }
 
                 try {
@@ -235,7 +349,7 @@ module.exports = {
                         states_dict[state.id] = state;
                     }
 
-                    module.exports.cache.states = states_dict;
+                    module.exports.data.states = states_dict;
 
                     return resolve(states_dict);
                 } catch (e) {
@@ -348,4 +462,50 @@ module.exports = {
             resolve();
         });
     },
+    getInstruments: function(req, res) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                //use cache
+                let cache_data = await getObj(cacheService.keys.instruments);
+
+                if(cache_data) {
+                    res.json(
+                        {
+                            items: cache_data,
+                        },
+                        200,
+                    );
+
+                    return resolve();
+                }
+
+                let conn = await dbService.conn();
+
+                let items = await conn('instruments')
+                    .select(
+                        'token',
+                        'name',
+                        'popularity',
+                        'is_common',
+                        'category',
+                        'updated'
+                    );
+
+                try {
+                    await setCache(cacheService.keys.instruments, items);
+                } catch(e) {
+                    console.error(e);
+                }
+
+                res.json({
+                    items: items
+                }, 200);
+            } catch(e) {
+                console.error(e);
+                res.json('Error retrieving data', 400);
+            }
+
+            resolve();
+        });
+    }
 };

@@ -3,6 +3,12 @@ const redis = require('redis');
 module.exports = {
     conn: null,
     keys: {
+        activity_types: `activity_types`,
+        venues_categories: `venues_categories`,
+        activity_venue_categories: `activity_venue_categories`,
+        countries: `countries`,
+        states: `states`,
+        instruments: `instruments`,
         session: function (session) {
             return `session:data:${session}`;
         },
