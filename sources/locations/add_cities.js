@@ -10,6 +10,7 @@ const {
     timeNow,
     getDistanceMeters,
     getMetersFromMilesOrKm,
+    generateToken,
 } = require('../../services/shared');
 const dbService = require('../../services/db');
 
@@ -252,6 +253,7 @@ function main() {
 
                         if (!state_db && state) {
                             let id = await conn('open_states').insert({
+                                token: generateToken(12),
                                 country_id: country.id,
                                 state_name: state,
                                 state_short: state_short,
@@ -296,6 +298,7 @@ function main() {
                         let lon_max_1000 = Math.floor(lon_max * 1000);
 
                         let insert_data = {
+                            token: generateToken(12),
                             country_id: country.id,
                             state_id: state_db ? state_db.id : null,
                             city_name: name,
