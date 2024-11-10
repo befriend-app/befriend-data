@@ -3,13 +3,13 @@ const redis = require('redis');
 module.exports = {
     conn: null,
     keys: {
-        activity_types: `activity_types`,
-        venues_categories: `venues_categories`,
-        activity_venue_categories: `activity_venue_categories`,
-        countries: `countries`,
-        states: `states`,
-        sections: `sections`,
-        instruments: `instruments`,
+        activity_types: `data:activity_types`,
+        venues_categories: `data:venues_categories`,
+        activity_venue_categories: `data:activity_venue_categories`,
+        countries: `data:countries`,
+        states: `data:states`,
+        sections: `data:sections`,
+        instruments: `data:instruments`,
         session: function (session) {
             return `session:data:${session}`;
         },

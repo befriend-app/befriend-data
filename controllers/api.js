@@ -671,9 +671,13 @@ module.exports = {
                     //remove unused is_{col} to save space
                     if (!item.is_grade_school) {
                         delete item.is_grade_school;
-                    } else if (!item.is_high_school) {
+                    }
+
+                    if (!item.is_high_school) {
                         delete item.is_high_school;
-                    } else if (!item.is_college) {
+                    }
+
+                    if (!item.is_college) {
                         delete item.is_college;
                     }
                 }
