@@ -7,7 +7,8 @@ module.exports = {
     batchLimit: 50000, //changing this value affects cache
     data: {
         countries: null,
-        states: null
+        states: null,
+        cities: null,
     },
     getActivityTypes: function (req, res) {
         return new Promise(async (resolve, reject) => {
@@ -15,7 +16,7 @@ module.exports = {
                 //use cache
                 let cache_data = await getObj(cacheService.keys.activity_types);
 
-                if(cache_data) {
+                if (cache_data) {
                     res.json(
                         {
                             items: cache_data,
@@ -55,7 +56,7 @@ module.exports = {
                 //set cache
                 try {
                     await setCache(cacheService.keys.activity_types, items);
-                } catch(e) {
+                } catch (e) {
                     console.error(e);
                 }
 
@@ -79,7 +80,7 @@ module.exports = {
                 //use cache
                 let cache_data = await getObj(cacheService.keys.venues_categories);
 
-                if(cache_data) {
+                if (cache_data) {
                     res.json(
                         {
                             items: cache_data,
@@ -119,7 +120,7 @@ module.exports = {
                 //set cache
                 try {
                     await setCache(cacheService.keys.venues_categories, items);
-                } catch(e) {
+                } catch (e) {
                     console.error(e);
                 }
 
@@ -143,7 +144,7 @@ module.exports = {
                 //use cache
                 let cache_data = await getObj(cacheService.keys.activity_venue_categories);
 
-                if(cache_data) {
+                if (cache_data) {
                     res.json(
                         {
                             items: cache_data,
@@ -170,7 +171,7 @@ module.exports = {
                 //set cache
                 try {
                     await setCache(cacheService.keys.activity_venue_categories, items);
-                } catch(e) {
+                } catch (e) {
                     console.error(e);
                 }
 
@@ -194,7 +195,7 @@ module.exports = {
                 //use cache
                 let cache_data = await getObj(cacheService.keys.countries);
 
-                if(cache_data) {
+                if (cache_data) {
                     res.json(
                         {
                             items: cache_data,
@@ -226,7 +227,7 @@ module.exports = {
                 //set cache
                 try {
                     await setCache(cacheService.keys.countries, items);
-                } catch(e) {
+                } catch (e) {
                     console.error(e);
                 }
 
@@ -257,7 +258,7 @@ module.exports = {
                 //use cache
                 let cache_data = await getObj(cacheService.keys.states);
 
-                if(cache_data) {
+                if (cache_data) {
                     res.json(
                         {
                             items: cache_data,
@@ -275,6 +276,7 @@ module.exports = {
                     .orderBy('country_code', 'asc')
                     .select(
                         'country_code',
+                        'os.token',
                         'state_name',
                         'state_short',
                         'os.population',
@@ -286,7 +288,7 @@ module.exports = {
                 //set cache
                 try {
                     await setCache(cacheService.keys.states, items);
-                } catch(e) {
+                } catch (e) {
                     console.error(e);
                 }
 
@@ -304,61 +306,91 @@ module.exports = {
             resolve();
         });
     },
+    countriesLookup: function () {
+        return new Promise(async (resolve, reject) => {
+            if (module.exports.data.countries) {
+                return resolve(module.exports.data.countries);
+            }
+
+            try {
+                let conn = await dbService.conn();
+
+                // Countries lookup
+                let countries = await conn('open_countries');
+                let countries_dict = {};
+
+                for (let country of countries) {
+                    countries_dict[country.id] = country;
+                }
+
+                module.exports.data.countries = countries_dict;
+
+                return resolve(countries_dict);
+            } catch (e) {
+                console.error(e);
+                return reject();
+            }
+        });
+    },
+    statesLookup: function () {
+        return new Promise(async (resolve, reject) => {
+            if (module.exports.data.states) {
+                return resolve(module.exports.data.states);
+            }
+
+            try {
+                let conn = await dbService.conn();
+
+                // States lookup
+                let states = await conn('open_states');
+                let states_dict = {};
+
+                for (let state of states) {
+                    states_dict[state.id] = state.token;
+                }
+
+                module.exports.data.states = states_dict;
+
+                return resolve(states_dict);
+            } catch (e) {
+                console.error(e);
+                return reject();
+            }
+        });
+    },
+    citiesLookup: function () {
+        return new Promise(async (resolve, reject) => {
+            if (module.exports.data.cities) {
+                return resolve(module.exports.data.cities);
+            }
+
+            try {
+                let conn = await dbService.conn();
+
+                let cities = await conn('open_cities').select('id', 'token', 'country_id');
+
+                let cities_dict = {};
+
+                for (let city of cities) {
+                    if (!(city.country_id in cities_dict)) {
+                        cities_dict[city.country_id] = {};
+                    }
+
+                    cities_dict[city.country_id][city.id] = city.token;
+                }
+
+                delete cities;
+
+                module.exports.data.cities = cities_dict;
+
+                return resolve(cities_dict);
+            } catch (e) {
+                console.error(e);
+                return reject();
+            }
+        });
+    },
     getCities: function (req, res) {
-        function allCountries() {
-            return new Promise(async (resolve, reject) => {
-                if (module.exports.data.countries) {
-                    return resolve(module.exports.data.countries);
-                }
-
-                try {
-                    let conn = await dbService.conn();
-
-                    // Countries lookup
-                    let countries = await conn('open_countries');
-                    let countries_dict = {};
-
-                    for (let country of countries) {
-                        countries_dict[country.id] = country;
-                    }
-
-                    module.exports.data.countries = countries_dict;
-
-                    return resolve(countries_dict);
-                } catch (e) {
-                    console.error(e);
-                    return reject();
-                }
-            });
-        }
-
-        function allStates() {
-            return new Promise(async (resolve, reject) => {
-                if (module.exports.data.states) {
-                    return resolve(module.exports.data.states);
-                }
-
-                try {
-                    let conn = await dbService.conn();
-
-                    // States lookup
-                    let states = await conn('open_states');
-                    let states_dict = {};
-
-                    for (let state of states) {
-                        states_dict[state.id] = state;
-                    }
-
-                    module.exports.data.states = states_dict;
-
-                    return resolve(states_dict);
-                } catch (e) {
-                    console.error(e);
-                    return reject();
-                }
-            });
-        }
-
         return new Promise(async (resolve, reject) => {
             try {
                 const limit = module.exports.batchLimit;
@@ -384,14 +416,15 @@ module.exports = {
                     }
                 }
 
-                let countries = await allCountries();
-                let states = await allStates();
+                let countries = await module.exports.countriesLookup();
+                let states = await module.exports.statesLookup();
 
                 let conn = await dbService.conn();
 
                 let query = conn('open_cities')
                     .orderBy('id')
                     .select(
+                        'token',
                         'country_id',
                         'state_id',
                         'city_name',
@@ -427,7 +460,7 @@ module.exports = {
                 for (let item of items) {
                     item.country_code = countries[item.country_id].country_code;
 
-                    item.state_name = states[item.state_id]?.state_name || null;
+                    item.state_token = states[item.state_id] || null;
 
                     delete item.country_id;
                     delete item.state_id;
@@ -462,13 +495,13 @@ module.exports = {
             resolve();
         });
     },
-    getInstruments: function(req, res) {
+    getInstruments: function (req, res) {
         return new Promise(async (resolve, reject) => {
             try {
                 //use cache
                 let cache_data = await getObj(cacheService.keys.instruments);
 
-                if(cache_data) {
+                if (cache_data) {
                     res.json(
                         {
                             items: cache_data,
@@ -481,26 +514,28 @@ module.exports = {
 
                 let conn = await dbService.conn();
 
-                let items = await conn('instruments')
-                    .select(
-                        'token',
-                        'name',
-                        'popularity',
-                        'is_common',
-                        'category',
-                        'updated'
-                    );
+                let items = await conn('instruments').select(
+                    'token',
+                    'name',
+                    'popularity',
+                    'is_common',
+                    'category',
+                    'updated',
+                );
 
                 try {
                     await setCache(cacheService.keys.instruments, items);
-                } catch(e) {
+                } catch (e) {
                     console.error(e);
                 }
 
-                res.json({
-                    items: items
-                }, 200);
-            } catch(e) {
+                res.json(
+                    {
+                        items: items,
+                    },
+                    200,
+                );
+            } catch (e) {
                 console.error(e);
                 res.json('Error retrieving data', 400);
             }
@@ -508,13 +543,13 @@ module.exports = {
             resolve();
         });
     },
-    getSections: function(req, res) {
+    getSections: function (req, res) {
         return new Promise(async (resolve, reject) => {
             try {
                 //use cache
                 let cache_data = await getObj(cacheService.keys.sections);
 
-                if(cache_data) {
+                if (cache_data) {
                     res.json(
                         {
                             items: cache_data,
@@ -527,31 +562,150 @@ module.exports = {
 
                 let conn = await dbService.conn();
 
-                let items = await conn('me_sections')
-                    .select(
-                        'section_key',
-                        'section_name',
-                        'icon',
-                        'position',
-                        'active',
-                        'updated'
-                    );
+                let items = await conn('me_sections').select(
+                    'section_key',
+                    'section_name',
+                    'icon',
+                    'position',
+                    'active',
+                    'updated',
+                );
 
                 try {
                     await setCache(cacheService.keys.sections, items);
-                } catch(e) {
+                } catch (e) {
                     console.error(e);
                 }
 
-                res.json({
-                    items: items
-                }, 200);
-            } catch(e) {
+                res.json(
+                    {
+                        items: items,
+                    },
+                    200,
+                );
+            } catch (e) {
                 console.error(e);
                 res.json('Error retrieving data', 400);
             }
 
             resolve();
         });
-    }
+    },
+    getSchools: function (req, res) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const limit = module.exports.batchLimit;
+                let offset = Math.floor((parseInt(req.query.offset) || 0) / limit) * limit;
+
+                const cache_key = cacheService.keys.schools_offset(offset);
+
+                //todo remove
+                if (false && !req.query.updated) {
+                    let cache_data = await cacheService.getObj(cache_key);
+
+                    if (cache_data) {
+                        res.json(
+                            {
+                                timestamp: timeNow(),
+                                next_offset: cache_data.length ? offset + limit : null,
+                                has_more: !!cache_data.length,
+                                items: cache_data,
+                            },
+                            200,
+                        );
+
+                        return resolve();
+                    }
+                }
+
+                let countries = await module.exports.countriesLookup();
+                let states = await module.exports.statesLookup();
+                let cities = await module.exports.citiesLookup();
+
+                let conn = await dbService.conn();
+
+                let query = conn('schools')
+                    .whereNotNull('city_id')
+                    .orderBy('id')
+                    .select(
+                        'token',
+                        'name',
+                        'country_id',
+                        'city_id',
+                        'state_id',
+                        'student_count',
+                        'lat',
+                        'lon',
+                        'is_grade_school',
+                        'is_high_school',
+                        'is_college',
+                        'updated',
+                        'deleted',
+                    )
+                    .limit(limit + 1)
+                    .offset(offset);
+
+                // On subsequent requests
+                if (req.query.updated) {
+                    query = query.where('updated', '>', req.query.updated);
+                }
+
+                let items = await query;
+
+                //replace country/state/city id with token
+                for (let item of items) {
+                    item.country_code = countries[item.country_id].country_code;
+
+                    item.state_token = states[item.state_id]?.token || null;
+
+                    if (!(item.country_id in cities)) {
+                        item.city_token = null;
+                    } else {
+                        item.city_token = cities[item.country_id][item.city_id] || null;
+                    }
+
+                    delete item.country_id;
+                    delete item.state_id;
+                    delete item.city_id;
+
+                    //remove unused is_{col} to save space
+                    if (!item.is_grade_school) {
+                        delete item.is_grade_school;
+                    } else if (!item.is_high_school) {
+                        delete item.is_high_school;
+                    } else if (!item.is_college) {
+                        delete item.is_college;
+                    }
+                }
+
+                // Check if there are more records
+                const hasMore = items.length > limit;
+
+                if (hasMore) {
+                    items = items.slice(0, limit); // Remove the extra item
+                }
+
+                //only update cache if no updated timestamp
+                if (!req.query.updated && items.length) {
+                    await cacheService.setCache(cache_key, items);
+                }
+
+                res.json(
+                    {
+                        timestamp: timeNow(),
+                        next_offset: hasMore ? offset + limit : null,
+                        has_more: hasMore,
+                        items: items,
+                    },
+                    200,
+                );
+            } catch (e) {
+                console.error(e);
+
+                res.json('Error retrieving data', 400);
+            }
+
+            resolve();
+        });
+    },
 };
