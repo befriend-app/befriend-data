@@ -14,7 +14,10 @@ module.exports = {
             return `session:data:${session}`;
         },
         cities_offset: function (offset) {
-            return `cities:offset:${offset}`;
+            return `data:cities:offset:${offset}`;
+        },
+        schools_offset: function (offset) {
+            return `data:schools:offset:${offset}`;
         },
     },
     init: function () {
