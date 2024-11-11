@@ -770,6 +770,9 @@ async function deleteDuplicateByName() {
     function getDuplicateScore(school) {
         let score = 0;
 
+        //prioritize wd
+        if (school.source === 'wd') score += 100;
+
         if (school.student_count) {
             // Higher student counts get higher scores (normalized to avoid too much weight)
             score += 5 + Math.min(5, Math.log10(school.student_count));
@@ -792,15 +795,14 @@ async function deleteDuplicateByName() {
         let conn = await dbService.conn();
 
         let schools = await conn('schools')
-            // .where('location_processed', false)
             .whereNull('deleted')
             .whereNotNull('lat')
             .whereNotNull('lon')
-            // .where('country_id', 987)
             .select('*');
 
         let countries = {};
 
+        // Group schools by country and name
         for (let s of schools) {
             if (!(s.country_id in countries)) {
                 countries[s.country_id] = {};
@@ -815,81 +817,106 @@ async function deleteDuplicateByName() {
             countries[s.country_id][nameLower].push(s);
         }
 
-        for (let k in countries) {
+        for (let country_id in countries) {
             console.log({
-                Deduplicating: countries_dict[k].country_name,
+                Deduplicating: countries_dict[country_id].country_name,
             });
 
-            let schoolsToDeleteIds = [];
+            let schoolsToDeleteIds = new Set();
+            let schools = countries[country_id];
 
-            let schools = countries[k];
-
-            for (let k2 in schools) {
-                let schoolList = schools[k2];
+            for (let schoolName in schools) {
+                let schoolList = schools[schoolName];
 
                 if (schoolList.length > 1) {
-                    console.log(
-                        `\nProcessing ${schoolList.length} potential duplicates for "${schoolList[0].name}"`,
-                    );
-
                     // Calculate scores for all schools
                     const scoredSchools = schoolList.map((school) => ({
                         ...school,
                         score: getDuplicateScore(school),
+                        processed: false
                     }));
 
                     // Sort by score descending
                     scoredSchools.sort((a, b) => b.score - a.score);
 
-                    // Select the highest scoring school as primary
-                    const primarySchool = scoredSchools[0];
+                    // Keep track of which schools have been processed
+                    let processedCount = 0;
 
-                    // Check all other schools against the primary
-                    for (let i = 1; i < scoredSchools.length; i++) {
-                        const compareSchool = scoredSchools[i];
+                    while (processedCount < scoredSchools.length) {
+                        // Find the next unprocessed school with highest score
+                        const primarySchool = scoredSchools.find(s => !s.processed);
+                        if (!primarySchool) break;
 
-                        const distance = getDistanceMiles(
-                            {
-                                lat: primarySchool.lat,
-                                lon: primarySchool.lon,
-                            },
-                            {
-                                lat: compareSchool.lat,
-                                lon: compareSchool.lon,
-                            },
-                        );
+                        primarySchool.processed = true;
+                        processedCount++;
 
-                        if (distance <= 10) {
-                            // Mark as duplicate if within 20 miles
-                            schoolsToDeleteIds.push(compareSchool.id);
+                        // Create a cluster of schools near this one
+                        const cluster = [primarySchool];
 
-                            console.log(`Marking duplicate (score: ${compareSchool.score.toFixed(2)}):
-                                ID: ${compareSchool.id}
-                                Distance: ${distance.toFixed(2)} miles
-                                Student Count: ${compareSchool.student_count || 'N/A'}
-                                State: ${compareSchool.state_id || 'N/A'}
-                                City: ${compareSchool.city_id || 'N/A'}
-                                Types: ${
-                                    [
-                                        compareSchool.is_college ? 'College' : '',
-                                        compareSchool.is_high_school ? 'High School' : '',
-                                        compareSchool.is_grade_school ? 'Grade School' : '',
-                                    ]
-                                        .filter(Boolean)
-                                        .join(', ') || 'None'
-                                }`);
+                        // Check remaining unprocessed schools against this one
+                        for (let compareSchool of scoredSchools) {
+                            if (compareSchool.processed) continue;
+
+                            // Check distance against any school in the current cluster
+                            let isNearCluster = cluster.some(clusterSchool => {
+                                const distance = getDistanceMiles(
+                                    {
+                                        lat: clusterSchool.lat,
+                                        lon: clusterSchool.lon,
+                                    },
+                                    {
+                                        lat: compareSchool.lat,
+                                        lon: compareSchool.lon,
+                                    }
+                                );
+                                return distance <= 20;
+                            });
+
+                            if (isNearCluster) {
+                                cluster.push(compareSchool);
+                                compareSchool.processed = true;
+                                processedCount++;
+                            }
+                        }
+
+                        // If we found multiple schools in this cluster, mark all but the highest
+                        // scored one for deletion
+                        if (cluster.length > 1) {
+                            // Sort cluster by score
+                            cluster.sort((a, b) => b.score - a.score);
+
+                            //update student count if missing
+                            if(!cluster[0].student_count) {
+                                const maxStudentCount = Math.max(...cluster.map(s => s.student_count || 0));
+
+                                if(maxStudentCount > 0 ) {
+                                    await conn('schools')
+                                        .where('id', cluster[0].id)
+                                        .update({
+                                            student_count: maxStudentCount,
+                                            updated: timeNow(),
+                                        });
+                                }
+                            }
+
+                            for (let i = 1; i < cluster.length; i++) {
+                                schoolsToDeleteIds.add(cluster[i].id);
+                            }
                         }
                     }
                 }
             }
 
-            if (schoolsToDeleteIds.length) {
-                let out = await conn('schools').whereIn('id', schoolsToDeleteIds).update({
-                    deleted: timeNow(),
-                });
+            if (schoolsToDeleteIds.size) {
+                let delete_count = await conn('schools')
+                    .whereIn('id', Array.from(schoolsToDeleteIds))
+                    .update({
+                        updated: timeNow(),
+                        deleted: timeNow(),
+                    });
 
                 console.log({
-                    Deleted: out,
+                    Deleted: delete_count,
                 });
             }
         }
@@ -1808,13 +1835,13 @@ function main() {
             //
             // await deleteWNames();
             // await updateSchoolTypes();
-            await missingSchoolType();
+            // await missingSchoolType();
 
             // await setSchoolLatLon();
             // await checkSetInvalidName();
             // await addSchoolsLocation();
             //
-            // await deleteDuplicateByName();
+            await deleteDuplicateByName();
             //
             // await fixWrongCities();
             //
