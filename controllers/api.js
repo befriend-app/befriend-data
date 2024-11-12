@@ -549,7 +549,7 @@ module.exports = {
                 //use cache
                 let cache_data = await getObj(cacheService.keys.music_genres);
 
-                if (false && cache_data) {
+                if (cache_data) {
                     res.json(
                         {
                             items: cache_data,
