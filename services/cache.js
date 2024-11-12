@@ -10,6 +10,7 @@ module.exports = {
         states: `data:states`,
         sections: `data:sections`,
         instruments: `data:instruments`,
+        music_genres: `data:music:genres`,
         session: function (session) {
             return `session:data:${session}`;
         },

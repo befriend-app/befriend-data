@@ -121,6 +121,18 @@ router.get('/movies', function (req, res, next) {
     });
 });
 
+router.get('/music/genres', function (req, res, next) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            await apiController.getMusicGenres(req, res);
+        } catch (e) {
+            console.error(e);
+        }
+
+        resolve();
+    });
+});
+
 router.get('/schools', function (req, res, next) {
     return new Promise(async (resolve, reject) => {
         try {
