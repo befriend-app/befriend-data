@@ -190,8 +190,20 @@ module.exports = {
     },
     deleteKeys: function (keys, batchSize = 1000000) {
         return new Promise(async (resolve, reject) => {
-            if (!keys || !keys.length) {
+            if (!module.exports.conn) {
+                try {
+                    await module.exports.init();
+                } catch (e) {
+                    return reject(e);
+                }
+            }
+
+            if (!keys) {
                 return resolve();
+            }
+
+            if(!Array.isArray(keys)) {
+                keys = [keys];
             }
 
             try {
