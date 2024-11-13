@@ -2,6 +2,7 @@ const { loadScriptEnv, timeNow, generateToken, updateSystemProcess } = require('
 const { batchInsert, batchUpdate } = require('../../services/db');
 const dbService = require('../../services/db');
 const { api } = require('./api');
+const { genreMap } = require('./genres_map');
 
 loadScriptEnv();
 
@@ -13,6 +14,12 @@ let system_process = {
     key: 'music_genres_last_country',
     data: null,
 };
+
+function findMBGenre(genre_name) {
+    //creates mapping between Apple Music genres and Music Brainz tags
+
+
+}
 
 async function getGenres() {
     let totals = {
@@ -74,10 +81,13 @@ async function getGenres() {
                 let parent = missingParents[apple_id];
 
                 if (!genresDict.byAppleId[parent.id]) {
+                    let mb_genres = findMBGenre(parent.name);
+
                     let new_parent = {
                         token: generateToken(10),
                         name: parent.name,
                         apple_id: parent.id,
+                        mb_genres: mb_genres ? JSON.stringify(mb_genres) : null,
                         parent_id: null,
                         is_active: true,
                         created: timeNow(),
@@ -94,7 +104,7 @@ async function getGenres() {
                 }
             }
 
-            // If we inserted any parents, do the batch insert now
+            // If we added any parents, do the batch insert
             if (batch_insert_genres.length) {
                 await batchInsert('music_genres', batch_insert_genres, true);
 
@@ -107,7 +117,7 @@ async function getGenres() {
                 batch_insert_genres = []; // Reset for main genres
             }
 
-            // Now process all regular genres
+            // Process all regular genres
             for (let i = 0; i < genres.length; i++) {
                 let position = i;
                 let genre = genres[i];
@@ -124,10 +134,13 @@ async function getGenres() {
                         parent_id = genresDict.byAppleId[parent_apple_id].id;
                     }
 
+                    let mb_genres = findMBGenre(name);
+
                     let new_genre = {
                         token: generateToken(10),
                         name: name,
                         apple_id: apple_id,
+                        mb_genres: mb_genres ? JSON.stringify(mb_genres) : null,
                         parent_id: parent_id,
                         is_active: true,
                         created: timeNow(),
@@ -291,6 +304,8 @@ async function loadGenres() {
             'mg.id',
             'mg.token',
             'mg.apple_id',
+            'mg.name',
+            'mg.mb_genres',
             'mgc.country_id',
             'mgc.position',
             'mgc.id AS country_genre_id',
@@ -303,6 +318,7 @@ async function loadGenres() {
                 id: genre.id,
                 token: genre.token,
                 apple_id: genre.apple_id,
+                name: genre.name,
                 countries: {},
             };
         }
