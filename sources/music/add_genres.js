@@ -1,6 +1,7 @@
 const { loadScriptEnv, timeNow, generateToken, updateSystemProcess } = require('../../services/shared');
 const { batchInsert, batchUpdate } = require('../../services/db');
 const dbService = require('../../services/db');
+const {keys: systemKeys} = require('../../services/system');
 const { api } = require('./api');
 const { genreMap } = require('./genres_map');
 
@@ -11,14 +12,41 @@ let countries = [];
 let genresDict = {};
 
 let system_process = {
-    key: 'music_genres_last_country',
+    key: systemKeys.music.genres,
     data: null,
 };
 
 function findMBGenre(genre_name) {
     //creates mapping between Apple Music genres and Music Brainz tags
+    if (!genre_name) {
+        return null;
+    }
 
+    const directMatch = genreMap[genre_name];
 
+    if (directMatch) {
+        // No subgenres
+        if (Array.isArray(directMatch)) {
+            return directMatch;
+        }
+        // If main/subgenres structure, return main tags
+        if (directMatch.main) {
+            return directMatch.main;
+        }
+    }
+
+    // Search in subgenres of regional music
+    for (const [mainGenre, value] of Object.entries(genreMap)) {
+        if (value.subgenres) {
+            const subgenreMatch = value.subgenres[genre_name];
+
+            if (subgenreMatch) {
+                return subgenreMatch;
+            }
+        }
+    }
+
+    return null;
 }
 
 async function getGenres() {
