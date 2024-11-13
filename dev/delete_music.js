@@ -1,6 +1,7 @@
 const cacheService = require('../services/cache');
 const db = require('../services/db');
 const { loadScriptEnv, isProdApp } = require('../services/shared');
+const {keys: systemKeys} = require('../services/system');
 
 loadScriptEnv();
 
@@ -33,6 +34,19 @@ function main(is_me) {
                 client: process.env.DB_CLIENT,
                 connection: connection,
             });
+
+            //delete process key
+            let db_system_keys = [systemKeys.music.genres, systemKeys.music.artists.country, systemKeys.music.artists.country_genre];
+
+            for(let key of db_system_keys) {
+                try {
+                     await knex('system')
+                         .where('system_key', key)
+                         .delete();
+                } catch(e) {
+                    console.error(e);
+                }
+            }
 
             let tables = [
                 'music_artists_genres_countries', 'music_artists_genres', 'music_artists',
