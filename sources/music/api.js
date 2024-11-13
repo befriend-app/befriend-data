@@ -64,22 +64,6 @@ const api = {
 
         throw lastError;
     },
-    getGenres: async function (countryCode) {
-        return await this.makeRequest(`/catalog/${countryCode.toLowerCase()}/genres`);
-    },
-    getArtists: async function (countryCode, genreId, limit, offset) {
-        return await this.makeRequest(
-            `/catalog/${countryCode.toLowerCase()}/charts`,
-            {
-                params: {
-                    types: 'artists',
-                    genre: genreId,
-                    limit: limit,
-                    offset: offset
-                }
-            }
-        );
-    }
 };
 
 module.exports = {
