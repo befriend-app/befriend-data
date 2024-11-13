@@ -3582,13 +3582,6 @@ module.exports = {
             popularity: 50,
         },
         {
-            token: 'ins_voic',
-            name: 'Voice',
-            category: 'Natural',
-            is_common: 1,
-            popularity: 1000,
-        },
-        {
             token: 'ins_voli',
             name: 'Volinka',
             category: 'Wind',
