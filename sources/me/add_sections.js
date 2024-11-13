@@ -90,15 +90,13 @@ function main() {
                         updated: timeNow(),
                     });
                 } else {
-                    await conn('me_sections')
-                        .where('id', check.id)
-                            .update({
-                                section_key: key,
-                                section_name: data.name,
-                                icon: data.icon,
-                                position: i,
-                                updated: timeNow(),
-                        });
+                    await conn('me_sections').where('id', check.id).update({
+                        section_key: key,
+                        section_name: data.name,
+                        icon: data.icon,
+                        position: i,
+                        updated: timeNow(),
+                    });
                 }
             }
 

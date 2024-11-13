@@ -379,7 +379,7 @@ module.exports = {
                     cities_dict[city.country_id][city.id] = city.token;
                 }
 
-                delete cities;
+                cities = null;
 
                 module.exports.data.cities = cities_dict;
 
@@ -549,7 +549,8 @@ module.exports = {
                 //use cache
                 let cache_data = await getObj(cacheService.keys.music_genres);
 
-                if (cache_data) {
+                //todo remove
+                if (false && cache_data) {
                     res.json(
                         {
                             items: cache_data,
@@ -562,7 +563,7 @@ module.exports = {
 
                 let items = {
                     genres: {},
-                    countries: {}
+                    countries: {},
                 };
 
                 let genreDict = {};
@@ -571,65 +572,52 @@ module.exports = {
                 let conn = await dbService.conn();
 
                 // Organize countries lookup
-                let countries = await conn('open_countries')
-                    .select('id', 'country_code');
+                let countries = await conn('open_countries').select('id', 'country_code');
 
-                for(let country of countries) {
+                for (let country of countries) {
                     countryDict[country.id] = country.country_code;
                 }
 
                 // Get all genres
                 let genres = await conn('music_genres')
-                    .select(
-                        'id',
-                        'token',
-                        'name',
-                        'parent_id',
-                        'is_active',
-                        'updated'
-                    )
+                    .select('id', 'token', 'name', 'parent_id', 'is_active', 'updated')
                     .whereNull('deleted');
 
                 // Create genres lookup
-                for(let genre of genres) {
+                for (let genre of genres) {
                     genreDict[genre.id] = genre;
                 }
 
                 // Organize genres with parent tokens
-                for(let genre of genres) {
+                for (let genre of genres) {
                     items.genres[genre.token] = {
                         token: genre.token,
                         parent_token: genre.parent_id ? genreDict[genre.parent_id]?.token : null,
                         name: genre.name,
                         is_active: genre.is_active,
-                        updated: genre.updated
+                        updated: genre.updated,
                     };
                 }
 
                 // genres by country
                 let genres_countries = await conn('music_genres_countries')
-                    .select(
-                        'genre_id',
-                        'country_id',
-                        'position',
-                        'updated'
-                    )
+                    .select('genre_id', 'country_id', 'position', 'updated')
                     .whereNull('deleted');
 
                 // organize associations
-                for(let country_genre of genres_countries) {
+                for (let country_genre of genres_countries) {
                     let countryCode = countryDict[country_genre.country_id];
                     let genre = genreDict[country_genre.genre_id];
 
-                    if(countryCode && genre) {
-                        if(!items.countries[countryCode]) {
+                    if (countryCode && genre) {
+                        if (!items.countries[countryCode]) {
                             items.countries[countryCode] = {};
                         }
 
                         items.countries[countryCode][genre.token] = {
                             token: genre.token,
                             position: country_genre.position,
-                            updated: country_genre.updated
+                            updated: country_genre.updated,
                         };
                     }
                 }

@@ -203,7 +203,7 @@ module.exports = {
                 return resolve();
             }
 
-            if(!Array.isArray(keys)) {
+            if (!Array.isArray(keys)) {
                 keys = [keys];
             }
 

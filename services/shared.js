@@ -61,16 +61,17 @@ function getDistanceMeters(loc_1, loc_2) {
 
 function getDistanceMiles(loc_1, loc_2) {
     const R = 3959; // Earth's radius in miles
-    const dLat = (loc_2.lat - loc_1.lat) * Math.PI / 180;
-    const dLon = (loc_2.lon - loc_1.lon) * Math.PI / 180;
+    const dLat = ((loc_2.lat - loc_1.lat) * Math.PI) / 180;
+    const dLon = ((loc_2.lon - loc_1.lon) * Math.PI) / 180;
     const a =
-        Math.sin(dLat/2) * Math.sin(dLat/2) +
-        Math.cos(loc_1.lat * Math.PI / 180) * Math.cos(loc_2.lat * Math.PI / 180) *
-        Math.sin(dLon/2) * Math.sin(dLon/2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos((loc_1.lat * Math.PI) / 180) *
+            Math.cos((loc_2.lat * Math.PI) / 180) *
+            Math.sin(dLon / 2) *
+            Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     return R * c;
 }
-
 
 function getMetersFromMilesOrKm(miles_or_km, to_int) {
     let meters = miles_or_km / meters_to_miles;

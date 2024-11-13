@@ -833,7 +833,7 @@ async function deleteDuplicateByName() {
                     const scoredSchools = schoolList.map((school) => ({
                         ...school,
                         score: getDuplicateScore(school),
-                        processed: false
+                        processed: false,
                     }));
 
                     // Sort by score descending
@@ -844,7 +844,7 @@ async function deleteDuplicateByName() {
 
                     while (processedCount < scoredSchools.length) {
                         // Find the next unprocessed school with highest score
-                        const primarySchool = scoredSchools.find(s => !s.processed);
+                        const primarySchool = scoredSchools.find((s) => !s.processed);
                         if (!primarySchool) break;
 
                         primarySchool.processed = true;
@@ -858,7 +858,7 @@ async function deleteDuplicateByName() {
                             if (compareSchool.processed) continue;
 
                             // Check distance against any school in the current cluster
-                            let isNearCluster = cluster.some(clusterSchool => {
+                            let isNearCluster = cluster.some((clusterSchool) => {
                                 const distance = getDistanceMiles(
                                     {
                                         lat: clusterSchool.lat,
@@ -867,7 +867,7 @@ async function deleteDuplicateByName() {
                                     {
                                         lat: compareSchool.lat,
                                         lon: compareSchool.lon,
-                                    }
+                                    },
                                 );
                                 return distance <= 20;
                             });
@@ -886,16 +886,16 @@ async function deleteDuplicateByName() {
                             cluster.sort((a, b) => b.score - a.score);
 
                             //update student count if missing
-                            if(!cluster[0].student_count) {
-                                const maxStudentCount = Math.max(...cluster.map(s => s.student_count || 0));
+                            if (!cluster[0].student_count) {
+                                const maxStudentCount = Math.max(
+                                    ...cluster.map((s) => s.student_count || 0),
+                                );
 
-                                if(maxStudentCount > 0 ) {
-                                    await conn('schools')
-                                        .where('id', cluster[0].id)
-                                        .update({
-                                            student_count: maxStudentCount,
-                                            updated: timeNow(),
-                                        });
+                                if (maxStudentCount > 0) {
+                                    await conn('schools').where('id', cluster[0].id).update({
+                                        student_count: maxStudentCount,
+                                        updated: timeNow(),
+                                    });
                                 }
                             }
 
