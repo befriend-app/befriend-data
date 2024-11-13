@@ -1,6 +1,7 @@
 const fs = require('fs');
 const dayjs = require('dayjs');
 const process = require('process');
+const dbService = require('./db');
 
 const utc = require('dayjs/plugin/utc');
 const timezone = require('dayjs/plugin/timezone');
@@ -199,6 +200,40 @@ function timeNow(seconds) {
     return Date.now();
 }
 
+function updateSystemProcess(system_key, value, to_json) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let conn = await dbService.conn();
+
+            if (to_json) {
+                value = JSON.stringify(value);
+            }
+
+            let qry_check = await conn('system').where('system_key', system_key).first();
+
+            if (qry_check) {
+                await conn('system').where('id', qry_check.id).update({
+                    system_value: value,
+                    updated: timeNow(),
+                });
+            } else {
+                await conn('system').insert({
+                    system_key: system_key,
+                    system_value: value,
+                    created: timeNow(),
+                    updated: timeNow(),
+                });
+            }
+
+            resolve();
+        } catch(e) {
+            console.error(e);
+            reject(e);
+        }
+    });
+}
+
+
 module.exports = {
     cloneObj,
     generateToken,
@@ -215,4 +250,5 @@ module.exports = {
     protectedNames,
     sleep,
     timeNow,
+    updateSystemProcess
 };
