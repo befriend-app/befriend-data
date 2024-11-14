@@ -772,6 +772,102 @@ module.exports = {
             resolve();
         });
     },
+    getMusicArtistsGenres: function (req, res) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const limit = module.exports.batchLimit;
+                let offset = Math.floor((parseInt(req.query.offset) || 0) / limit) * limit;
+
+                const cache_key = cacheService.keys.music_artists_genres_offset(offset);
+
+                if (!req.query.updated) {
+                    let cache_data = await cacheService.getObj(cache_key);
+
+                    if (cache_data) {
+                        res.json(
+                            {
+                                timestamp: timeNow(),
+                                next_offset: cache_data.length ? offset + limit : null,
+                                has_more: !!cache_data.length,
+                                items: cache_data,
+                            },
+                            200,
+                        );
+
+                        return resolve();
+                    }
+                }
+
+                let conn = await dbService.conn();
+
+                // First get genre lookup dictionary
+                let genres = await conn('music_genres')
+                    .select('id', 'token');
+
+                let genreDict = {};
+                for (let genre of genres) {
+                    genreDict[genre.id] = genre.token;
+                }
+
+                // Now get artist lookup dictionary
+                let artists = await conn('music_artists')
+                    .select('id', 'token');
+
+                let artistDict = {};
+                for (let artist of artists) {
+                    artistDict[artist.id] = artist.token;
+                }
+
+                // Get all artist-genre associations with pagination
+                let query = conn('music_artists_genres')
+                    .select('artist_id', 'genre_id', 'popularity', 'updated', 'deleted')
+                    .limit(limit + 1)
+                    .offset(offset);
+
+                // On subsequent requests
+                if (req.query.updated) {
+                    query = query.where('updated', '>', req.query.updated);
+                }
+
+                let items = await query;
+
+                // Transform IDs to tokens
+                for(let item of items) {
+                    item.artist_token = artistDict[item.artist_id];
+                    item.genre_token = genreDict[item.genre_id];
+
+                    delete item.artist_id;
+                    delete item.genre_id;
+                }
+
+                const hasMore = items.length > limit;
+
+                if (hasMore) {
+                    items = items.slice(0, limit);
+                }
+
+                // Only update cache if no updated timestamp
+                if (!req.query.updated && items.length) {
+                    await cacheService.setCache(cache_key, items);
+                }
+
+                res.json(
+                    {
+                        timestamp: timeNow(),
+                        next_offset: hasMore ? offset + limit : null,
+                        has_more: hasMore,
+                        items: items,
+                    },
+                    200,
+                );
+            } catch (e) {
+                console.error(e);
+                res.json('Error retrieving data', 400);
+            }
+
+            resolve();
+        });
+    },
     getMeSections: function (req, res) {
         return new Promise(async (resolve, reject) => {
             try {

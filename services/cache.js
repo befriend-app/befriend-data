@@ -43,8 +43,8 @@ module.exports = {
         music_artists_offset: function (offset) {
             return `data:music:artists:${offset}`
         },
-        music_artists_genres: function(genre_token) {
-            return `data:music:artists:genres:${genre_token}`;
+        music_artists_genres_offset: function(offset) {
+            return `data:music:artists:genres:${offset}`;
         },
     },
     init: function () {

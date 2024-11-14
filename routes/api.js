@@ -157,10 +157,10 @@ router.get('/music/artists', function (req, res, next) {
     });
 });
 
-router.get('/music/artists/genres/:genre_token', function (req, res, next) {
+router.get('/music/artists/genres', function (req, res, next) {
     return new Promise(async (resolve, reject) => {
         try {
-            await apiController.getMusicArtists(req, res);
+            await apiController.getMusicArtistsGenres(req, res);
         } catch (e) {
             console.error(e);
         }
