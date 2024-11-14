@@ -181,10 +181,10 @@ router.get('/schools', function (req, res, next) {
     });
 });
 
-router.get('/sections', function (req, res, next) {
+router.get('/me/sections', function (req, res, next) {
     return new Promise(async (resolve, reject) => {
         try {
-            await apiController.getSections(req, res);
+            await apiController.getMeSections(req, res);
         } catch (e) {
             console.error(e);
         }

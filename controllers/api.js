@@ -642,8 +642,7 @@ module.exports = {
 
                 // Get all genres
                 let genres = await conn('music_genres')
-                    .select('id', 'token', 'name', 'parent_id', 'is_active', 'is_featured', 'updated')
-                    .whereNull('deleted');
+                    .select('id', 'token', 'name', 'parent_id', 'is_active', 'is_featured', 'updated', 'deleted');
 
                 // Create genres lookup
                 for (let genre of genres) {
@@ -664,8 +663,7 @@ module.exports = {
 
                 // genres by country
                 let genres_countries = await conn('music_genres_countries')
-                    .select('genre_id', 'country_id', 'position', 'updated')
-                    .whereNull('deleted');
+                    .select('genre_id', 'country_id', 'position', 'updated', 'deleted');
 
                 // organize associations
                 for (let country_genre of genres_countries) {
@@ -708,91 +706,60 @@ module.exports = {
     getMusicArtists: function (req, res) {
         return new Promise(async (resolve, reject) => {
             try {
-                //use cache
-                let cache_data = await getObj(cacheService.keys.music_genres);
+                const limit = module.exports.batchLimit;
+                let offset = Math.floor((parseInt(req.query.offset) || 0) / limit) * limit;
 
-                //todo remove
-                if (false && cache_data) {
-                    res.json(
-                        {
-                            items: cache_data,
-                        },
-                        200,
-                    );
+                const cache_key = cacheService.keys.music_artists_offset(offset);
 
-                    return resolve();
-                }
+                if (!req.query.updated) {
+                    let cache_data = await cacheService.getObj(cache_key);
 
-                let items = {
-                    genres: {},
-                    countries: {},
-                };
+                    //todo remove
+                    if (false && cache_data) {
+                        res.json(
+                            {
+                                timestamp: timeNow(),
+                                next_offset: cache_data.length ? offset + limit : null,
+                                has_more: !!cache_data.length,
+                                items: cache_data,
+                            },
+                            200,
+                        );
 
-                let genreDict = {};
-                let countryDict = {};
-
-                let conn = await dbService.conn();
-
-                // Organize countries lookup
-                let countries = await conn('open_countries').select('id', 'country_code');
-
-                for (let country of countries) {
-                    countryDict[country.id] = country.country_code;
-                }
-
-                // Get all genres
-                let genres = await conn('music_genres')
-                    .select('id', 'token', 'name', 'parent_id', 'is_active', 'is_featured', 'updated')
-                    .whereNull('deleted');
-
-                // Create genres lookup
-                for (let genre of genres) {
-                    genreDict[genre.id] = genre;
-                }
-
-                // Organize genres with parent tokens
-                for (let genre of genres) {
-                    items.genres[genre.token] = {
-                        token: genre.token,
-                        parent_token: genre.parent_id ? genreDict[genre.parent_id]?.token : null,
-                        name: genre.name,
-                        is_active: genre.is_active,
-                        is_featured: genre.is_featured,
-                        updated: genre.updated,
-                    };
-                }
-
-                // genres by country
-                let genres_countries = await conn('music_genres_countries')
-                    .select('genre_id', 'country_id', 'position', 'updated')
-                    .whereNull('deleted');
-
-                // organize associations
-                for (let country_genre of genres_countries) {
-                    let countryCode = countryDict[country_genre.country_id];
-                    let genre = genreDict[country_genre.genre_id];
-
-                    if (countryCode && genre) {
-                        if (!items.countries[countryCode]) {
-                            items.countries[countryCode] = {};
-                        }
-
-                        items.countries[countryCode][genre.token] = {
-                            token: genre.token,
-                            position: country_genre.position,
-                            updated: country_genre.updated,
-                        };
+                        return resolve();
                     }
                 }
 
-                try {
-                    await setCache(cacheService.keys.music_genres, items);
-                } catch (e) {
-                    console.error(e);
+                let conn = await dbService.conn();
+
+                // Get all artists
+                let query = conn('music_artists')
+                    .select('token', 'name', 'sort_name', 'type', 'mb_score', 'is_active', 'updated', 'deleted')
+                    .limit(limit + 1)
+                    .offset(offset);
+
+                if(req.query.updated) {
+                    query = query.where('updated', '>', req.query.updated);
+                }
+
+                let items = await query;
+
+                const hasMore = items.length > limit;
+
+                if (hasMore) {
+                    items = items.slice(0, limit);
+                }
+
+                //only update cache if no updated timestamp
+                if (!req.query.updated && items.length) {
+                    await cacheService.setCache(cache_key, items);
                 }
 
                 res.json(
                     {
+                        timestamp: timeNow(),
+                        next_offset: hasMore ? offset + limit : null,
+                        has_more: hasMore,
                         items: items,
                     },
                     200,
@@ -805,7 +772,7 @@ module.exports = {
             resolve();
         });
     },
-    getSections: function (req, res) {
+    getMeSections: function (req, res) {
         return new Promise(async (resolve, reject) => {
             try {
                 //use cache

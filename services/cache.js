@@ -11,7 +11,6 @@ module.exports = {
         sections: `data:sections`,
         instruments: `data:instruments`,
         music_genres: `data:music:genres`,
-        music_artists: `data:music:artists`,
         updated: {
             activities: {
                 types: `data:updated:activities:types`,
@@ -40,6 +39,9 @@ module.exports = {
         },
         schools_offset: function (offset) {
             return `data:schools:offset:${offset}`;
+        },
+        music_artists_offset: function (offset) {
+            return `data:music:artists:${offset}`
         },
         music_artists_genres: function(genre_token) {
             return `data:music:artists:genres:${genre_token}`;

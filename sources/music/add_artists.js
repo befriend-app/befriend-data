@@ -34,6 +34,10 @@ async function getArtists() {
     let batchSize = api.mb.config.batchSize;
 
     for (let [id, genreData] of Object.entries(genresDict)) {
+        if(!genreData.is_active) {
+            continue;
+        }
+
         let genre_totals = {
             artists: {
                 added: 0,
