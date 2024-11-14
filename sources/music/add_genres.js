@@ -1,7 +1,7 @@
 const { loadScriptEnv, timeNow, generateToken, updateSystemProcess } = require('../../services/shared');
 const { batchInsert, batchUpdate } = require('../../services/db');
 const dbService = require('../../services/db');
-const {keys: systemKeys} = require('../../services/system');
+const {keys: systemKeys, getProcess } = require('../../services/system');
 const { api } = require('./api');
 const { genreMap } = require('./genres_map');
 
@@ -11,10 +11,7 @@ let countries = [];
 
 let genresDict = {};
 
-let system_process = {
-    key: systemKeys.music.genres,
-    data: null,
-};
+let prevLastCountry = null;
 
 function findMBGenre(genre_name) {
     //creates mapping between Apple Music genres and Music Brainz tags
@@ -70,7 +67,7 @@ async function getGenres() {
         let batch_deletes = [];
 
         //skip already processed country
-        if (system_process.data && country.id <= system_process.data) {
+        if (prevLastCountry && country.id <= prevLastCountry) {
             totals.countries.skipped += 1;
             continue;
         }
@@ -78,7 +75,7 @@ async function getGenres() {
         console.log(`Starting country: ${country.country_name}`);
 
         try {
-            const response = await api.makeRequest(
+            const response = await api.apple.makeRequest(
                 `/catalog/${country.country_code.toLowerCase()}/genres`,
             );
             let genres = response.data;
@@ -282,12 +279,12 @@ async function getGenres() {
             totals.countries.deleted += batch_deletes.length;
 
             //set as processed
-            await updateSystemProcess(system_process.key, country.id);
+            await updateSystemProcess(systemKeys.music.genres, country.id);
         } catch (error) {
             //allow continuation on invalid path (i.e. catalog/ad)
 
             if (['40008', '40009'].includes(error.response?.data?.errors?.[0]?.code)) {
-                await updateSystemProcess(system_process.key, country.id);
+                await updateSystemProcess(systemKeys.music.genres, country.id);
                 continue;
             }
 
@@ -299,17 +296,10 @@ async function getGenres() {
     console.log(totals);
 }
 
-
 async function loadSystemProcess() {
-    let conn = await dbService.conn();
+    prevLastCountry = await getProcess(systemKeys.music.genres);
 
-    //genres
-    let genres_qry = await conn('system').where('system_key', system_process.key).first();
-
-    if (genres_qry) {
-        //id of last country processed
-        system_process.data = parseInt(genres_qry.system_value);
-    }
+    prevLastCountry = prevLastCountry ? parseInt(prevLastCountry) : null;
 }
 
 async function loadCountries() {
@@ -322,6 +312,7 @@ async function loadGenres() {
     let conn = await dbService.conn();
 
     genresDict = {
+        byId: {},
         byAppleId: {},
         byCountry: {},
     };
@@ -341,11 +332,22 @@ async function loadGenres() {
 
     // Organize lookups
     for (let genre of genres) {
+        if (!genresDict.byId[genre.id]) {
+            genresDict.byId[genre.id] = {
+                id: genre.id,
+                token: genre.token,
+                apple_id: genre.apple_id,
+                mb_genres: genre.mb_genres,
+                name: genre.name,
+            };
+        }
+
         if (!genresDict.byAppleId[genre.apple_id]) {
             genresDict.byAppleId[genre.apple_id] = {
                 id: genre.id,
                 token: genre.token,
                 apple_id: genre.apple_id,
+                mb_genres: genre.mb_genres,
                 name: genre.name,
                 countries: {},
             };
@@ -371,7 +373,7 @@ async function main() {
     try {
         console.log("Process genres");
 
-        api.setClient();
+        api.apple.setClient();
         
         await loadSystemProcess();
         await loadCountries();

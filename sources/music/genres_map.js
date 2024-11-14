@@ -1,6 +1,5 @@
 // Mapping between Apple genres and MusicBrainz genres/tags
 const genreMap = {
-    // Main Music Categories
     "Alternative": ["alternative", "alternative rock"],
     "Blues": ["blues"],
     "Classical": ["classical"],
@@ -13,6 +12,10 @@ const genreMap = {
     "R&B/Soul": ["r&b", "rhythm and blues", "soul"],
     "Reggae": ["reggae"],
     "Rock": ["rock"],
+    "Indie Rock": ["indie rock", "indie"],
+    "Soul": ["soul", "soul music", "northern soul"],
+    "Punk": ["punk", "punk rock"],
+    "Hard Rock": ["hard rock"],
 
     // Regional/Cultural Music
     "Brazilian": {
@@ -40,6 +43,15 @@ const genreMap = {
         }
     },
 
+    "African": {
+        "main": ["african", "african traditional"],
+        "subgenres": {
+            "Afrobeats": ["afrobeats"],
+            "Afrikaans": ["afrikaans"],
+            "Amapiano": ["amapiano"],
+        }
+    },
+
     // East Asian Music
     "C-Pop": ["c-pop", "chinese pop"],
     "K-Pop": ["k-pop", "korean pop"],
@@ -49,12 +61,6 @@ const genreMap = {
     "アニメ": ["anime"],
     "演歌": ["enka"],
     "歌謡曲": ["kayōkyoku"],
-
-    // African Music
-    "African Music": ["african"],
-    "Afrobeats": ["afrobeats"],
-    "Afrikaans": ["afrikaans"],
-    "Amapiano": ["amapiano"],
 
     // Other Categories
     "Children's Music": ["children's music", "children"],
