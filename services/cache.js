@@ -11,6 +11,27 @@ module.exports = {
         sections: `data:sections`,
         instruments: `data:instruments`,
         music_genres: `data:music:genres`,
+        music_artists: `data:music:artists`,
+        updated: {
+            activities: {
+                types: `data:updated:activities:types`,
+                venues_categories: `data:updated:activities:venues_categories`,
+                activity_venues_categories: `data:updated:activities:activity_venues_categories`,
+            },
+            locations: {
+                countries: `data:updated:locations:countries`,
+                states: `data:updated:locations:states`,
+                cities: `data:updated:cities:cities`,
+            },
+            instruments: `data:updated:instruments`,
+            music: {
+                genres: `data:updated:music:genres`,
+                artists: `data:updated:music:artists`,
+                artists_genres: `data:updated:music:artists:genres`,
+            },
+            sections: `data:updated:sections`,
+            schools: `data:updated:schools`,
+        },
         session: function (session) {
             return `session:data:${session}`;
         },
@@ -19,6 +40,9 @@ module.exports = {
         },
         schools_offset: function (offset) {
             return `data:schools:offset:${offset}`;
+        },
+        music_artists_genres: function(genre_token) {
+            return `data:music:artists:genres:${genre_token}`;
         },
     },
     init: function () {

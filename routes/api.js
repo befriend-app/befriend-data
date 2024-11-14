@@ -13,6 +13,18 @@ router.get('/', function (req, res, next) {
     });
 });
 
+router.get('/updates', function (req, res, next) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            await apiController.getUpdates(req, res);
+        } catch (e) {
+            console.error(e);
+        }
+
+        resolve();
+    });
+});
+
 router.get('/activity-types', function (req, res, next) {
     return new Promise(async (resolve, reject) => {
         try {
@@ -125,6 +137,30 @@ router.get('/music/genres', function (req, res, next) {
     return new Promise(async (resolve, reject) => {
         try {
             await apiController.getMusicGenres(req, res);
+        } catch (e) {
+            console.error(e);
+        }
+
+        resolve();
+    });
+});
+
+router.get('/music/artists', function (req, res, next) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            await apiController.getMusicArtists(req, res);
+        } catch (e) {
+            console.error(e);
+        }
+
+        resolve();
+    });
+});
+
+router.get('/music/artists/genres/:genre_token', function (req, res, next) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            await apiController.getMusicArtists(req, res);
         } catch (e) {
             console.error(e);
         }

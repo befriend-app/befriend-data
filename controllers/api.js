@@ -2,6 +2,7 @@ const cacheService = require('../services/cache');
 const dbService = require('../services/db');
 const { timeNow } = require('../services/shared');
 const { getObj, setCache } = require('../services/cache');
+const { getLastUpdated } = require('../services/system');
 
 module.exports = {
     batchLimit: 50000, //changing this value affects cache
@@ -9,6 +10,67 @@ module.exports = {
         countries: null,
         states: null,
         cities: null,
+    },
+    getUpdates: function (req, res) {
+        return new Promise(async (resolve, reject) => {
+            let keys = cacheService.keys.updated;
+
+            //db/cache/code
+            // Get last updated timestamps for all endpoints
+            const [
+                activity_types,
+                venues_categories,
+                activity_venues_categories,
+                countries,
+                states,
+                cities,
+                instruments,
+                music_genres,
+                music_artists,
+                music_artists_genres,
+                sections,
+                schools
+            ] = await Promise.all([
+                getLastUpdated(keys.activities.types, 'activity_types'),
+                getLastUpdated(keys.activities.venues_categories, 'venues_categories'),
+                getLastUpdated(keys.activities.activity_venues_categories, 'activity_type_venues'),
+                getLastUpdated(keys.locations.countries, 'open_countries'),
+                getLastUpdated(keys.locations.states, 'open_states'),
+                getLastUpdated(keys.locations.cities, 'open_cities'),
+                getLastUpdated(keys.instruments, 'instruments'),
+                getLastUpdated(keys.music.genres, 'music_genres'),
+                getLastUpdated(keys.music.artists, 'music_artists'),
+                getLastUpdated(keys.music.artists_genres, 'music_artists_genres'),
+                getLastUpdated(keys.sections, 'me_sections'),
+                getLastUpdated(keys.schools, 'schools')
+            ]);
+
+            //timestamps of last updated for each endpoint
+            let organized = {
+                activities: {
+                    types: activity_types || null,
+                    venues_categories: venues_categories || null,
+                    activity_venues_categories: activity_venues_categories || null,
+                },
+                locations: {
+                    countries: countries || null,
+                    states: states || null,
+                    cities: cities || null
+                },
+                instruments: instruments || null,
+                music: {
+                    genres: music_genres || null,
+                    artists: music_artists || null,
+                    artists_genres: music_artists_genres || null
+                },
+                sections: sections || null,
+                schools: schools || null,
+            };
+
+            res.json(organized);
+
+            resolve();
+        });
     },
     getActivityTypes: function (req, res) {
         return new Promise(async (resolve, reject) => {
@@ -580,7 +642,7 @@ module.exports = {
 
                 // Get all genres
                 let genres = await conn('music_genres')
-                    .select('id', 'token', 'name', 'parent_id', 'is_active', 'updated')
+                    .select('id', 'token', 'name', 'parent_id', 'is_active', 'is_featured', 'updated')
                     .whereNull('deleted');
 
                 // Create genres lookup
@@ -595,6 +657,107 @@ module.exports = {
                         parent_token: genre.parent_id ? genreDict[genre.parent_id]?.token : null,
                         name: genre.name,
                         is_active: genre.is_active,
+                        is_featured: genre.is_featured,
+                        updated: genre.updated,
+                    };
+                }
+
+                // genres by country
+                let genres_countries = await conn('music_genres_countries')
+                    .select('genre_id', 'country_id', 'position', 'updated')
+                    .whereNull('deleted');
+
+                // organize associations
+                for (let country_genre of genres_countries) {
+                    let countryCode = countryDict[country_genre.country_id];
+                    let genre = genreDict[country_genre.genre_id];
+
+                    if (countryCode && genre) {
+                        if (!items.countries[countryCode]) {
+                            items.countries[countryCode] = {};
+                        }
+
+                        items.countries[countryCode][genre.token] = {
+                            token: genre.token,
+                            position: country_genre.position,
+                            updated: country_genre.updated,
+                        };
+                    }
+                }
+
+                try {
+                    await setCache(cacheService.keys.music_genres, items);
+                } catch (e) {
+                    console.error(e);
+                }
+
+                res.json(
+                    {
+                        items: items,
+                    },
+                    200,
+                );
+            } catch (e) {
+                console.error(e);
+                res.json('Error retrieving data', 400);
+            }
+
+            resolve();
+        });
+    },
+    getMusicArtists: function (req, res) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                //use cache
+                let cache_data = await getObj(cacheService.keys.music_genres);
+
+                //todo remove
+                if (false && cache_data) {
+                    res.json(
+                        {
+                            items: cache_data,
+                        },
+                        200,
+                    );
+
+                    return resolve();
+                }
+
+                let items = {
+                    genres: {},
+                    countries: {},
+                };
+
+                let genreDict = {};
+                let countryDict = {};
+
+                let conn = await dbService.conn();
+
+                // Organize countries lookup
+                let countries = await conn('open_countries').select('id', 'country_code');
+
+                for (let country of countries) {
+                    countryDict[country.id] = country.country_code;
+                }
+
+                // Get all genres
+                let genres = await conn('music_genres')
+                    .select('id', 'token', 'name', 'parent_id', 'is_active', 'is_featured', 'updated')
+                    .whereNull('deleted');
+
+                // Create genres lookup
+                for (let genre of genres) {
+                    genreDict[genre.id] = genre;
+                }
+
+                // Organize genres with parent tokens
+                for (let genre of genres) {
+                    items.genres[genre.token] = {
+                        token: genre.token,
+                        parent_token: genre.parent_id ? genreDict[genre.parent_id]?.token : null,
+                        name: genre.name,
+                        is_active: genre.is_active,
+                        is_featured: genre.is_featured,
                         updated: genre.updated,
                     };
                 }
