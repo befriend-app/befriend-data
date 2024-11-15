@@ -2,14 +2,12 @@ const { loadScriptEnv, timeNow, generateToken, updateSystemProcess, sleep } = re
 const { batchInsert, batchUpdate } = require('../../services/db');
 const dbService = require('../../services/db');
 const {keys: systemKeys, getProcess } = require('../../services/system');
-const axios = require('axios');
 const { api } = require('./api');
 const { loadGenres } = require('./add_genres');
 
 loadScriptEnv();
 
 let genresDict = {};
-let countries = [];
 let artistsDict = {
     byMbid: {},
     byGenre: {}
@@ -59,6 +57,10 @@ async function getArtists() {
 
         let mb_genres;
 
+        // if(![354].includes(id)) {
+        //     continue;
+        // }
+
         if (prevGenre && id <= prevGenre) {
             continue;
         }
@@ -106,10 +108,10 @@ async function getArtists() {
                     for (let i = 0; i < artists.length; i++) {
                         const artist = artists[i];
                         let tags = artist.tags || [];
-                        tags = tags.slice(0, 20);
+                        tags = tags.slice(0, 15);
 
                         const artistData = {
-                            name: artist.name,
+                            name: artist.name.substring(0, 250),
                             mb_id: artist.id,
                             mb_score: artist.score,
                             sort_name: artist['sort-name'],

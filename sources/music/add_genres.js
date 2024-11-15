@@ -324,6 +324,7 @@ async function loadGenres() {
             'mg.token',
             'mg.apple_id',
             'mg.name',
+            'mg.is_active',
             'mg.mb_genres',
             'mgc.country_id',
             'mgc.position',
@@ -339,6 +340,7 @@ async function loadGenres() {
                 apple_id: genre.apple_id,
                 mb_genres: genre.mb_genres,
                 name: genre.name,
+                is_active: genre.is_active,
             };
         }
 
