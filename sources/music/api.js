@@ -1,6 +1,6 @@
 const axios = require('axios');
 const jwt = require('jsonwebtoken');
-const { loadScriptEnv, joinPaths, sleep } = require('../../services/shared');
+const { loadScriptEnv, joinPaths, sleep, timeNow } = require('../../services/shared');
 const packageData = require('../../package.json');
 
 loadScriptEnv();
@@ -39,7 +39,7 @@ const api = {
             );
 
             this.token.value = response.data.access_token;
-            this.token.expiry = Date.now() + response.data.expires_in * 1000;
+            this.token.expiry = timeNow() + response.data.expires_in * 1000;
 
             this.client = axios.create({
                 baseURL: this.config.base_url,
@@ -51,7 +51,7 @@ const api = {
             });
         },
         checkToken: async function () {
-            if (!this.token.value || Date.now() >= this.token.expiry) {
+            if (!this.token.value || timeNow() >= this.token.expiry) {
                 await this.setClient();
             }
         },
@@ -151,52 +151,116 @@ const api = {
             batchSize: 100,
             rateLimit: {
                 requests: 1,
-                interval: 1000, // 1 request per second as per MusicBrainz guidelines
+                interval: 1000,
+                minRemaining: 400,
+                maxRetries: 5,
+                baseDelay: 1000,
             },
         },
-        makeRequest: async function (endpoint, params = {}, retries = 3) {
+        makeRequest: async function (endpoint, params = {}, retries = 5) {
+            const rateLimitState = {
+                limit: null,
+                remaining: null,
+                reset: null,
+                lastRequestTime: 0,
+            };
+
+            async function handleRateLimit(headers) {
+                rateLimitState.limit = parseInt(headers['x-ratelimit-limit']);
+                rateLimitState.remaining = parseInt(headers['x-ratelimit-remaining']);
+                rateLimitState.reset = parseInt(headers['x-ratelimit-reset']);
+
+                console.log({
+                    limit: rateLimitState.limit,
+                    remaining: rateLimitState.remaining,
+                    reset: rateLimitState.reset
+                });
+
+                // If we're running low on remaining requests, calculate delay
+                if (rateLimitState.remaining < api.mb.config.rateLimit.minRemaining) {
+                    const now = timeNow();
+                    const resetTime = rateLimitState.reset * 1000; // Convert to milliseconds
+                    const timeUntilReset = resetTime - now;
+
+                    if (timeUntilReset > 0) {
+                        const delayNeeded = Math.ceil(timeUntilReset / rateLimitState.remaining);
+                        console.log(`Rate limit running low. Delaying ${delayNeeded}ms between requests`);
+                        await sleep(delayNeeded);
+                    }
+                }
+
+                // Ensure minimum delay between requests
+                const now = timeNow();
+                const timeSinceLastRequest = now - rateLimitState.lastRequestTime;
+                if (timeSinceLastRequest < api.mb.config.rateLimit.interval) {
+                    await sleep(api.mb.config.rateLimit.interval - timeSinceLastRequest);
+                }
+                rateLimitState.lastRequestTime = timeNow();
+            }
+
             let lastError;
 
-            for (let i = 0; i < retries; i++) {
+            for (let attempt = 0; attempt < retries; attempt++) {
                 try {
-                    let response = await axios.get(joinPaths(api.mb.config.baseUrl, endpoint), {
-                        params: {
-                            fmt: 'json',
-                            ...params,
-                        },
-                        headers: {
-                            'User-Agent': `${packageData.productName}/${packageData.version} (${process.env.ADMIN_EMAIL})`,
-                        },
-                    });
+                    const response = await axios.get(
+                        joinPaths(api.mb.config.baseUrl, endpoint),
+                        {
+                            params: {
+                                fmt: 'json',
+                                ...params,
+                            },
+                            headers: {
+                                'User-Agent': `${packageData.productName}/${packageData.version} (${process.env.ADMIN_EMAIL})`,
+                            },
+                            // Add timeout to prevent hanging
+                            timeout: 30000,
+                        }
+                    );
 
-                    let rateLimit = {
-                        limit: parseInt(response.headers['x-ratelimit-limit']),
-                        remaining: parseInt(response.headers['x-ratelimit-remaining']),
-                        reset: parseInt(response.headers['x-ratelimit-reset']),
-                    };
-
-                    console.log(rateLimit);
-
-                    if (rateLimit.remaining < 300) {
-                        console.log('Slowing down for a moment...');
-                        await sleep(1000);
-                    }
+                    // Update rate limit state and handle delays
+                    await handleRateLimit(response.headers);
 
                     return response.data;
-                } catch (error) {
-                    lastError = error;
 
-                    if (error.response?.status === 429) {
-                        const delay = Math.pow(2, i) * 1000;
-                        await new Promise((resolve) => setTimeout(resolve, delay));
+                } catch (error) {
+                    const isLastAttempt = attempt === retries - 1;
+
+                    // Log the error with attempt number
+                    console.error(`Request failed (attempt ${attempt + 1}/${retries}):`, {
+                        endpoint,
+                        status: error.response?.status,
+                        message: error.message,
+                    });
+
+                    if (error.code === 'ECONNRESET' || error.code === 'ETIMEDOUT') {
+                        console.log('Connection reset or timeout, retrying after delay...');
+                        await sleep(api.mb.config.rateLimit.baseDelay * Math.pow(2, attempt));
                         continue;
                     }
 
-                    throw error;
+                    if (error.response?.status === 429) {
+                        const retryAfter = parseInt(error.response.headers['retry-after']) ||
+                            Math.pow(2, attempt) * api.mb.config.rateLimit.baseDelay;
+                        console.log(`Rate limit exceeded. Waiting ${retryAfter}ms before retry...`);
+                        await sleep(retryAfter);
+                        continue;
+                    }
+
+                    if (error.response?.status === 503) {
+                        const backoffDelay = api.mb.config.rateLimit.baseDelay * Math.pow(2, attempt);
+                        console.log(`Service unavailable. Backing off for ${backoffDelay}ms...`);
+                        await sleep(backoffDelay);
+                        continue;
+                    }
+
+                    // If we've exhausted all retries or hit a different error, throw
+                    if (isLastAttempt || ![429, 503].includes(error.response?.status)) {
+                        throw new Error(`MusicBrainz API error (${error.response?.status || error.code}): ${error.message}`);
+                    }
                 }
             }
 
-            throw lastError;
+            throw new Error(`Failed after ${retries} retries`);
         },
     },
 };

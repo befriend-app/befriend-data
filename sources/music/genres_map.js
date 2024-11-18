@@ -82,7 +82,7 @@ const genreMap = {
         name: 'Indie Rock',
         position: 10,
         mb: ['indie rock', 'indie'],
-        s: ['indie', 'indie-pop']
+        s: ['indie', 'indie rock', 'indie-pop']
     },
     Jazz: {
         name: 'Jazz',
@@ -114,11 +114,11 @@ const genreMap = {
         mb: ['punk', 'punk rock'],
         s: ['punk', 'punk-rock', 'hardcore']
     },
-    'R&B/Soul': {
-        name: 'R&B/Soul',
+    'R&B': {
+        name: 'R&B',
         position: 16,
-        mb: ['r&b', 'rhythm and blues', 'soul'],
-        s: ['r-n-b', 'soul']
+        mb: ['r&b', 'rhythm and blues'],
+        s: ['r-n-b']
     },
     Reggae: {
         name: 'Reggae',

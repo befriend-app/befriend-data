@@ -5,39 +5,43 @@ const {
     updateSystemProcess,
     sleep,
 } = require('../../services/shared');
+
 const { batchInsert, batchUpdate } = require('../../services/db');
 const dbService = require('../../services/db');
 const { keys: systemKeys, getProcess } = require('../../services/system');
 const { api } = require('./api');
+const { genreMap } = require('./genres_map');
 const { loadGenres } = require('./add_genres');
 
 loadScriptEnv();
 
 let genresDict = {};
 let artistsDict = {
-    byMbid: {},
-    byGenre: {},
+    byMbId: {},
+    bySpotifyId: {},
+    genres: {},
 };
 
 let prevGenre = null;
 
-async function getArtists() {
+async function getArtistsMB() {
+    console.log("Get artists: Music Brainz");
+
+    //get all artists in music brainz db
     let totals = {
         artists: {
             added: 0,
             updated: 0,
         },
-        artists_genres: {
-            added: 0,
-            updated: 0,
-            deleted: 0,
-            skipped: 0,
-        },
     };
 
     let batchSize = api.mb.config.batchSize;
 
-    for (let [id, genreData] of Object.entries(genresDict)) {
+    for (let [id, genreData] of Object.entries(genresDict.byId)) {
+        id = parseInt(id);
+
+        let mb_genres;
+
         if (!genreData.is_active) {
             continue;
         }
@@ -46,30 +50,17 @@ async function getArtists() {
             artists: {
                 added: 0,
                 updated: 0,
-            },
-            artists_genres: {
-                added: 0,
-                updated: 0,
-                deleted: 0,
-                skipped: 0,
-            },
+            }
         };
 
-        if (!artistsDict.byGenre[id]) {
-            artistsDict.byGenre[id] = {};
-        }
-
-        id = parseInt(id);
-
-        let mb_genres;
-
-        if (![297].includes(id)) {
-            continue;
-        }
-
-        // if (prevGenre && id <= prevGenre) {
+        //redo punk,new age, pop,r&b
+        // if (![405,415,416,417].includes(id)) {
         //     continue;
         // }
+
+        if (prevGenre && id <= prevGenre) {
+            continue;
+        }
 
         try {
             mb_genres = JSON.parse(genreData.mb_genres);
@@ -92,7 +83,7 @@ async function getArtists() {
             let hasMore = true;
 
             while (hasMore) {
-                await sleep(1000);
+                await sleep(500);
 
                 try {
                     const response = await api.mb.makeRequest('/artist', {
@@ -106,25 +97,33 @@ async function getArtists() {
                     hasMore = artists.length === batchSize;
 
                     let batch_insert_artists = [];
-                    let batch_insert_genres = [];
                     let batch_update_artists = [];
 
                     for (let i = 0; i < artists.length; i++) {
                         const artist = artists[i];
                         let tags = artist.tags || [];
-                        tags = tags.slice(0, 15);
+                        tags = tags.slice(0, 10);
+                        let tags_arr = [];
+
+                        for(let tag of tags) {
+                            if(tag.length > 100) {
+                                continue;
+                            }
+
+                            tags_arr.push(tag);
+                        }
 
                         const artistData = {
                             name: artist.name.substring(0, 250),
+                            sort_name: artist['sort-name'],
                             mb_id: artist.id,
                             mb_score: artist.score,
-                            sort_name: artist['sort-name'],
-                            type: artist.type || null,
-                            tags: JSON.stringify(tags),
+                            mb_type: artist.type || null,
+                            mb_tags: JSON.stringify(tags_arr),
                             updated: timeNow(),
                         };
 
-                        if (!artistsDict.byMbid[artist.id]) {
+                        if (!artistsDict.byMbId[artist.id]) {
                             let insert = {
                                 ...artistData,
                                 token: generateToken(12),
@@ -133,7 +132,7 @@ async function getArtists() {
 
                             batch_insert_artists.push(insert);
                         } else {
-                            const existing = artistsDict.byMbid[artist.id];
+                            const existing = artistsDict.byMbId[artist.id];
                             let hasChanges = false;
 
                             for (const key in artistData) {
@@ -150,20 +149,6 @@ async function getArtists() {
                                 });
                             }
                         }
-
-                        if (!artistsDict.byGenre[genreData.id]?.[artist.id]) {
-                            let insert = {
-                                mb_artist_id: artist.id,
-                                genre_id: genreData.id,
-                                popularity: artist.score,
-                                created: timeNow(),
-                                updated: timeNow(),
-                            };
-
-                            batch_insert_genres.push(insert);
-
-                            artistsDict.byGenre[genreData.id][artist.id] = insert;
-                        }
                     }
 
                     if (batch_insert_artists.length) {
@@ -172,7 +157,7 @@ async function getArtists() {
                         genre_totals.artists.added += batch_insert_artists.length;
 
                         for (const artist of batch_insert_artists) {
-                            artistsDict.byMbid[artist.mb_id] = artist;
+                            artistsDict.byMbId[artist.mb_id] = artist;
                         }
                     }
 
@@ -181,17 +166,6 @@ async function getArtists() {
 
                         totals.artists.updated += batch_update_artists.length;
                         genre_totals.artists.updated += batch_update_artists.length;
-                    }
-
-                    if (batch_insert_genres.length) {
-                        for (let item of batch_insert_genres) {
-                            item.artist_id = artistsDict.byMbid[item.mb_artist_id].id;
-                            delete item.mb_artist_id;
-                        }
-
-                        await batchInsert('music_artists_genres', batch_insert_genres);
-                        totals.artists_genres.added += batch_insert_genres.length;
-                        genre_totals.artists_genres.added += batch_insert_genres.length;
                     }
 
                     console.log({
@@ -219,6 +193,175 @@ async function getArtists() {
     console.log(totals);
 }
 
+async function updateArtistsSpotify(parallelCount) {
+    function mapSpotifyGenres(genres) {
+        return genres.reduce((acc, spotifyGenre) => {
+            for(let k in genreMap) {
+                let genreData = genreMap[k];
+
+                if(genreData.s?.includes(spotifyGenre)) {
+                    const ourGenre = genresDict.byName[genreData.name];
+
+                    if(ourGenre) {
+                        acc[ourGenre.id] = ourGenre;
+                    }
+                }
+            }
+
+            return acc;
+        }, {});
+    }
+
+    async function processArtistBatch(artists) {
+        for (let i = 0; i < artists.length; i++) {
+            let artist = artists[i];
+
+            try {
+                await sleep(100); // Respect rate limits
+
+                // Search artist on Spotify
+                const response = await api.spotify.makeRequest('/search', {
+                    params: {
+                        q: artist.name,
+                        type: 'artist',
+                        limit: 10
+                    }
+                });
+
+                let updateData = {
+                    spotify_processed: 1,
+                    updated: timeNow()
+                };
+
+                let potential_matches = response.artists.items.filter(item => item.name === artist.name);
+
+                if(!potential_matches.length) {
+                    totals.not_found++;
+                } else {
+                    if(potential_matches.length > 1) {
+                        potential_matches.sort(function(a, b) {
+                            return b.followers?.total - a.followers?.total;
+                        });
+
+                        let duplicate_check = [];
+
+                        for(let m of potential_matches) {
+                            duplicate_check.push({
+                                name: m.name,
+                                followers: m.followers.total,
+                                popularity: m.popularity,
+                                genres: JSON.stringify(m.genres)
+                            })
+                        }
+                    }
+
+                    let spotifyArtist = potential_matches[0];
+
+                    updateData = {
+                        ...updateData,
+                        spotify_id: spotifyArtist.id,
+                        spotify_type: spotifyArtist.type,
+                        spotify_popularity: spotifyArtist.popularity,
+                        spotify_followers: spotifyArtist.followers.total,
+                        spotify_genres: spotifyArtist.genres.length ? JSON.stringify(spotifyArtist.genres) : null,
+                    };
+
+                    // Update genre associations if genres found
+                    if (spotifyArtist.genres.length) {
+                        const artistGenres = artistsDict.genres[artist.id];
+
+                        const mappedGenres = mapSpotifyGenres(spotifyArtist.genres);
+
+                        const batch_insert_genres = [];
+
+                        // adding genre
+                        for(let genre_id in mappedGenres) {
+                            if(!(genre_id in artistGenres)) {
+                                batch_insert_genres.push({
+                                    artist_id: artist.id,
+                                    genre_id: genre_id,
+                                    created: timeNow(),
+                                    updated: timeNow()
+                                });
+                            }
+                        }
+
+                        // deleting genre
+                        for(let genre_id in artistGenres) {
+                            if(!(genre_id in mappedGenres)) {
+                                let item = mappedGenres[genre_id];
+
+                                await conn('music_artists_genres')
+                                    .where('id', item.mag_id)
+                                    .update({
+                                        updated: timeNow(),
+                                        deleted: timeNow()
+                                    });
+                            }
+                        }
+
+                        if (batch_insert_genres.length) {
+                            await batchInsert('music_artists_genres', batch_insert_genres);
+                        }
+                    }
+
+                    totals.found++;
+                }
+
+                // Update artist with Spotify data
+                await conn('music_artists')
+                    .where('id', artist.id)
+                    .update(updateData);
+
+                totals.processed++;
+
+                if (totals.processed % 100 === 0) {
+                    console.log(totals);
+                }
+            } catch (error) {
+                console.error(`Error processing artist ${artist.name}:`, error.message);
+
+                totals.errors++;
+
+                if (error.response?.status === 429) {
+                    console.log('Rate limit hit, waiting...');
+                    await sleep(5000);
+                }
+            }
+        }
+    }
+
+    let totals = {
+        processed: 0,
+        found: 0,
+        not_found: 0,
+        errors: 0,
+        count: 0
+    };
+
+    const conn = await dbService.conn();
+
+    let artists = await conn('music_artists')
+        .where('spotify_processed', 0);
+
+    totals.count = artists.length;
+
+    const batchSize = Math.ceil(artists.length / parallelCount);
+    const batches = [];
+
+    for(let i = 0; i < parallelCount; i++) {
+        const start = i * batchSize;
+        const end = Math.min(start + batchSize, artists.length);
+        const batch = artists.slice(start, end);
+
+        batches.push(processArtistBatch(batch, i + 1, totals));
+    }
+
+    await Promise.all(batches);
+
+    console.log('Final totals:', totals);
+}
+
 async function loadSystemProcess() {
     prevGenre = await getProcess(systemKeys.music.artists.genre);
     prevGenre = prevGenre ? parseInt(prevGenre) : null;
@@ -234,33 +377,48 @@ async function loadArtists() {
             'ma.token',
             'ma.name',
             'ma.sort_name',
+            'ma.spotify_id',
+            'ma.spotify_popularity',
+            'ma.spotify_followers',
+            'ma.spotify_processed',
             'ma.mb_id',
-            'ma.type',
+            'ma.mb_type',
             'ma.mb_score',
             'mag.id AS mag_id',
             'mag.genre_id',
         );
 
     for (const artist of artists) {
-        if (!artistsDict.byMbid[artist.mb_id]) {
-            artistsDict.byMbid[artist.mb_id] = {
-                id: artist.id,
-                token: artist.token,
-                name: artist.name,
-                mb_id: artist.mb_id,
-                sort_name: artist.sort_name,
-                type: artist.type,
-                mb_score: artist.mb_score,
-            };
+        let data = {
+            id: artist.id,
+            token: artist.token,
+            name: artist.name,
+            sort_name: artist.sort_name,
+            spotify_id: artist.spotify_id,
+            spotify_popularity: artist.spotify_popularity,
+            spotify_followers: artist.spotify_followers,
+            spotify_processed: artist.spotify_processed,
+            mb_id: artist.mb_id,
+            mb_type: artist.mb_type,
+            mb_score: artist.mb_score,
+        };
+
+        if (!artistsDict.byMbId[artist.mb_id]) {
+            artistsDict.byMbId[artist.mb_id] = data;
+        }
+
+        if (!artistsDict.bySpotifyId[artist.spotify_id]) {
+            artistsDict.bySpotifyId[artist.spotify_id] = data;
+        }
+
+        if (!artistsDict.genres[artist.id]) {
+            artistsDict.genres[artist.id] = {};
         }
 
         if (artist.genre_id) {
-            if (!artistsDict.byGenre[artist.genre_id]) {
-                artistsDict.byGenre[artist.genre_id] = {};
-            }
-
-            artistsDict.byGenre[artist.genre_id][artist.mb_id] = {
-                id: artist.id,
+            artistsDict.genres[artist.id][artist.genre_id] = {
+                artist_id: artist.id,
+                genre_id: artist.genre_id,
                 mag_id: artist.mag_id,
                 popularity: artist.popularity,
             };
@@ -272,13 +430,16 @@ async function loadArtists() {
 
 async function main() {
     try {
-        console.log('Processing MusicBrainz artists');
+        console.log('Processing artists');
 
         await loadSystemProcess();
-        genresDict = (await loadGenres()).byId;
+        genresDict = (await loadGenres());
 
         await loadArtists();
-        await getArtists();
+
+        await getArtistsMB();
+
+        await updateArtistsSpotify(2);
     } catch (error) {
         console.error('Error in main execution:', error);
     }

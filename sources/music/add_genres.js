@@ -12,8 +12,6 @@ const { genreMap } = require('./genres_map');
 
 loadScriptEnv();
 
-let maxLimit = 50;
-let markets = [];
 let countries = [];
 
 let genresDict = {
@@ -153,6 +151,7 @@ async function loadGenres() {
             name: genre.name,
             is_active: genre.is_active,
             spotify_genres: genre.spotify_genres,
+            position: genre.position,
             apple_id: genre.apple_id,
             mb_genres: genre.mb_genres,
         };
