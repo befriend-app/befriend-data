@@ -29,14 +29,12 @@ function main() {
                         updated: timeNow(),
                     });
                 } else {
-                    await conn('instruments')
-                        .where('id', check.id)
-                        .update({
-                            token: instrument.token,
-                            category: instrument.category,
-                            is_common: instrument.is_common,
-                            popularity: instrument.popularity,
-                            updated: timeNow(),
+                    await conn('instruments').where('id', check.id).update({
+                        token: instrument.token,
+                        category: instrument.category,
+                        is_common: instrument.is_common,
+                        popularity: instrument.popularity,
+                        updated: timeNow(),
                     });
                 }
             }

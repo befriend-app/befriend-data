@@ -41,9 +41,9 @@ module.exports = {
             return `data:schools:offset:${offset}`;
         },
         music_artists_offset: function (offset) {
-            return `data:music:artists:${offset}`
+            return `data:music:artists:${offset}`;
         },
-        music_artists_genres_offset: function(offset) {
+        music_artists_genres_offset: function (offset) {
             return `data:music:artists:genres:${offset}`;
         },
     },

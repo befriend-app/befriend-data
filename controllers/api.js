@@ -29,7 +29,7 @@ module.exports = {
                 music_artists,
                 music_artists_genres,
                 sections,
-                schools
+                schools,
             ] = await Promise.all([
                 getLastUpdated(keys.activities.types, 'activity_types'),
                 getLastUpdated(keys.activities.venues_categories, 'venues_categories'),
@@ -42,7 +42,7 @@ module.exports = {
                 getLastUpdated(keys.music.artists, 'music_artists'),
                 getLastUpdated(keys.music.artists_genres, 'music_artists_genres'),
                 getLastUpdated(keys.sections, 'me_sections'),
-                getLastUpdated(keys.schools, 'schools')
+                getLastUpdated(keys.schools, 'schools'),
             ]);
 
             //timestamps of last updated for each endpoint
@@ -55,13 +55,13 @@ module.exports = {
                 locations: {
                     countries: countries || null,
                     states: states || null,
-                    cities: cities || null
+                    cities: cities || null,
                 },
                 instruments: instruments || null,
                 music: {
                     genres: music_genres || null,
                     artists: music_artists || null,
-                    artists_genres: music_artists_genres || null
+                    artists_genres: music_artists_genres || null,
                 },
                 sections: sections || null,
                 schools: schools || null,
@@ -641,8 +641,16 @@ module.exports = {
                 }
 
                 // Get all genres
-                let genres = await conn('music_genres')
-                    .select('id', 'token', 'name', 'parent_id', 'is_active', 'is_featured', 'updated', 'deleted');
+                let genres = await conn('music_genres').select(
+                    'id',
+                    'token',
+                    'name',
+                    'parent_id',
+                    'is_active',
+                    'is_featured',
+                    'updated',
+                    'deleted',
+                );
 
                 // Create genres lookup
                 for (let genre of genres) {
@@ -662,8 +670,13 @@ module.exports = {
                 }
 
                 // genres by country
-                let genres_countries = await conn('music_genres_countries')
-                    .select('genre_id', 'country_id', 'position', 'updated', 'deleted');
+                let genres_countries = await conn('music_genres_countries').select(
+                    'genre_id',
+                    'country_id',
+                    'position',
+                    'updated',
+                    'deleted',
+                );
 
                 // organize associations
                 for (let country_genre of genres_countries) {
@@ -734,11 +747,20 @@ module.exports = {
 
                 // Get all artists
                 let query = conn('music_artists')
-                    .select('token', 'name', 'sort_name', 'type', 'mb_score', 'is_active', 'updated', 'deleted')
+                    .select(
+                        'token',
+                        'name',
+                        'sort_name',
+                        'type',
+                        'mb_score',
+                        'is_active',
+                        'updated',
+                        'deleted',
+                    )
                     .limit(limit + 1)
                     .offset(offset);
 
-                if(req.query.updated) {
+                if (req.query.updated) {
                     query = query.where('updated', '>', req.query.updated);
                 }
 
@@ -801,8 +823,7 @@ module.exports = {
                 let conn = await dbService.conn();
 
                 // First get genre lookup dictionary
-                let genres = await conn('music_genres')
-                    .select('id', 'token');
+                let genres = await conn('music_genres').select('id', 'token');
 
                 let genreDict = {};
                 for (let genre of genres) {
@@ -810,8 +831,7 @@ module.exports = {
                 }
 
                 // Now get artist lookup dictionary
-                let artists = await conn('music_artists')
-                    .select('id', 'token');
+                let artists = await conn('music_artists').select('id', 'token');
 
                 let artistDict = {};
                 for (let artist of artists) {
@@ -832,7 +852,7 @@ module.exports = {
                 let items = await query;
 
                 // Transform IDs to tokens
-                for(let item of items) {
+                for (let item of items) {
                     item.artist_token = artistDict[item.artist_id];
                     item.genre_token = genreDict[item.genre_id];
 

@@ -1,7 +1,13 @@
-const { loadScriptEnv, timeNow, generateToken, updateSystemProcess, sleep } = require('../../services/shared');
+const {
+    loadScriptEnv,
+    timeNow,
+    generateToken,
+    updateSystemProcess,
+    sleep,
+} = require('../../services/shared');
 const { batchInsert, batchUpdate } = require('../../services/db');
 const dbService = require('../../services/db');
-const {keys: systemKeys, getProcess } = require('../../services/system');
+const { keys: systemKeys, getProcess } = require('../../services/system');
 const { api } = require('./api');
 const { loadGenres } = require('./add_genres');
 
@@ -10,7 +16,7 @@ loadScriptEnv();
 let genresDict = {};
 let artistsDict = {
     byMbid: {},
-    byGenre: {}
+    byGenre: {},
 };
 
 let prevGenre = null;
@@ -19,64 +25,62 @@ async function getArtists() {
     let totals = {
         artists: {
             added: 0,
-            updated: 0
+            updated: 0,
         },
         artists_genres: {
             added: 0,
             updated: 0,
             deleted: 0,
-            skipped: 0
-        }
+            skipped: 0,
+        },
     };
 
     let batchSize = api.mb.config.batchSize;
 
     for (let [id, genreData] of Object.entries(genresDict)) {
-        if(!genreData.is_active) {
+        if (!genreData.is_active) {
             continue;
         }
 
         let genre_totals = {
             artists: {
                 added: 0,
-                updated: 0
+                updated: 0,
             },
             artists_genres: {
                 added: 0,
                 updated: 0,
                 deleted: 0,
-                skipped: 0
-            }
+                skipped: 0,
+            },
         };
 
-        if(!(artistsDict.byGenre[id])) {
-            artistsDict.byGenre[id] = {}
+        if (!artistsDict.byGenre[id]) {
+            artistsDict.byGenre[id] = {};
         }
 
         id = parseInt(id);
 
         let mb_genres;
 
-        // if(![354].includes(id)) {
-        //     continue;
-        // }
-
-        if (prevGenre && id <= prevGenre) {
+        if (![297].includes(id)) {
             continue;
         }
 
+        // if (prevGenre && id <= prevGenre) {
+        //     continue;
+        // }
+
         try {
             mb_genres = JSON.parse(genreData.mb_genres);
-        } catch(e) {
+        } catch (e) {}
 
-        }
-
-        if(!mb_genres) {
+        if (!mb_genres) {
             continue;
         }
 
         console.log({
-            starting_genre: genreData.name
+            starting_genre: genreData.name,
         });
 
         for (let genre_name of mb_genres) {
@@ -94,7 +98,7 @@ async function getArtists() {
                     const response = await api.mb.makeRequest('/artist', {
                         query: `tag:${genre_name}`,
                         limit: batchSize,
-                        offset: offset
+                        offset: offset,
                     });
 
                     const artists = response.artists || [];
@@ -117,7 +121,7 @@ async function getArtists() {
                             sort_name: artist['sort-name'],
                             type: artist.type || null,
                             tags: JSON.stringify(tags),
-                            updated: timeNow()
+                            updated: timeNow(),
                         };
 
                         if (!artistsDict.byMbid[artist.id]) {
@@ -133,7 +137,7 @@ async function getArtists() {
                             let hasChanges = false;
 
                             for (const key in artistData) {
-                                if ((key in existing) && existing[key] !== artistData[key]) {
+                                if (key in existing && existing[key] !== artistData[key]) {
                                     hasChanges = true;
                                     break;
                                 }
@@ -142,7 +146,7 @@ async function getArtists() {
                             if (hasChanges) {
                                 batch_update_artists.push({
                                     id: existing.id,
-                                    ...artistData
+                                    ...artistData,
                                 });
                             }
                         }
@@ -153,7 +157,7 @@ async function getArtists() {
                                 genre_id: genreData.id,
                                 popularity: artist.score,
                                 created: timeNow(),
-                                updated: timeNow()
+                                updated: timeNow(),
                             };
 
                             batch_insert_genres.push(insert);
@@ -180,7 +184,7 @@ async function getArtists() {
                     }
 
                     if (batch_insert_genres.length) {
-                        for(let item of batch_insert_genres) {
+                        for (let item of batch_insert_genres) {
                             item.artist_id = artistsDict.byMbid[item.mb_artist_id].id;
                             delete item.mb_artist_id;
                         }
@@ -191,7 +195,7 @@ async function getArtists() {
                     }
 
                     console.log({
-                        processed: `${artists.length + offset}/${response.count}`
+                        processed: `${artists.length + offset}/${response.count}`,
                     });
 
                     offset += batchSize;
@@ -199,7 +203,7 @@ async function getArtists() {
                     console.error('Error fetching artists:', error.message);
 
                     if (error.response?.status === 503) {
-                        await new Promise(resolve => setTimeout(resolve, 5000));
+                        await new Promise((resolve) => setTimeout(resolve, 5000));
                         continue;
                     }
                     break;
@@ -209,10 +213,7 @@ async function getArtists() {
 
         console.log(genre_totals);
 
-        await updateSystemProcess(
-            systemKeys.music.artists.genre,
-            id
-        );
+        await updateSystemProcess(systemKeys.music.artists.genre, id);
     }
 
     console.log(totals);
@@ -237,7 +238,7 @@ async function loadArtists() {
             'ma.type',
             'ma.mb_score',
             'mag.id AS mag_id',
-            'mag.genre_id'
+            'mag.genre_id',
         );
 
     for (const artist of artists) {
@@ -271,7 +272,7 @@ async function loadArtists() {
 
 async function main() {
     try {
-        console.log("Processing MusicBrainz artists");
+        console.log('Processing MusicBrainz artists');
 
         await loadSystemProcess();
         genresDict = (await loadGenres()).byId;

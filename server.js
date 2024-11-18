@@ -20,8 +20,8 @@ let systemService = require('./services/system');
     }
 
     try {
-         systemService.startUpdatesInterval();
-    } catch(e) {
+        systemService.startUpdatesInterval();
+    } catch (e) {
         console.error(e);
     }
 })();

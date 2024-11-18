@@ -1,11 +1,90 @@
 const axios = require('axios');
 const jwt = require('jsonwebtoken');
 const { loadScriptEnv, joinPaths, sleep } = require('../../services/shared');
-const package = require('../../package.json');
+const packageData = require('../../package.json');
 
 loadScriptEnv();
 
 const api = {
+    spotify: {
+        config: {
+            base_url: 'https://api.spotify.com/v1',
+            auth_url: 'https://accounts.spotify.com/api/token',
+            batch_size: 50,
+            request_timeout: 30000,
+            keys: {
+                client_id: process.env.SPOTIFY_CLIENT_ID,
+                client_secret: process.env.SPOTIFY_CLIENT_SECRET,
+            },
+        },
+        client: null,
+        token: {
+            value: null,
+            expiry: null,
+        },
+        setClient: async function () {
+            const auth = Buffer.from(
+                `${this.config.keys.client_id}:${this.config.keys.client_secret}`,
+            ).toString('base64');
+
+            const response = await axios.post(
+                this.config.auth_url,
+                'grant_type=client_credentials',
+                {
+                    headers: {
+                        Authorization: `Basic ${auth}`,
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                },
+            );
+
+            this.token.value = response.data.access_token;
+            this.token.expiry = Date.now() + response.data.expires_in * 1000;
+
+            this.client = axios.create({
+                baseURL: this.config.base_url,
+                timeout: this.config.request_timeout,
+                headers: {
+                    Authorization: `Bearer ${this.token.value}`,
+                    'Content-Type': 'application/json',
+                },
+            });
+        },
+        checkToken: async function () {
+            if (!this.token.value || Date.now() >= this.token.expiry) {
+                await this.setClient();
+            }
+        },
+        makeRequest: async function (endpoint, params, retries = 3) {
+            await this.checkToken();
+
+            let lastError;
+
+            for (let i = 0; i < retries; i++) {
+                try {
+                    let response = await this.client.get(endpoint, params || {});
+                    return response.data;
+                } catch (error) {
+                    lastError = error;
+
+                    if (error.response?.status === 429) {
+                        const delay = Math.pow(2, i) * 1000;
+                        await sleep(delay);
+                        continue;
+                    }
+
+                    if (error.response?.status === 401) {
+                        await this.setClient();
+                        continue;
+                    }
+
+                    throw error;
+                }
+            }
+
+            throw lastError;
+        },
+    },
     apple: {
         config: {
             base_url: 'https://api.music.apple.com/v1',
@@ -72,8 +151,8 @@ const api = {
             batchSize: 100,
             rateLimit: {
                 requests: 1,
-                interval: 1000 // 1 request per second as per MusicBrainz guidelines
-            }
+                interval: 1000, // 1 request per second as per MusicBrainz guidelines
+            },
         },
         makeRequest: async function (endpoint, params = {}, retries = 3) {
             let lastError;
@@ -86,8 +165,8 @@ const api = {
                             ...params,
                         },
                         headers: {
-                            'User-Agent': `${package.productName}/${package.version} (${process.env.ADMIN_EMAIL})`
-                        }
+                            'User-Agent': `${packageData.productName}/${packageData.version} (${process.env.ADMIN_EMAIL})`,
+                        },
                     });
 
                     let rateLimit = {
@@ -98,8 +177,8 @@ const api = {
 
                     console.log(rateLimit);
 
-                    if(rateLimit.remaining < 300) {
-                        console.log("Slowing down for a moment...");
+                    if (rateLimit.remaining < 300) {
+                        console.log('Slowing down for a moment...');
                         await sleep(1000);
                     }
 
@@ -118,8 +197,8 @@ const api = {
             }
 
             throw lastError;
-        }
-    }
+        },
+    },
 };
 
 module.exports = {

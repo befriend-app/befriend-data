@@ -226,13 +226,12 @@ function updateSystemProcess(system_key, value, to_json) {
             }
 
             resolve();
-        } catch(e) {
+        } catch (e) {
             console.error(e);
             reject(e);
         }
     });
 }
-
 
 module.exports = {
     cloneObj,
@@ -250,5 +249,5 @@ module.exports = {
     protectedNames,
     sleep,
     timeNow,
-    updateSystemProcess
+    updateSystemProcess,
 };
