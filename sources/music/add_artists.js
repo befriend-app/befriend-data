@@ -308,7 +308,8 @@ async function updateArtistsSpotify(parallelCount) {
     const conn = await dbService.conn();
 
     let artists = await conn('music_artists')
-        .where('spotify_processed', 0);
+        .where('spotify_processed', 0)
+        .orderBy('mb_score', 'desc');
 
     totals.count = artists.length;
 
@@ -545,16 +546,28 @@ async function main() {
     try {
         console.log('Processing artists');
 
+        //load previous process state
         await loadSystemProcess();
+
+        //load existing genres
         genresDict = (await loadGenres());
 
+        //load existing artists
         await loadArtists();
+
+        //get artists from music brainz
         await getArtistsMB();
+
+        //update artists w/ spotify data
         await updateArtistsSpotify(3);
+
+        //delete duplicate artists
         await deleteDuplicates();
 
+        //add/merge spotify genres
         await require('./merge').main();
 
+        //link artists to genres
         await updateArtistsGenres();
     } catch (error) {
         console.error('Error in main execution:', error);
