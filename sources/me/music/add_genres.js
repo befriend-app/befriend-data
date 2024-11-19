@@ -3,10 +3,10 @@ const {
     timeNow,
     generateToken,
     updateSystemProcess,
-} = require('../../services/shared');
-const { batchInsert, batchUpdate } = require('../../services/db');
-const dbService = require('../../services/db');
-const { keys: systemKeys, getProcess } = require('../../services/system');
+} = require('../../../services/shared');
+const { batchInsert, batchUpdate } = require('../../../services/db');
+const dbService = require('../../../services/db');
+const { keys: systemKeys, getProcess } = require('../../../services/system');
 const { api } = require('./api');
 const { genreMap } = require('./genres_map');
 

@@ -1,7 +1,7 @@
 const axios = require('axios');
 const jwt = require('jsonwebtoken');
-const { loadScriptEnv, joinPaths, sleep, timeNow } = require('../../services/shared');
-const packageData = require('../../package.json');
+const { loadScriptEnv, joinPaths, sleep, timeNow } = require('../../../services/shared');
+const packageData = require('../../../package.json');
 
 loadScriptEnv();
 

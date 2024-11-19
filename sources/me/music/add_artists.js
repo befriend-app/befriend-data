@@ -4,11 +4,11 @@ const {
     generateToken,
     updateSystemProcess,
     sleep,
-} = require('../../services/shared');
+} = require('../../../services/shared');
 
-const { batchInsert, batchUpdate } = require('../../services/db');
-const dbService = require('../../services/db');
-const { keys: systemKeys, getProcess } = require('../../services/system');
+const { batchInsert, batchUpdate } = require('../../../services/db');
+const dbService = require('../../../services/db');
+const { keys: systemKeys, getProcess } = require('../../../services/system');
 const { api } = require('./api');
 const { genreMap } = require('./genres_map');
 const { loadGenres } = require('./add_genres');
@@ -193,25 +193,9 @@ async function getArtistsMB() {
     console.log(totals);
 }
 
-function mapSpotifyGenres(genres) {
-    return genres.reduce((acc, spotifyGenre) => {
-        for(let k in genreMap) {
-            let genreData = genreMap[k];
-
-            if(genreData.s?.includes(spotifyGenre)) {
-                const ourGenre = genresDict.byName[genreData.name];
-
-                if(ourGenre) {
-                    acc[ourGenre.id] = ourGenre;
-                }
-            }
-        }
-
-        return acc;
-    }, {});
-}
-
 async function updateArtistsSpotify(parallelCount) {
+    console.log("Update artists w/ spotify data");
+
     async function processArtistBatch(artists) {
         for (let i = 0; i < artists.length; i++) {
             let artist = artists[i];
@@ -335,6 +319,8 @@ async function loadSystemProcess() {
 }
 
 async function loadArtists() {
+    console.log("Loading existing artists");
+
     const conn = await dbService.conn();
 
     const artists = await conn('music_artists AS ma')
@@ -556,7 +542,8 @@ async function main() {
         await loadArtists();
 
         //get artists from music brainz
-        await getArtistsMB();
+
+        // await getArtistsMB();
 
         //update artists w/ spotify data
         await updateArtistsSpotify(3);
