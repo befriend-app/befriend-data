@@ -394,6 +394,58 @@ async function loadArtists() {
     return artistsDict;
 }
 
+async function deleteDuplicates() {
+    let conn = await dbService.conn();
+
+    // Get all undeleted artists
+    let artists = await conn('music_artists')
+        .select('id', 'name', 'spotify_id')
+        .whereNull('deleted')
+        .whereNotNull('spotify_id') // Only consider artists with spotify_id
+        .orderBy('id'); // Order by ID to keep earliest entries
+
+    // Group by spotify_id
+    let spotifyGroups = {};
+    for (let artist of artists) {
+        if (!spotifyGroups[artist.spotify_id]) {
+            spotifyGroups[artist.spotify_id] = [];
+        }
+        spotifyGroups[artist.spotify_id].push(artist);
+    }
+
+    // Find duplicates (keep first, mark rest for deletion)
+    let deleteIds = [];
+    let now = timeNow();
+
+    for (let spotify_id in spotifyGroups) {
+        let group = spotifyGroups[spotify_id];
+        if (group.length > 1) {
+            for (let i = 1; i < group.length; i++) {
+                deleteIds.push(group[i].id);
+            }
+        }
+    }
+
+    // Perform deletion if we found any duplicates
+    if (deleteIds.length) {
+        console.log(`Deleting ${deleteIds.length} duplicate artists`);
+
+        try {
+            await conn('music_artists')
+                .whereIn('id', deleteIds)
+                .update({
+                    deleted: now,
+                    updated: now
+                });
+        } catch (e) {
+            console.error('Error deleting duplicates:', e);
+            throw e;
+        }
+    } else {
+        console.log('No duplicates found');
+    }
+}
+
 async function updateArtistsGenres() {
     const conn = await dbService.conn();
 
@@ -497,10 +549,9 @@ async function main() {
         genresDict = (await loadGenres());
 
         await loadArtists();
-
-        // await getArtistsMB();
-
-        // await updateArtistsSpotify(3);
+        await getArtistsMB();
+        await updateArtistsSpotify(3);
+        await deleteDuplicates();
 
         await require('./merge').main();
 
