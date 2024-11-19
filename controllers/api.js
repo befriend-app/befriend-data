@@ -625,20 +625,11 @@ module.exports = {
 
                 let items = {
                     genres: {},
-                    countries: {},
                 };
 
                 let genreDict = {};
-                let countryDict = {};
 
                 let conn = await dbService.conn();
-
-                // Organize countries lookup
-                let countries = await conn('open_countries').select('id', 'country_code');
-
-                for (let country of countries) {
-                    countryDict[country.id] = country.country_code;
-                }
 
                 // Get all genres
                 let genres = await conn('music_genres').select(
@@ -648,6 +639,7 @@ module.exports = {
                     'parent_id',
                     'is_active',
                     'is_featured',
+                    'position',
                     'updated',
                     'deleted',
                 );
@@ -665,35 +657,10 @@ module.exports = {
                         name: genre.name,
                         is_active: genre.is_active,
                         is_featured: genre.is_featured,
+                        position: genre.position,
                         updated: genre.updated,
+                        deleted: genre.deleted
                     };
-                }
-
-                // genres by country
-                let genres_countries = await conn('music_genres_countries').select(
-                    'genre_id',
-                    'country_id',
-                    'position',
-                    'updated',
-                    'deleted',
-                );
-
-                // organize associations
-                for (let country_genre of genres_countries) {
-                    let countryCode = countryDict[country_genre.country_id];
-                    let genre = genreDict[country_genre.genre_id];
-
-                    if (countryCode && genre) {
-                        if (!items.countries[countryCode]) {
-                            items.countries[countryCode] = {};
-                        }
-
-                        items.countries[countryCode][genre.token] = {
-                            token: genre.token,
-                            position: country_genre.position,
-                            updated: country_genre.updated,
-                        };
-                    }
                 }
 
                 try {
@@ -751,8 +718,9 @@ module.exports = {
                         'token',
                         'name',
                         'sort_name',
-                        'type',
-                        'mb_score',
+                        'spotify_followers',
+                        'spotify_popularity',
+                        'spotify_genres',
                         'is_active',
                         'updated',
                         'deleted',
@@ -805,7 +773,7 @@ module.exports = {
                 if (!req.query.updated) {
                     let cache_data = await cacheService.getObj(cache_key);
 
-                    if (cache_data) {
+                    if (false && cache_data) {
                         res.json(
                             {
                                 timestamp: timeNow(),
@@ -840,7 +808,7 @@ module.exports = {
 
                 // Get all artist-genre associations with pagination
                 let query = conn('music_artists_genres')
-                    .select('artist_id', 'genre_id', 'popularity', 'updated', 'deleted')
+                    .select('artist_id', 'genre_id', 'updated', 'deleted')
                     .limit(limit + 1)
                     .offset(offset);
 

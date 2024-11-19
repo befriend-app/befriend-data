@@ -198,8 +198,6 @@ const api = {
                 rateLimitState.lastRequestTime = timeNow();
             }
 
-            let lastError;
-
             for (let attempt = 0; attempt < retries; attempt++) {
                 try {
                     const response = await axios.get(
@@ -254,9 +252,12 @@ const api = {
                     }
 
                     // If we've exhausted all retries or hit a different error, throw
-                    if (isLastAttempt || ![429, 503].includes(error.response?.status)) {
+                    if (isLastAttempt) {
                         throw new Error(`MusicBrainz API error (${error.response?.status || error.code}): ${error.message}`);
                     }
+
+                    console.log(`MusicBrainz API error (${error.response?.status || error.code}): ${error.message}`);
+                    continue;
                 }
             }
 

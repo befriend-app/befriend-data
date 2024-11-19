@@ -53,8 +53,8 @@ async function getArtistsMB() {
             }
         };
 
-        //redo punk,new age, pop,r&b
-        // if (![405,415,416,417].includes(id)) {
+        // redo r&b
+        // if (![417].includes(id)) {
         //     continue;
         // }
 
@@ -115,7 +115,7 @@ async function getArtistsMB() {
 
                         const artistData = {
                             name: artist.name.substring(0, 250),
-                            sort_name: artist['sort-name'],
+                            sort_name: artist['sort-name'].substring(0, 250),
                             mb_id: artist.id,
                             mb_score: artist.score,
                             mb_type: artist.type || null,
@@ -193,31 +193,31 @@ async function getArtistsMB() {
     console.log(totals);
 }
 
-async function updateArtistsSpotify(parallelCount) {
-    function mapSpotifyGenres(genres) {
-        return genres.reduce((acc, spotifyGenre) => {
-            for(let k in genreMap) {
-                let genreData = genreMap[k];
+function mapSpotifyGenres(genres) {
+    return genres.reduce((acc, spotifyGenre) => {
+        for(let k in genreMap) {
+            let genreData = genreMap[k];
 
-                if(genreData.s?.includes(spotifyGenre)) {
-                    const ourGenre = genresDict.byName[genreData.name];
+            if(genreData.s?.includes(spotifyGenre)) {
+                const ourGenre = genresDict.byName[genreData.name];
 
-                    if(ourGenre) {
-                        acc[ourGenre.id] = ourGenre;
-                    }
+                if(ourGenre) {
+                    acc[ourGenre.id] = ourGenre;
                 }
             }
+        }
 
-            return acc;
-        }, {});
-    }
+        return acc;
+    }, {});
+}
 
+async function updateArtistsSpotify(parallelCount) {
     async function processArtistBatch(artists) {
         for (let i = 0; i < artists.length; i++) {
             let artist = artists[i];
 
             try {
-                await sleep(100); // Respect rate limits
+                await sleep(100);
 
                 // Search artist on Spotify
                 const response = await api.spotify.makeRequest('/search', {
@@ -266,45 +266,6 @@ async function updateArtistsSpotify(parallelCount) {
                         spotify_genres: spotifyArtist.genres.length ? JSON.stringify(spotifyArtist.genres) : null,
                     };
 
-                    // Update genre associations if genres found
-                    if (spotifyArtist.genres.length) {
-                        const artistGenres = artistsDict.genres[artist.id];
-
-                        const mappedGenres = mapSpotifyGenres(spotifyArtist.genres);
-
-                        const batch_insert_genres = [];
-
-                        // adding genre
-                        for(let genre_id in mappedGenres) {
-                            if(!(genre_id in artistGenres)) {
-                                batch_insert_genres.push({
-                                    artist_id: artist.id,
-                                    genre_id: genre_id,
-                                    created: timeNow(),
-                                    updated: timeNow()
-                                });
-                            }
-                        }
-
-                        // deleting genre
-                        for(let genre_id in artistGenres) {
-                            if(!(genre_id in mappedGenres)) {
-                                let item = mappedGenres[genre_id];
-
-                                await conn('music_artists_genres')
-                                    .where('id', item.mag_id)
-                                    .update({
-                                        updated: timeNow(),
-                                        deleted: timeNow()
-                                    });
-                            }
-                        }
-
-                        if (batch_insert_genres.length) {
-                            await batchInsert('music_artists_genres', batch_insert_genres);
-                        }
-                    }
-
                     totals.found++;
                 }
 
@@ -324,8 +285,13 @@ async function updateArtistsSpotify(parallelCount) {
                 totals.errors++;
 
                 if (error.response?.status === 429) {
-                    console.log('Rate limit hit, waiting...');
-                    await sleep(5000);
+                    let retryAfter = parseInt(error.response.headers['retry-after']);
+
+                    console.log({
+                        slowing_down: `${retryAfter} sec`
+                    });
+
+                    await sleep(retryAfter * 1000 + 2000);
                 }
             }
         }
@@ -428,6 +394,101 @@ async function loadArtists() {
     return artistsDict;
 }
 
+async function updateArtistsGenres() {
+    const conn = await dbService.conn();
+
+    // Get artists with spotify genres
+    let artists = await conn('music_artists')
+        .whereNotNull('spotify_genres');
+
+    // Get existing artist/genre relationships
+    let artistGenres = await conn('music_artists_genres');
+
+    // Get spotify genre mappings
+    let spotifyGenres = await conn('music_genres_spotify_genres AS mgsg')
+        .join('music_spotify_genres AS msg', 'msg.id', '=', 'mgsg.spotify_genre_id')
+        .join('music_genres AS mg', 'mg.id', '=', 'mgsg.genre_id')
+        .select({
+            spotify_genre: 'msg.name',
+            genre_id: 'mg.id'
+        });
+
+    // Create lookup for existing artist/genre relationships
+    let artistGenreLookup = artistGenres.reduce((acc, genre) => {
+        if(!(genre.artist_id in acc)) {
+            acc[genre.artist_id] = {};
+        }
+
+        acc[genre.artist_id][genre.genre_id] = genre;
+        return acc;
+    }, {});
+
+    // Create lookup for spotify genre to genre_id mapping
+    let spotifyGenreLookup = spotifyGenres.reduce((acc, mapping) => {
+        acc[mapping.spotify_genre.toLowerCase()] = mapping.genre_id;
+        return acc;
+    }, {});
+
+    let batch_insert = [];
+
+    // Process each artist
+    for(let artist of artists) {
+        let spotifyGenres = [];
+
+        try {
+            spotifyGenres = JSON.parse(artist.spotify_genres || '[]');
+        } catch(e) {
+            console.error(`Invalid JSON for artist ${artist.id}:`, e);
+            continue;
+        }
+
+        // Process each spotify genre
+        for(let spotifyGenre of spotifyGenres) {
+            const genreId = spotifyGenreLookup[spotifyGenre.toLowerCase()];
+
+            // Skip if we don't have a mapping for this spotify genre
+            if(!genreId) {
+                console.log("Missing genre: " + spotifyGenre);
+                continue;
+            }
+
+            // Check if this artist/genre relationship already exists
+            const existingGenre = artistGenreLookup[artist.id]?.[genreId];
+
+            if(!existingGenre) {
+                // New relationship - add to insert batch
+                let data = {
+                    artist_id: artist.id,
+                    genre_id: genreId,
+                    created: timeNow(),
+                    updated: timeNow()
+                };
+
+                batch_insert.push(data);
+
+                if(!(artist.id in artistGenreLookup)) {
+                    artistGenreLookup[artist.id] = {};
+                }
+
+                artistGenreLookup[artist.id][genreId] = data;
+            }
+        }
+    }
+
+    // Process batches
+    if(batch_insert.length) {
+        try {
+            await batchInsert('music_artists_genres', batch_insert);
+        } catch(e) {
+            console.error('Error during batch insert:', e);
+        }
+    }
+
+    console.log({
+        added: batch_insert.length
+    })
+}
+
 async function main() {
     try {
         console.log('Processing artists');
@@ -437,9 +498,13 @@ async function main() {
 
         await loadArtists();
 
-        await getArtistsMB();
+        // await getArtistsMB();
 
-        await updateArtistsSpotify(2);
+        // await updateArtistsSpotify(3);
+
+        await require('./merge').main();
+
+        await updateArtistsGenres();
     } catch (error) {
         console.error('Error in main execution:', error);
     }

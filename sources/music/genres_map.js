@@ -15,6 +15,12 @@ const genreMap = {
         mb: ['blues'],
         s: ['blues']
     },
+    'Classic Rock': {
+        name: 'Classic Rock',
+        position: 2,
+        mb: ['classic rock'],
+        s: ['classic rock']
+    },
     Classical: {
         name: 'Classical',
         position: 3,
