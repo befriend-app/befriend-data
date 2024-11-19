@@ -2,11 +2,10 @@ const {
     loadScriptEnv,
     timeNow,
     generateToken,
-    updateSystemProcess,
 } = require('../../../services/shared');
 const { batchInsert, batchUpdate } = require('../../../services/db');
 const dbService = require('../../../services/db');
-const { keys: systemKeys, getProcess } = require('../../../services/system');
+const { keys: systemKeys, getProcess, saveProcess } = require('../../../services/system');
 const { api } = require('./api');
 const { genreMap } = require('./genres_map');
 

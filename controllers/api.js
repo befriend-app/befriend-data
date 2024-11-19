@@ -605,6 +605,30 @@ module.exports = {
             resolve();
         });
     },
+    getMovieGenres: function (req, res) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let cache_data = await getObj(cacheService.keys.movie_genres);
+
+                if (cache_data) {
+                    res.json({ items: cache_data }, 200);
+                    return resolve();
+                }
+
+                let conn = await dbService.conn();
+                let items = await conn('movie_genres')
+                    .select('token', 'name', 'tmdb_id', 'updated');
+
+                await setCache(cacheService.keys.movie_genres, items);
+
+                res.json({ items: items }, 200);
+            } catch (e) {
+                console.error(e);
+                res.json('Error retrieving data', 400);
+            }
+            resolve();
+        });
+    },
     getMusicGenres: function (req, res) {
         return new Promise(async (resolve, reject) => {
             try {

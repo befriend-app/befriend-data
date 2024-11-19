@@ -2,13 +2,12 @@ const {
     loadScriptEnv,
     timeNow,
     generateToken,
-    updateSystemProcess,
     sleep,
 } = require('../../../services/shared');
 
 const { batchInsert, batchUpdate } = require('../../../services/db');
 const dbService = require('../../../services/db');
-const { keys: systemKeys, getProcess } = require('../../../services/system');
+const { keys: systemKeys, getProcess, saveProcess } = require('../../../services/system');
 const { api } = require('./api');
 const { genreMap } = require('./genres_map');
 const { loadGenres } = require('./add_genres');
@@ -187,7 +186,7 @@ async function getArtistsMB() {
 
         console.log(genre_totals);
 
-        await updateSystemProcess(systemKeys.music.artists.genre, id);
+        await saveProcess(systemKeys.music.artists.genre, id);
     }
 
     console.log(totals);

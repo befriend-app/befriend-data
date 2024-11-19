@@ -11,6 +11,8 @@ module.exports = {
         sections: `data:sections`,
         instruments: `data:instruments`,
         music_genres: `data:music:genres`,
+        movie_genres: `data:movie:genres`,
+        movies: `data:movies`,
         updated: {
             activities: {
                 types: `data:updated:activities:types`,
@@ -40,12 +42,19 @@ module.exports = {
         schools_offset: function (offset) {
             return `data:schools:offset:${offset}`;
         },
+        movies_offset: function (offset) {
+            return `data:movies:offset:${offset}`;
+        },
+        movies_genres_offset: function (offset) {
+            return `data:movie:genres:offset:${offset}`;
+        },
         music_artists_offset: function (offset) {
             return `data:music:artists:${offset}`;
         },
         music_artists_genres_offset: function (offset) {
             return `data:music:artists:genres:${offset}`;
         },
+
     },
     init: function () {
         return new Promise(async (resolve, reject) => {

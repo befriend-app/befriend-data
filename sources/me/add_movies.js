@@ -2,22 +2,32 @@ const axios = require('axios');
 const { loadScriptEnv, timeNow, generateToken } = require('../../services/shared');
 const dbService = require('../../services/db');
 const cacheService = require('../../services/cache');
+const { getProcess, systemKeys, saveProcess } = require('../../services/system');
 
 loadScriptEnv();
 
 const MAX_PAGES = 500;
-const BATCH_SIZE = 1000;
+const BATCH_SIZE = 100;
 const PARALLEL_BATCH_SIZE = 5;
 const API_DELAY = 250;
 
+let lastReleaseDate = null;
+
+async function loadSystemProcess() {
+    lastReleaseDate = await getProcess(systemKeys.movies.date);
+}
+
 async function addMovies() {
     console.log("Add movies");
+
+    await loadSystemProcess();
 
     const main_table = 'movies';
     let added = 0;
     let updated = 0;
     let batch_insert = [];
     let batch_update = [];
+    let latestProcessedDate = null;
 
     try {
         const conn = await dbService.conn();
@@ -34,11 +44,23 @@ async function addMovies() {
         let startYear = 1900;
         const currentYear = new Date().getFullYear();
 
+        // If we have a last release date, start from one month prior
+        if (lastReleaseDate) {
+            const lastDate = new Date(lastReleaseDate);
+            lastDate.setMonth(lastDate.getMonth() - 1);
+            startYear = lastDate.getFullYear();
+        }
+
         for (let year = startYear; year <= currentYear; year++) {
             console.log(`Processing year ${year}`);
             const months = getMonthRanges(year);
 
             for (const month of months) {
+                // Skip if this month is before our last processed date
+                if (lastReleaseDate && month.end < lastReleaseDate) {
+                    continue;
+                }
+
                 let current_page = 1;
                 let hasMorePages = true;
 
@@ -58,6 +80,11 @@ async function addMovies() {
                         for (const movie of results) {
                             if (!movie.release_date) continue;
 
+                            // Track the latest release date processed
+                            if (!latestProcessedDate || movie.release_date > latestProcessedDate) {
+                                latestProcessedDate = movie.release_date;
+                            }
+
                             const existing = movies_dict[movie.id];
 
                             if (!existing) {
@@ -69,7 +96,6 @@ async function addMovies() {
                                     original_language: movie.original_language,
                                     release_date: movie.release_date,
                                     popularity: movie.popularity,
-                                    type: 'movie',
                                     created: timeNow(),
                                     updated: timeNow()
                                 });
@@ -126,6 +152,11 @@ async function addMovies() {
             if (batch_update.length) {
                 await dbService.batchUpdate(main_table, batch_update);
                 batch_update = [];
+            }
+
+            // Update the last processed date
+            if (latestProcessedDate) {
+                await saveProcess(systemKeys.movies.date, latestProcessedDate);
             }
         }
 
@@ -197,6 +228,7 @@ async function addMovieGenres() {
     const main_table = 'movies_genres';
     let added = 0;
     let batch_insert = [];
+    let batch_update_movies = [];
 
     try {
         const conn = await dbService.conn();
@@ -217,12 +249,8 @@ async function addMovieGenres() {
         }, {});
 
         // Get all movies
-        const movies = await conn('movies');
-
-        //Filter for processing
-        const movies_to_process = movies.filter(movie => {
-            return !assoc_dict[movie.id];
-        });
+        const movies_to_process = await conn('movies')
+            .where('genre_processed', 0);
 
         console.log({
             movies_genre_process: movies_to_process.length
@@ -240,6 +268,12 @@ async function addMovieGenres() {
                             Authorization: `Bearer ${process.env.TMDB_API_KEY}`,
                         }
                     });
+
+                    batch_update_movies.push({
+                        id: movie.id,
+                        genre_processed: true,
+                        updated: timeNow()
+                    })
 
                     const inserts = [];
                     for (const genre of response.data.genres) {
@@ -278,6 +312,11 @@ async function addMovieGenres() {
             if (batch_insert.length >= BATCH_SIZE) {
                 await dbService.batchInsert(main_table, batch_insert);
                 batch_insert = [];
+
+                if(batch_update_movies.length >= BATCH_SIZE) {
+                    await dbService.batchUpdate('movies', batch_update_movies);
+                    batch_update_movies = [];
+                }
             }
 
             console.log(`Processed ${i + batch.length}/${movies_to_process.length} movies, added ${added} genre associations`);
@@ -289,6 +328,10 @@ async function addMovieGenres() {
         // Process remaining batch
         if (batch_insert.length) {
             await dbService.batchInsert(main_table, batch_insert);
+        }
+
+        if(batch_update_movies.length) {
+            await dbService.batchUpdate('movies', batch_update_movies);
         }
 
         console.log({ added });

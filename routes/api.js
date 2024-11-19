@@ -1,7 +1,7 @@
 let express = require('express');
 let router = express.Router();
 
-let apiController = require('../controllers/api');
+let api = require('../controllers/api');
 
 router.get('/', function (req, res, next) {
     return new Promise(async (resolve, reject) => {
@@ -16,7 +16,7 @@ router.get('/', function (req, res, next) {
 router.get('/updates', function (req, res, next) {
     return new Promise(async (resolve, reject) => {
         try {
-            await apiController.getUpdates(req, res);
+            await api.getUpdates(req, res);
         } catch (e) {
             console.error(e);
         }
@@ -28,7 +28,7 @@ router.get('/updates', function (req, res, next) {
 router.get('/activity-types', function (req, res, next) {
     return new Promise(async (resolve, reject) => {
         try {
-            await apiController.getActivityTypes(req, res);
+            await api.getActivityTypes(req, res);
         } catch (e) {
             console.error(e);
         }
@@ -40,7 +40,7 @@ router.get('/activity-types', function (req, res, next) {
 router.get('/venues-categories', function (req, res, next) {
     return new Promise(async (resolve, reject) => {
         try {
-            await apiController.getVenuesCategories(req, res);
+            await api.getVenuesCategories(req, res);
         } catch (e) {
             console.error(e);
         }
@@ -52,7 +52,7 @@ router.get('/venues-categories', function (req, res, next) {
 router.get('/activities-venue-categories', function (req, res, next) {
     return new Promise(async (resolve, reject) => {
         try {
-            await apiController.getActivityVenueCategories(req, res);
+            await api.getActivityVenueCategories(req, res);
         } catch (e) {
             console.error(e);
         }
@@ -64,7 +64,7 @@ router.get('/activities-venue-categories', function (req, res, next) {
 router.get('/countries', function (req, res, next) {
     return new Promise(async (resolve, reject) => {
         try {
-            await apiController.getCountries(req, res);
+            await api.getCountries(req, res);
         } catch (e) {
             console.error(e);
         }
@@ -76,7 +76,7 @@ router.get('/countries', function (req, res, next) {
 router.get('/states', function (req, res, next) {
     return new Promise(async (resolve, reject) => {
         try {
-            await apiController.getStates(req, res);
+            await api.getStates(req, res);
         } catch (e) {
             console.error(e);
         }
@@ -88,7 +88,7 @@ router.get('/states', function (req, res, next) {
 router.get('/cities', function (req, res, next) {
     return new Promise(async (resolve, reject) => {
         try {
-            await apiController.getCities(req, res);
+            await api.getCities(req, res);
         } catch (e) {
             console.error(e);
         }
@@ -100,7 +100,7 @@ router.get('/cities', function (req, res, next) {
 router.get('/genders', function (req, res, next) {
     return new Promise(async (resolve, reject) => {
         try {
-            await apiController.getGenders(req, res);
+            await api.getGenders(req, res);
         } catch (e) {
             console.error(e);
         }
@@ -112,7 +112,19 @@ router.get('/genders', function (req, res, next) {
 router.get('/instruments', function (req, res, next) {
     return new Promise(async (resolve, reject) => {
         try {
-            await apiController.getInstruments(req, res);
+            await api.getInstruments(req, res);
+        } catch (e) {
+            console.error(e);
+        }
+
+        resolve();
+    });
+});
+
+router.get('/movie-genres', function (req, res, next) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            await api.getMovieGenres(req, res);
         } catch (e) {
             console.error(e);
         }
@@ -124,7 +136,19 @@ router.get('/instruments', function (req, res, next) {
 router.get('/movies', function (req, res, next) {
     return new Promise(async (resolve, reject) => {
         try {
-            await apiController.getMovies(req, res);
+            await api.getMovies(req, res);
+        } catch (e) {
+            console.error(e);
+        }
+
+        resolve();
+    });
+});
+
+router.get('/movies/genres', function (req, res, next) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            await api.getMoviesGenres(req, res);
         } catch (e) {
             console.error(e);
         }
@@ -136,7 +160,7 @@ router.get('/movies', function (req, res, next) {
 router.get('/music/genres', function (req, res, next) {
     return new Promise(async (resolve, reject) => {
         try {
-            await apiController.getMusicGenres(req, res);
+            await api.getMusicGenres(req, res);
         } catch (e) {
             console.error(e);
         }
@@ -148,7 +172,7 @@ router.get('/music/genres', function (req, res, next) {
 router.get('/music/artists', function (req, res, next) {
     return new Promise(async (resolve, reject) => {
         try {
-            await apiController.getMusicArtists(req, res);
+            await api.getMusicArtists(req, res);
         } catch (e) {
             console.error(e);
         }
@@ -160,7 +184,7 @@ router.get('/music/artists', function (req, res, next) {
 router.get('/music/artists/genres', function (req, res, next) {
     return new Promise(async (resolve, reject) => {
         try {
-            await apiController.getMusicArtistsGenres(req, res);
+            await api.getMusicArtistsGenres(req, res);
         } catch (e) {
             console.error(e);
         }
@@ -172,7 +196,7 @@ router.get('/music/artists/genres', function (req, res, next) {
 router.get('/schools', function (req, res, next) {
     return new Promise(async (resolve, reject) => {
         try {
-            await apiController.getSchools(req, res);
+            await api.getSchools(req, res);
         } catch (e) {
             console.error(e);
         }
@@ -184,7 +208,7 @@ router.get('/schools', function (req, res, next) {
 router.get('/me/sections', function (req, res, next) {
     return new Promise(async (resolve, reject) => {
         try {
-            await apiController.getMeSections(req, res);
+            await api.getMeSections(req, res);
         } catch (e) {
             console.error(e);
         }
