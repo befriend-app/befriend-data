@@ -629,6 +629,154 @@ module.exports = {
             resolve();
         });
     },
+    getMovies: function(req, res) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const limit = module.exports.batchLimit;
+                let offset = Math.floor((parseInt(req.query.offset) || 0) / limit) * limit;
+                const cache_key = cacheService.keys.movies_offset(offset);
+
+                if (!req.query.updated) {
+                    let cache_data = await cacheService.getObj(cache_key);
+
+                    //todo remove
+                    if (false && cache_data) {
+                        res.json({
+                            timestamp: timeNow(),
+                            next_offset: cache_data.length ? offset + limit : null,
+                            has_more: !!cache_data.length,
+                            items: cache_data
+                        }, 200);
+                        return resolve();
+                    }
+                }
+
+                let conn = await dbService.conn();
+                let query = conn('movies')
+                    .orderBy('id')
+                    .select(
+                        'token',
+                        'tmdb_id',
+                        'name',
+                        'tmdb_poster_path',
+                        'original_language',
+                        'release_date',
+                        'popularity',
+                        'updated',
+                        'deleted'
+                    )
+                    .limit(limit + 1)
+                    .offset(offset);
+
+                if (req.query.updated) {
+                    query = query.where('updated', '>', req.query.updated);
+                }
+
+                let items = await query;
+                const hasMore = items.length > limit;
+
+                if (hasMore) {
+                    items = items.slice(0, limit);
+                }
+
+                items.map((item) => {
+                    item.release_date = item.release_date?.toISOString().split('T')[0] || null;
+                });
+
+                if (!req.query.updated && items.length) {
+                    await cacheService.setCache(cache_key, items);
+                }
+
+                res.json({
+                    timestamp: timeNow(),
+                    next_offset: hasMore ? offset + limit : null,
+                    has_more: hasMore,
+                    items: items
+                }, 200);
+            } catch (e) {
+                console.error(e);
+                res.json('Error retrieving data', 400);
+            }
+            resolve();
+        });
+    },
+    getMoviesGenres: function(req, res) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const limit = module.exports.batchLimit;
+                let offset = Math.floor((parseInt(req.query.offset) || 0) / limit) * limit;
+                const cache_key = cacheService.keys.movies_genres_offset(offset);
+
+                if (!req.query.updated) {
+                    let cache_data = await cacheService.getObj(cache_key);
+                    if (cache_data) {
+                        res.json({
+                            timestamp: timeNow(),
+                            next_offset: cache_data.length ? offset + limit : null,
+                            has_more: !!cache_data.length,
+                            items: cache_data
+                        }, 200);
+                        return resolve();
+                    }
+                }
+
+                let conn = await dbService.conn();
+
+                const [movies, genres] = await Promise.all([
+                    conn('movies').select('id', 'token'),
+                    conn('movie_genres').select('id', 'token')
+                ]);
+
+                const moviesDict = movies.reduce((acc, m) => {
+                    acc[m.id] = m.token;
+                    return acc;
+                }, {});
+
+                const genresDict = genres.reduce((acc, g) => {
+                    acc[g.id] = g.token;
+                    return acc;
+                }, {});
+
+                let query = conn('movie_genres_movies')
+                    .select('movie_id', 'genre_id', 'updated', 'deleted')
+                    .limit(limit + 1)
+                    .offset(offset);
+
+                if (req.query.updated) {
+                    query = query.where('updated', '>', req.query.updated);
+                }
+
+                let items = await query;
+
+                for (let item of items) {
+                    item.movie_token = moviesDict[item.movie_id];
+                    item.genre_token = genresDict[item.genre_id];
+                    delete item.movie_id;
+                    delete item.genre_id;
+                }
+
+                const hasMore = items.length > limit;
+                if (hasMore) {
+                    items = items.slice(0, limit);
+                }
+
+                if (!req.query.updated && items.length) {
+                    await cacheService.setCache(cache_key, items);
+                }
+
+                res.json({
+                    timestamp: timeNow(),
+                    next_offset: hasMore ? offset + limit : null,
+                    has_more: hasMore,
+                    items: items
+                }, 200);
+            } catch (e) {
+                console.error(e);
+                res.json('Error retrieving data', 400);
+            }
+            resolve();
+        });
+    },
     getMusicGenres: function (req, res) {
         return new Promise(async (resolve, reject) => {
             try {
