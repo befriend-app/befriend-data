@@ -4,6 +4,12 @@ function main() {
             console.log('Loading me data');
 
             await require('./sections').main();
+
+            await require('./drinking').main();
+            await require('./politics').main();
+            await require('./smoking').main();
+            await require('./religions').main();
+
             await require('./instruments').main();
             await require('./movies').main();
             await require('./music').main();
