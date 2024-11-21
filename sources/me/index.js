@@ -3,9 +3,9 @@ function main() {
         try {
             console.log('Loading me data');
 
-            await require('./add_sections').main();
-            await require('./add_instruments').main();
-            await require('./add_movies').main();
+            await require('./sections').main();
+            await require('./instruments').main();
+            await require('./movies').main();
             await require('./music').main();
             await require('./schools/add_schools').main();
         } catch (e) {

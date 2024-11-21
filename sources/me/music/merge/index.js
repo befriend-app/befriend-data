@@ -4,7 +4,7 @@ function main() {
             console.log('Merge genres');
 
             await require('./spotify_genres').main();
-            await require('./spotify_genre_matching').main();
+            await require('./merge_genres').main();
         } catch (e) {
             console.error(e);
         }

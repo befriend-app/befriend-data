@@ -97,6 +97,18 @@ router.get('/cities', function (req, res, next) {
     });
 });
 
+router.get('/drinking', function (req, res, next) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            await api.getDrinking(req, res);
+        } catch (e) {
+            console.error(e);
+        }
+
+        resolve();
+    });
+});
+
 router.get('/genders', function (req, res, next) {
     return new Promise(async (resolve, reject) => {
         try {

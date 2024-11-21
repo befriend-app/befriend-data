@@ -114,7 +114,6 @@ async function main() {
                     is_merged: true,
                     updated: timeNow()
                 });
-
         } catch (error) {
             if(error.status === 429) {
                 console.log("Wait a moment");

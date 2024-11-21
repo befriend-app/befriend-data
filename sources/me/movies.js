@@ -8,7 +8,7 @@ loadScriptEnv();
 
 const MAX_PAGES = 500;
 const BATCH_SIZE = 100;
-const PARALLEL_BATCH_SIZE = 5;
+const PARALLEL_PROCESS = 10;
 const API_DELAY = 250;
 
 let lastReleaseDate = null;
@@ -257,8 +257,8 @@ async function addMovieGenres() {
         });
 
         // Process movies in parallel batches
-        for (let i = 0; i < movies_to_process.length; i += PARALLEL_BATCH_SIZE) {
-            const batch = movies_to_process.slice(i, i + PARALLEL_BATCH_SIZE);
+        for (let i = 0; i < movies_to_process.length; i += PARALLEL_PROCESS) {
+            const batch = movies_to_process.slice(i, i + PARALLEL_PROCESS);
 
             const promises = batch.map(async movie => {
                 try {
@@ -281,12 +281,20 @@ async function addMovieGenres() {
                         if (!genre_record) continue;
 
                         if (!assoc_dict[movie.id]?.[genre_record.id]) {
-                            inserts.push({
+                            let data = {
                                 movie_id: movie.id,
                                 genre_id: genre_record.id,
                                 created: timeNow(),
                                 updated: timeNow()
-                            });
+                            };
+
+                            inserts.push(data);
+
+                            if(!assoc_dict[movie.id]) {
+                                assoc_dict[movie.id] = {};
+                            }
+
+                            assoc_dict[movie.id][genre_record.id] = data;
                         }
                     }
 
@@ -322,7 +330,7 @@ async function addMovieGenres() {
             console.log(`Processed ${i + batch.length}/${movies_to_process.length} movies, added ${added} genre associations`);
 
             // Rate limiting delay between batches
-            await new Promise(resolve => setTimeout(resolve, API_DELAY * PARALLEL_BATCH_SIZE));
+            await new Promise(resolve => setTimeout(resolve, API_DELAY * PARALLEL_PROCESS));
         }
 
         // Process remaining batch

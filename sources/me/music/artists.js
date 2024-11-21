@@ -10,7 +10,7 @@ const dbService = require('../../../services/db');
 const { keys: systemKeys, getProcess, saveProcess } = require('../../../services/system');
 const { api } = require('./api');
 const { genreMap } = require('./genres_map');
-const { loadGenres } = require('./add_genres');
+const { loadGenres } = require('./genres');
 
 loadScriptEnv();
 
@@ -551,7 +551,7 @@ async function main() {
         await deleteDuplicates();
 
         //add/merge spotify genres
-        await require('./merge').main();
+        // await require('./merge').main();
 
         //link artists to genres
         await updateArtistsGenres();

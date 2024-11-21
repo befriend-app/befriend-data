@@ -3,8 +3,8 @@ function main() {
         try {
             console.log('Loading music');
 
-            await require('./add_genres').main();
-            await require('./add_artists').main();
+            await require('./genres').main();
+            await require('./artists').main();
         } catch (e) {
             console.error(e);
         }

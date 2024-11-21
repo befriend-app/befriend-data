@@ -557,6 +557,54 @@ module.exports = {
             resolve();
         });
     },
+    getDrinking: function (req, res) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                //use cache
+                let cache_data = await getObj(cacheService.keys.drinking);
+
+                if (cache_data) {
+                    res.json(
+                        {
+                            items: cache_data,
+                        },
+                        200,
+                    );
+
+                    return resolve();
+                }
+
+                let conn = await dbService.conn();
+
+                let items = await conn('drinking').select(
+                    'token',
+                    'name',
+                    'is_visible',
+                    'sort_position',
+                    'updated',
+                    'deleted'
+                );
+
+                try {
+                    await setCache(cacheService.keys.drinking, items);
+                } catch (e) {
+                    console.error(e);
+                }
+
+                res.json(
+                    {
+                        items: items,
+                    },
+                    200,
+                );
+            } catch (e) {
+                console.error(e);
+                res.json('Error retrieving data', 400);
+            }
+
+            resolve();
+        });
+    },
     getInstruments: function (req, res) {
         return new Promise(async (resolve, reject) => {
             try {
@@ -709,7 +757,9 @@ module.exports = {
 
                 if (!req.query.updated) {
                     let cache_data = await cacheService.getObj(cache_key);
-                    if (cache_data) {
+
+                    //todo remove
+                    if (false && cache_data) {
                         res.json({
                             timestamp: timeNow(),
                             next_offset: cache_data.length ? offset + limit : null,
@@ -737,7 +787,7 @@ module.exports = {
                     return acc;
                 }, {});
 
-                let query = conn('movie_genres_movies')
+                let query = conn('movies_genres')
                     .select('movie_id', 'genre_id', 'updated', 'deleted')
                     .limit(limit + 1)
                     .offset(offset);
