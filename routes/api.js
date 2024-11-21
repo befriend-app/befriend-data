@@ -217,6 +217,18 @@ router.get('/schools', function (req, res, next) {
     });
 });
 
+router.get('/smoking', function (req, res, next) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            await api.getSmoking(req, res);
+        } catch (e) {
+            console.error(e);
+        }
+
+        resolve();
+    });
+});
+
 router.get('/me/sections', function (req, res, next) {
     return new Promise(async (resolve, reject) => {
         try {
