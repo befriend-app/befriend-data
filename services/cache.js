@@ -10,6 +10,7 @@ module.exports = {
         states: `data:states`,
         sections: `data:sections`,
         drinking: `data:drinking`,
+        religions: `data:religions`,
         smoking: `data:smoking`,
         instruments: `data:instruments`,
         music_genres: `data:music:genres`,

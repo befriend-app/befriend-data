@@ -205,6 +205,18 @@ router.get('/music/artists/genres', function (req, res, next) {
     });
 });
 
+router.get('/religions', function (req, res, next) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            await api.getReligions(req, res);
+        } catch (e) {
+            console.error(e);
+        }
+
+        resolve();
+    });
+});
+
 router.get('/schools', function (req, res, next) {
     return new Promise(async (resolve, reject) => {
         try {
