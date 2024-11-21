@@ -10,7 +10,7 @@ let tokens = {
     input: 0,
     cache_input: 0,
     cache_read_input: 0,
-    output: 0
+    output: 0,
 };
 
 async function main() {
@@ -18,8 +18,7 @@ async function main() {
 
     const conn = await dbService.conn();
     const genres = await conn('music_genres');
-    const spotifyGenres = await conn('music_spotify_genres')
-        .where('is_merged', 0);
+    const spotifyGenres = await conn('music_spotify_genres').where('is_merged', 0);
     const genresSpotifyGenres = await conn('music_genres_spotify_genres');
 
     const genresLookup = genres.reduce((acc, genre) => {
@@ -35,7 +34,9 @@ async function main() {
         return acc;
     }, {});
 
-    const unprocessedGenres = spotifyGenres.filter(spotifyGenre => !(spotifyGenre.id in gsgLookup));
+    const unprocessedGenres = spotifyGenres.filter(
+        (spotifyGenre) => !(spotifyGenre.id in gsgLookup),
+    );
 
     for (let i = 0; i < unprocessedGenres.length; ++i) {
         console.log(`${i + 1}/${unprocessedGenres.length}`);
@@ -50,7 +51,7 @@ async function main() {
                     'content-type': 'application/json',
                     'x-api-key': process.env.ANTHROPIC_API_KEY,
                     'anthropic-version': '2023-06-01',
-                    'anthropic-beta': 'prompt-caching-2024-07-31'
+                    'anthropic-beta': 'prompt-caching-2024-07-31',
                 },
                 data: {
                     model: 'claude-3-5-sonnet-20241022',
@@ -58,21 +59,21 @@ async function main() {
                     system: [
                         {
                             type: 'text',
-                            text: `Please match Spotify genre names to generic genre names from the following list: ${JSON.stringify(genreNames)}. Respond with JSON only in format: { names: ['Genre Name'] }`
+                            text: `Please match Spotify genre names to generic genre names from the following list: ${JSON.stringify(genreNames)}. Respond with JSON only in format: { names: ['Genre Name'] }`,
                         },
                         {
                             type: 'text',
                             text: spotifyGenre.name,
-                            cache_control: { type: 'ephemeral' }
-                        }
+                            cache_control: { type: 'ephemeral' },
+                        },
                     ],
                     messages: [
                         {
                             role: 'user',
-                            content: `Match this Spotify genre: "${spotifyGenre.name}"`
-                        }
-                    ]
-                }
+                            content: `Match this Spotify genre: "${spotifyGenre.name}"`,
+                        },
+                    ],
+                },
             });
 
             tokens.input += response.data.usage.input_tokens;
@@ -84,7 +85,7 @@ async function main() {
 
             console.log({
                 spotifyGenre: spotifyGenre.name,
-                output: results
+                output: results,
             });
 
             for (let genre_name of results) {
@@ -98,7 +99,7 @@ async function main() {
                             genre_id: genre.id,
                             spotify_genre_id: spotifyGenre.id,
                             created: timeNow(),
-                            updated: timeNow()
+                            updated: timeNow(),
                         });
                     }
                 }
@@ -108,15 +109,13 @@ async function main() {
                 tokens,
             });
 
-            await conn('music_spotify_genres')
-                .where('id', spotifyGenre.id)
-                .update({
-                    is_merged: true,
-                    updated: timeNow()
-                });
+            await conn('music_spotify_genres').where('id', spotifyGenre.id).update({
+                is_merged: true,
+                updated: timeNow(),
+            });
         } catch (error) {
-            if(error.status === 429) {
-                console.log("Wait a moment");
+            if (error.status === 429) {
+                console.log('Wait a moment');
 
                 await sleep(parseInt(error.response.headers['retry-after']) * 60000);
             }
@@ -126,12 +125,12 @@ async function main() {
     }
 
     console.log({
-        tokens
+        tokens,
     });
 }
 
 module.exports = {
-    main
+    main,
 };
 
 if (require.main === module) {

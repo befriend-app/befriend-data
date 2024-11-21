@@ -1,9 +1,4 @@
-const {
-    loadScriptEnv,
-    timeNow,
-    generateToken,
-    sleep,
-} = require('../../../services/shared');
+const { loadScriptEnv, timeNow, generateToken, sleep } = require('../../../services/shared');
 
 const { batchInsert, batchUpdate } = require('../../../services/db');
 const dbService = require('../../../services/db');
@@ -24,7 +19,7 @@ let artistsDict = {
 let prevGenre = null;
 
 async function getArtistsMB() {
-    console.log("Get artists: Music Brainz");
+    console.log('Get artists: Music Brainz');
 
     //get all artists in music brainz db
     let totals = {
@@ -49,7 +44,7 @@ async function getArtistsMB() {
             artists: {
                 added: 0,
                 updated: 0,
-            }
+            },
         };
 
         // redo r&b
@@ -104,8 +99,8 @@ async function getArtistsMB() {
                         tags = tags.slice(0, 10);
                         let tags_arr = [];
 
-                        for(let tag of tags) {
-                            if(tag.length > 100) {
+                        for (let tag of tags) {
+                            if (tag.length > 100) {
                                 continue;
                             }
 
@@ -193,7 +188,7 @@ async function getArtistsMB() {
 }
 
 async function updateArtistsSpotify(parallelCount) {
-    console.log("Update artists w/ spotify data");
+    console.log('Update artists w/ spotify data');
 
     async function processArtistBatch(artists) {
         for (let i = 0; i < artists.length; i++) {
@@ -207,34 +202,36 @@ async function updateArtistsSpotify(parallelCount) {
                     params: {
                         q: artist.name,
                         type: 'artist',
-                        limit: 10
-                    }
+                        limit: 10,
+                    },
                 });
 
                 let updateData = {
                     spotify_processed: 1,
-                    updated: timeNow()
+                    updated: timeNow(),
                 };
 
-                let potential_matches = response.artists.items.filter(item => item.name === artist.name);
+                let potential_matches = response.artists.items.filter(
+                    (item) => item.name === artist.name,
+                );
 
-                if(!potential_matches.length) {
+                if (!potential_matches.length) {
                     totals.not_found++;
                 } else {
-                    if(potential_matches.length > 1) {
-                        potential_matches.sort(function(a, b) {
+                    if (potential_matches.length > 1) {
+                        potential_matches.sort(function (a, b) {
                             return b.followers?.total - a.followers?.total;
                         });
 
                         let duplicate_check = [];
 
-                        for(let m of potential_matches) {
+                        for (let m of potential_matches) {
                             duplicate_check.push({
                                 name: m.name,
                                 followers: m.followers.total,
                                 popularity: m.popularity,
-                                genres: JSON.stringify(m.genres)
-                            })
+                                genres: JSON.stringify(m.genres),
+                            });
                         }
                     }
 
@@ -246,16 +243,16 @@ async function updateArtistsSpotify(parallelCount) {
                         spotify_type: spotifyArtist.type,
                         spotify_popularity: spotifyArtist.popularity,
                         spotify_followers: spotifyArtist.followers.total,
-                        spotify_genres: spotifyArtist.genres.length ? JSON.stringify(spotifyArtist.genres) : null,
+                        spotify_genres: spotifyArtist.genres.length
+                            ? JSON.stringify(spotifyArtist.genres)
+                            : null,
                     };
 
                     totals.found++;
                 }
 
                 // Update artist with Spotify data
-                await conn('music_artists')
-                    .where('id', artist.id)
-                    .update(updateData);
+                await conn('music_artists').where('id', artist.id).update(updateData);
 
                 totals.processed++;
 
@@ -271,7 +268,7 @@ async function updateArtistsSpotify(parallelCount) {
                     let retryAfter = parseInt(error.response.headers['retry-after']);
 
                     console.log({
-                        slowing_down: `${retryAfter} sec`
+                        slowing_down: `${retryAfter} sec`,
                     });
 
                     await sleep(retryAfter * 1000 + 2000);
@@ -285,7 +282,7 @@ async function updateArtistsSpotify(parallelCount) {
         found: 0,
         not_found: 0,
         errors: 0,
-        count: 0
+        count: 0,
     };
 
     const conn = await dbService.conn();
@@ -299,7 +296,7 @@ async function updateArtistsSpotify(parallelCount) {
     const batchSize = Math.ceil(artists.length / parallelCount);
     const batches = [];
 
-    for(let i = 0; i < parallelCount; i++) {
+    for (let i = 0; i < parallelCount; i++) {
         const start = i * batchSize;
         const end = Math.min(start + batchSize, artists.length);
         const batch = artists.slice(start, end);
@@ -318,7 +315,7 @@ async function loadSystemProcess() {
 }
 
 async function loadArtists() {
-    console.log("Loading existing artists");
+    console.log('Loading existing artists');
 
     const conn = await dbService.conn();
 
@@ -417,12 +414,10 @@ async function deleteDuplicates() {
         console.log(`Deleting ${deleteIds.length} duplicate artists`);
 
         try {
-            await conn('music_artists')
-                .whereIn('id', deleteIds)
-                .update({
-                    deleted: now,
-                    updated: now
-                });
+            await conn('music_artists').whereIn('id', deleteIds).update({
+                deleted: now,
+                updated: now,
+            });
         } catch (e) {
             console.error('Error deleting duplicates:', e);
             throw e;
@@ -436,8 +431,7 @@ async function updateArtistsGenres() {
     const conn = await dbService.conn();
 
     // Get artists with spotify genres
-    let artists = await conn('music_artists')
-        .whereNotNull('spotify_genres');
+    let artists = await conn('music_artists').whereNotNull('spotify_genres');
 
     // Get existing artist/genre relationships
     let artistGenres = await conn('music_artists_genres');
@@ -448,12 +442,12 @@ async function updateArtistsGenres() {
         .join('music_genres AS mg', 'mg.id', '=', 'mgsg.genre_id')
         .select({
             spotify_genre: 'msg.name',
-            genre_id: 'mg.id'
+            genre_id: 'mg.id',
         });
 
     // Create lookup for existing artist/genre relationships
     let artistGenreLookup = artistGenres.reduce((acc, genre) => {
-        if(!(genre.artist_id in acc)) {
+        if (!(genre.artist_id in acc)) {
             acc[genre.artist_id] = {};
         }
 
@@ -470,41 +464,41 @@ async function updateArtistsGenres() {
     let batch_insert = [];
 
     // Process each artist
-    for(let artist of artists) {
+    for (let artist of artists) {
         let spotifyGenres = [];
 
         try {
             spotifyGenres = JSON.parse(artist.spotify_genres || '[]');
-        } catch(e) {
+        } catch (e) {
             console.error(`Invalid JSON for artist ${artist.id}:`, e);
             continue;
         }
 
         // Process each spotify genre
-        for(let spotifyGenre of spotifyGenres) {
+        for (let spotifyGenre of spotifyGenres) {
             const genreId = spotifyGenreLookup[spotifyGenre.toLowerCase()];
 
             // Skip if we don't have a mapping for this spotify genre
-            if(!genreId) {
-                console.log("Missing genre: " + spotifyGenre);
+            if (!genreId) {
+                console.log('Missing genre: ' + spotifyGenre);
                 continue;
             }
 
             // Check if this artist/genre relationship already exists
             const existingGenre = artistGenreLookup[artist.id]?.[genreId];
 
-            if(!existingGenre) {
+            if (!existingGenre) {
                 // New relationship - add to insert batch
                 let data = {
                     artist_id: artist.id,
                     genre_id: genreId,
                     created: timeNow(),
-                    updated: timeNow()
+                    updated: timeNow(),
                 };
 
                 batch_insert.push(data);
 
-                if(!(artist.id in artistGenreLookup)) {
+                if (!(artist.id in artistGenreLookup)) {
                     artistGenreLookup[artist.id] = {};
                 }
 
@@ -514,17 +508,17 @@ async function updateArtistsGenres() {
     }
 
     // Process batches
-    if(batch_insert.length) {
+    if (batch_insert.length) {
         try {
             await batchInsert('music_artists_genres', batch_insert);
-        } catch(e) {
+        } catch (e) {
             console.error('Error during batch insert:', e);
         }
     }
 
     console.log({
-        added: batch_insert.length
-    })
+        added: batch_insert.length,
+    });
 }
 
 async function main() {
@@ -535,7 +529,7 @@ async function main() {
         await loadSystemProcess();
 
         //load existing genres
-        genresDict = (await loadGenres());
+        genresDict = await loadGenres();
 
         //load existing artists
         await loadArtists();

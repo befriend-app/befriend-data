@@ -32,13 +32,11 @@ function main() {
                 name: 'Not Political',
                 sort_position: 4,
                 is_visible: true,
-            }
+            },
         ];
 
         for (let item of items) {
-            let check = await conn('politics')
-                .where('token', item.token)
-                .first();
+            let check = await conn('politics').where('token', item.token).first();
 
             if (!check) {
                 item.created = timeNow();

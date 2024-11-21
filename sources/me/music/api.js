@@ -173,7 +173,7 @@ const api = {
                 console.log({
                     limit: rateLimitState.limit,
                     remaining: rateLimitState.remaining,
-                    reset: rateLimitState.reset
+                    reset: rateLimitState.reset,
                 });
 
                 // If we're running low on remaining requests, calculate delay
@@ -184,7 +184,9 @@ const api = {
 
                     if (timeUntilReset > 0) {
                         const delayNeeded = Math.ceil(timeUntilReset / rateLimitState.remaining);
-                        console.log(`Rate limit running low. Delaying ${delayNeeded}ms between requests`);
+                        console.log(
+                            `Rate limit running low. Delaying ${delayNeeded}ms between requests`,
+                        );
                         await sleep(delayNeeded);
                     }
                 }
@@ -200,26 +202,22 @@ const api = {
 
             for (let attempt = 0; attempt < retries; attempt++) {
                 try {
-                    const response = await axios.get(
-                        joinPaths(api.mb.config.baseUrl, endpoint),
-                        {
-                            params: {
-                                fmt: 'json',
-                                ...params,
-                            },
-                            headers: {
-                                'User-Agent': `${packageData.productName}/${packageData.version} (${process.env.ADMIN_EMAIL})`,
-                            },
-                            // Add timeout to prevent hanging
-                            timeout: 30000,
-                        }
-                    );
+                    const response = await axios.get(joinPaths(api.mb.config.baseUrl, endpoint), {
+                        params: {
+                            fmt: 'json',
+                            ...params,
+                        },
+                        headers: {
+                            'User-Agent': `${packageData.productName}/${packageData.version} (${process.env.ADMIN_EMAIL})`,
+                        },
+                        // Add timeout to prevent hanging
+                        timeout: 30000,
+                    });
 
                     // Update rate limit state and handle delays
                     await handleRateLimit(response.headers);
 
                     return response.data;
-
                 } catch (error) {
                     const isLastAttempt = attempt === retries - 1;
 
@@ -237,7 +235,8 @@ const api = {
                     }
 
                     if (error.response?.status === 429) {
-                        const retryAfter = parseInt(error.response.headers['retry-after']) ||
+                        const retryAfter =
+                            parseInt(error.response.headers['retry-after']) ||
                             Math.pow(2, attempt) * api.mb.config.rateLimit.baseDelay;
                         console.log(`Rate limit exceeded. Waiting ${retryAfter}ms before retry...`);
                         await sleep(retryAfter);
@@ -245,7 +244,8 @@ const api = {
                     }
 
                     if (error.response?.status === 503) {
-                        const backoffDelay = api.mb.config.rateLimit.baseDelay * Math.pow(2, attempt);
+                        const backoffDelay =
+                            api.mb.config.rateLimit.baseDelay * Math.pow(2, attempt);
                         console.log(`Service unavailable. Backing off for ${backoffDelay}ms...`);
                         await sleep(backoffDelay);
                         continue;
@@ -253,10 +253,14 @@ const api = {
 
                     // If we've exhausted all retries or hit a different error, throw
                     if (isLastAttempt) {
-                        throw new Error(`MusicBrainz API error (${error.response?.status || error.code}): ${error.message}`);
+                        throw new Error(
+                            `MusicBrainz API error (${error.response?.status || error.code}): ${error.message}`,
+                        );
                     }
 
-                    console.log(`MusicBrainz API error (${error.response?.status || error.code}): ${error.message}`);
+                    console.log(
+                        `MusicBrainz API error (${error.response?.status || error.code}): ${error.message}`,
+                    );
                     continue;
                 }
             }

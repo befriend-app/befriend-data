@@ -1,8 +1,4 @@
-const {
-    loadScriptEnv,
-    timeNow,
-    generateToken,
-} = require('../../../services/shared');
+const { loadScriptEnv, timeNow, generateToken } = require('../../../services/shared');
 const { batchInsert, batchUpdate } = require('../../../services/db');
 const dbService = require('../../../services/db');
 const { keys: systemKeys, getProcess, saveProcess } = require('../../../services/system');
@@ -65,7 +61,7 @@ function findSpotifyGenre(genre_name) {
 }
 
 async function getGenres() {
-    console.log("Get genres");
+    console.log('Get genres');
 
     try {
         const response = await api.spotify.makeRequest('/recommendations/available-genre-seeds');
@@ -81,7 +77,7 @@ async function getGenres() {
                 continue;
             }
 
-            if(genre.name in genresDict.byName) {
+            if (genre.name in genresDict.byName) {
                 continue;
             }
 
@@ -93,7 +89,7 @@ async function getGenres() {
                 is_featured: true,
                 position: genre.position,
                 created: timeNow(),
-                updated: timeNow()
+                updated: timeNow(),
             };
 
             batch_insert.push(data);
@@ -101,7 +97,7 @@ async function getGenres() {
             genresDict.byName[genre.name] = data;
         }
 
-        if(batch_insert.length) {
+        if (batch_insert.length) {
             await batchInsert('music_genres', batch_insert);
 
             console.log(`Added ${batch_insert.length} new genres`);

@@ -44,9 +44,7 @@ function main() {
         ];
 
         for (let drink of drinkings) {
-            let check = await conn('drinking')
-                .where('token', drink.token)
-                .first();
+            let check = await conn('drinking').where('token', drink.token).first();
 
             if (!check) {
                 await conn('drinking').insert(drink);

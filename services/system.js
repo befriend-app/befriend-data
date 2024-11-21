@@ -6,7 +6,7 @@ const { setCache, getObj } = require('./cache');
 module.exports = {
     keys: {
         movies: {
-            date: 'movies_last_release_date'
+            date: 'movies_last_release_date',
         },
         music: {
             genres: 'music_genres_last_country',
@@ -31,35 +31,35 @@ module.exports = {
     },
     saveProcess(system_key, value, to_json) {
         return new Promise(async (resolve, reject) => {
-        try {
-            let conn = await dbService.conn();
+            try {
+                let conn = await dbService.conn();
 
-            if (to_json) {
-                value = JSON.stringify(value);
+                if (to_json) {
+                    value = JSON.stringify(value);
+                }
+
+                let qry_check = await conn('system').where('system_key', system_key).first();
+
+                if (qry_check) {
+                    await conn('system').where('id', qry_check.id).update({
+                        system_value: value,
+                        updated: Date.now(),
+                    });
+                } else {
+                    await conn('system').insert({
+                        system_key: system_key,
+                        system_value: value,
+                        created: Date.now(),
+                        updated: Date.now(),
+                    });
+                }
+
+                resolve();
+            } catch (e) {
+                console.error(e);
+                reject(e);
             }
-
-            let qry_check = await conn('system').where('system_key', system_key).first();
-
-            if (qry_check) {
-                await conn('system').where('id', qry_check.id).update({
-                    system_value: value,
-                    updated: Date.now(),
-                });
-            } else {
-                await conn('system').insert({
-                    system_key: system_key,
-                    system_value: value,
-                    created: Date.now(),
-                    updated: Date.now(),
-                });
-            }
-
-            resolve();
-        } catch (e) {
-            console.error(e);
-            reject(e);
-        }
-    });
+        });
     },
     setLastUpdated: function (key, lastUpdated) {
         return new Promise(async (resolve, reject) => {

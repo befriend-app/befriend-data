@@ -18,7 +18,7 @@ async function loadSystemProcess() {
 }
 
 async function addMovies() {
-    console.log("Add movies");
+    console.log('Add movies');
 
     await loadSystemProcess();
 
@@ -72,7 +72,7 @@ async function addMovies() {
                             headers: {
                                 accept: 'application/json',
                                 Authorization: `Bearer ${process.env.TMDB_API_KEY}`,
-                            }
+                            },
                         });
 
                         const { results, total_pages } = response.data;
@@ -97,7 +97,7 @@ async function addMovies() {
                                     release_date: movie.release_date,
                                     popularity: movie.popularity,
                                     created: timeNow(),
-                                    updated: timeNow()
+                                    updated: timeNow(),
                                 });
 
                                 added++;
@@ -110,7 +110,7 @@ async function addMovies() {
                                 batch_update.push({
                                     id: existing.id,
                                     popularity: movie.popularity,
-                                    updated: timeNow()
+                                    updated: timeNow(),
                                 });
 
                                 updated++;
@@ -124,21 +124,20 @@ async function addMovies() {
 
                         console.log(
                             `Processed page ${current_page}/${total_pages} for date range ${month.start} to ${month.end}`,
-                            { added, updated }
+                            { added, updated },
                         );
 
                         current_page++;
                         hasMorePages = current_page <= Math.min(total_pages, MAX_PAGES);
 
                         // Add delay to avoid rate limiting
-                        await new Promise(resolve => setTimeout(resolve, 1000));
-
+                        await new Promise((resolve) => setTimeout(resolve, 1000));
                     } catch (e) {
                         console.error(
                             `Error fetching page ${current_page} for dates ${month.start}-${month.end}:`,
-                            e.message
+                            e.message,
                         );
-                        await new Promise(resolve => setTimeout(resolve, 5000));
+                        await new Promise((resolve) => setTimeout(resolve, 5000));
                     }
                 }
             }
@@ -161,7 +160,6 @@ async function addMovies() {
         }
 
         console.log({ added, updated });
-
     } catch (e) {
         console.error(e);
         throw e;
@@ -169,7 +167,7 @@ async function addMovies() {
 }
 
 async function addGenres() {
-    console.log("Add genres");
+    console.log('Add genres');
 
     const main_table = 'movie_genres';
     let added = 0;
@@ -192,7 +190,7 @@ async function addGenres() {
             headers: {
                 accept: 'application/json',
                 Authorization: `Bearer ${process.env.TMDB_API_KEY}`,
-            }
+            },
         });
 
         for (const genre of response.data.genres) {
@@ -204,7 +202,7 @@ async function addGenres() {
                     token: generateToken(10),
                     name: genre.name,
                     created: timeNow(),
-                    updated: timeNow()
+                    updated: timeNow(),
                 });
                 added++;
             }
@@ -215,7 +213,6 @@ async function addGenres() {
         }
 
         console.log({ added, updated });
-
     } catch (e) {
         console.error('Error syncing genres:', e);
         throw e;
@@ -223,7 +220,7 @@ async function addGenres() {
 }
 
 async function addMovieGenres() {
-    console.log("Add movie genres");
+    console.log('Add movie genres');
 
     const main_table = 'movies_genres';
     let added = 0;
@@ -249,31 +246,33 @@ async function addMovieGenres() {
         }, {});
 
         // Get all movies
-        const movies_to_process = await conn('movies')
-            .where('genre_processed', 0);
+        const movies_to_process = await conn('movies').where('genre_processed', 0);
 
         console.log({
-            movies_genre_process: movies_to_process.length
+            movies_genre_process: movies_to_process.length,
         });
 
         // Process movies in parallel batches
         for (let i = 0; i < movies_to_process.length; i += PARALLEL_PROCESS) {
             const batch = movies_to_process.slice(i, i + PARALLEL_PROCESS);
 
-            const promises = batch.map(async movie => {
+            const promises = batch.map(async (movie) => {
                 try {
-                    const response = await axios.get(`https://api.themoviedb.org/3/movie/${movie.tmdb_id}`, {
-                        headers: {
-                            accept: 'application/json',
-                            Authorization: `Bearer ${process.env.TMDB_API_KEY}`,
-                        }
-                    });
+                    const response = await axios.get(
+                        `https://api.themoviedb.org/3/movie/${movie.tmdb_id}`,
+                        {
+                            headers: {
+                                accept: 'application/json',
+                                Authorization: `Bearer ${process.env.TMDB_API_KEY}`,
+                            },
+                        },
+                    );
 
                     batch_update_movies.push({
                         id: movie.id,
                         genre_processed: true,
-                        updated: timeNow()
-                    })
+                        updated: timeNow(),
+                    });
 
                     const inserts = [];
                     for (const genre of response.data.genres) {
@@ -285,12 +284,12 @@ async function addMovieGenres() {
                                 movie_id: movie.id,
                                 genre_id: genre_record.id,
                                 created: timeNow(),
-                                updated: timeNow()
+                                updated: timeNow(),
                             };
 
                             inserts.push(data);
 
-                            if(!assoc_dict[movie.id]) {
+                            if (!assoc_dict[movie.id]) {
                                 assoc_dict[movie.id] = {};
                             }
 
@@ -299,7 +298,6 @@ async function addMovieGenres() {
                     }
 
                     return inserts;
-
                 } catch (e) {
                     console.error(`Error processing movie ${movie.tmdb_id}:`, e.message);
                     return [];
@@ -311,7 +309,7 @@ async function addMovieGenres() {
             // Flatten and add to batch_insert
             const new_inserts = results.flat();
 
-            for(let item of new_inserts) {
+            for (let item of new_inserts) {
                 batch_insert.push(item);
             }
 
@@ -321,16 +319,18 @@ async function addMovieGenres() {
                 await dbService.batchInsert(main_table, batch_insert);
                 batch_insert = [];
 
-                if(batch_update_movies.length >= BATCH_SIZE) {
+                if (batch_update_movies.length >= BATCH_SIZE) {
                     await dbService.batchUpdate('movies', batch_update_movies);
                     batch_update_movies = [];
                 }
             }
 
-            console.log(`Processed ${i + batch.length}/${movies_to_process.length} movies, added ${added} genre associations`);
+            console.log(
+                `Processed ${i + batch.length}/${movies_to_process.length} movies, added ${added} genre associations`,
+            );
 
             // Rate limiting delay between batches
-            await new Promise(resolve => setTimeout(resolve, API_DELAY * PARALLEL_PROCESS));
+            await new Promise((resolve) => setTimeout(resolve, API_DELAY * PARALLEL_PROCESS));
         }
 
         // Process remaining batch
@@ -338,12 +338,11 @@ async function addMovieGenres() {
             await dbService.batchInsert(main_table, batch_insert);
         }
 
-        if(batch_update_movies.length) {
+        if (batch_update_movies.length) {
             await dbService.batchUpdate('movies', batch_update_movies);
         }
 
         console.log({ added });
-
     } catch (e) {
         console.error('Error syncing movie genres:', e);
         throw e;
@@ -378,7 +377,7 @@ function isLeapYear(year) {
 
 async function main() {
     try {
-        console.log("Process movies");
+        console.log('Process movies');
         await cacheService.init();
 
         // await addGenres();
@@ -391,7 +390,7 @@ async function main() {
 }
 
 module.exports = {
-    main
+    main,
 };
 
 if (require.main === module) {

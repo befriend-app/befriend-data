@@ -133,6 +133,31 @@ router.get('/instruments', function (req, res, next) {
     });
 });
 
+router.get('/languages', function (req, res, next) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            await api.getLanguages(req, res);
+        } catch (e) {
+            console.error(e);
+        }
+
+        resolve();
+    });
+});
+
+router.get('/languages/countries', function (req, res, next) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            await api.getLanguagesCountries(req, res);
+        } catch (e) {
+            console.error(e);
+        }
+
+        resolve();
+    });
+});
+
+
 router.get('/movie-genres', function (req, res, next) {
     return new Promise(async (resolve, reject) => {
         try {

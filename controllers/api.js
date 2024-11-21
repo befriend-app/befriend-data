@@ -582,7 +582,7 @@ module.exports = {
                     'is_visible',
                     'sort_position',
                     'updated',
-                    'deleted'
+                    'deleted',
                 );
 
                 try {
@@ -605,7 +605,7 @@ module.exports = {
             resolve();
         });
     },
-    getPolitics: function(req, res) {
+    getPolitics: function (req, res) {
         return new Promise(async (resolve, reject) => {
             try {
                 let cache_key = cacheService.keys.politics;
@@ -632,7 +632,7 @@ module.exports = {
                     'is_visible',
                     'sort_position',
                     'updated',
-                    'deleted'
+                    'deleted',
                 );
 
                 try {
@@ -682,7 +682,7 @@ module.exports = {
                     'is_visible',
                     'sort_position',
                     'updated',
-                    'deleted'
+                    'deleted',
                 );
 
                 try {
@@ -730,7 +730,7 @@ module.exports = {
                     'is_visible',
                     'sort_position',
                     'updated',
-                    'deleted'
+                    'deleted',
                 );
 
                 try {
@@ -801,6 +801,100 @@ module.exports = {
             resolve();
         });
     },
+    getLanguages: function (req, res) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let cache_key = cacheService.keys.languages;
+                let cache_data = await getObj(cache_key);
+
+                if (cache_data) {
+                    res.json({ items: cache_data }, 200);
+                    return resolve();
+                }
+
+                let conn = await dbService.conn();
+
+                let items = await conn('languages').select(
+                    'id',
+                    'token',
+                    'name',
+                    'sort_position',
+                    'is_visible',
+                    'updated',
+                    'deleted',
+                );
+
+                await setCache(cache_key, items);
+
+                res.json({ items: items }, 200);
+            } catch (e) {
+                console.error(e);
+                res.json('Error retrieving data', 400);
+            }
+            resolve();
+        });
+    },
+    getLanguagesCountries: function (req, res) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let cache_key = cacheService.keys.languages_countries;
+                let cache_data = await getObj(cache_key);
+
+                if (cache_data) {
+                    res.json({ items: cache_data }, 200);
+                    return resolve();
+                }
+
+                let conn = await dbService.conn();
+
+                let languages = await conn('languages');
+
+                let countries = await conn('open_countries');
+
+                let languages_countries = await conn('top_languages_countries');
+
+                let countries_dict = countries.reduce((acc, item) => {
+                    acc[item.id] = item;
+                    return acc;
+                }, {});
+
+                let languages_dict = languages.reduce((acc, item) => {
+                    acc[item.id] = item;
+                    return acc;
+                }, {});
+
+                let items = languages_countries.reduce((acc, item) => {
+                    let country = countries_dict[item.country_id];
+                    let language = languages_dict[item.language_id];
+
+                    if(!country || !language) {
+                        return acc;
+                    }
+
+                    if(!(country.country_code in acc)) {
+                        acc[country.country_code] = {};
+                    }
+
+                    acc[country.country_code][language.token] = {
+                        country_code: country.country_code,
+                        token: language.token,
+                        sort_position: item.sort_position,
+                        updated: item.updated
+                    }
+
+                    return acc;
+                }, {});
+
+                await setCache(cache_key, items);
+
+                res.json({ items: items }, 200);
+            } catch (e) {
+                console.error(e);
+                res.json('Error retrieving data', 400);
+            }
+            resolve();
+        });
+    },
     getMovieGenres: function (req, res) {
         return new Promise(async (resolve, reject) => {
             try {
@@ -812,8 +906,12 @@ module.exports = {
                 }
 
                 let conn = await dbService.conn();
-                let items = await conn('movie_genres')
-                    .select('token', 'name', 'tmdb_id', 'updated');
+                let items = await conn('movie_genres').select(
+                    'token',
+                    'name',
+                    'tmdb_id',
+                    'updated',
+                );
 
                 await setCache(cacheService.keys.movie_genres, items);
 
@@ -825,7 +923,7 @@ module.exports = {
             resolve();
         });
     },
-    getMovies: function(req, res) {
+    getMovies: function (req, res) {
         return new Promise(async (resolve, reject) => {
             try {
                 const limit = module.exports.batchLimit;
@@ -837,12 +935,15 @@ module.exports = {
 
                     //todo remove
                     if (false && cache_data) {
-                        res.json({
-                            timestamp: timeNow(),
-                            next_offset: cache_data.length ? offset + limit : null,
-                            has_more: !!cache_data.length,
-                            items: cache_data
-                        }, 200);
+                        res.json(
+                            {
+                                timestamp: timeNow(),
+                                next_offset: cache_data.length ? offset + limit : null,
+                                has_more: !!cache_data.length,
+                                items: cache_data,
+                            },
+                            200,
+                        );
                         return resolve();
                     }
                 }
@@ -859,7 +960,7 @@ module.exports = {
                         'release_date',
                         'popularity',
                         'updated',
-                        'deleted'
+                        'deleted',
                     )
                     .limit(limit + 1)
                     .offset(offset);
@@ -883,12 +984,15 @@ module.exports = {
                     await cacheService.setCache(cache_key, items);
                 }
 
-                res.json({
-                    timestamp: timeNow(),
-                    next_offset: hasMore ? offset + limit : null,
-                    has_more: hasMore,
-                    items: items
-                }, 200);
+                res.json(
+                    {
+                        timestamp: timeNow(),
+                        next_offset: hasMore ? offset + limit : null,
+                        has_more: hasMore,
+                        items: items,
+                    },
+                    200,
+                );
             } catch (e) {
                 console.error(e);
                 res.json('Error retrieving data', 400);
@@ -896,7 +1000,7 @@ module.exports = {
             resolve();
         });
     },
-    getMoviesGenres: function(req, res) {
+    getMoviesGenres: function (req, res) {
         return new Promise(async (resolve, reject) => {
             try {
                 const limit = module.exports.batchLimit;
@@ -908,12 +1012,15 @@ module.exports = {
 
                     //todo remove
                     if (false && cache_data) {
-                        res.json({
-                            timestamp: timeNow(),
-                            next_offset: cache_data.length ? offset + limit : null,
-                            has_more: !!cache_data.length,
-                            items: cache_data
-                        }, 200);
+                        res.json(
+                            {
+                                timestamp: timeNow(),
+                                next_offset: cache_data.length ? offset + limit : null,
+                                has_more: !!cache_data.length,
+                                items: cache_data,
+                            },
+                            200,
+                        );
                         return resolve();
                     }
                 }
@@ -922,7 +1029,7 @@ module.exports = {
 
                 const [movies, genres] = await Promise.all([
                     conn('movies').select('id', 'token'),
-                    conn('movie_genres').select('id', 'token')
+                    conn('movie_genres').select('id', 'token'),
                 ]);
 
                 const moviesDict = movies.reduce((acc, m) => {
@@ -962,12 +1069,15 @@ module.exports = {
                     await cacheService.setCache(cache_key, items);
                 }
 
-                res.json({
-                    timestamp: timeNow(),
-                    next_offset: hasMore ? offset + limit : null,
-                    has_more: hasMore,
-                    items: items
-                }, 200);
+                res.json(
+                    {
+                        timestamp: timeNow(),
+                        next_offset: hasMore ? offset + limit : null,
+                        has_more: hasMore,
+                        items: items,
+                    },
+                    200,
+                );
             } catch (e) {
                 console.error(e);
                 res.json('Error retrieving data', 400);
@@ -1029,7 +1139,7 @@ module.exports = {
                         is_featured: genre.is_featured,
                         position: genre.position,
                         updated: genre.updated,
-                        deleted: genre.deleted
+                        deleted: genre.deleted,
                     };
                 }
 

@@ -10,6 +10,8 @@ module.exports = {
         states: `data:states`,
         sections: `data:sections`,
         drinking: `data:drinking`,
+        languages: `data:languages`,
+        languages_countries: `data:languages:countries`,
         politics: `data:politics`,
         religions: `data:religions`,
         smoking: `data:smoking`,
@@ -58,7 +60,6 @@ module.exports = {
         music_artists_genres_offset: function (offset) {
             return `data:music:artists:genres:${offset}`;
         },
-
     },
     init: function () {
         return new Promise(async (resolve, reject) => {

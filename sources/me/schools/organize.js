@@ -1,4 +1,4 @@
-const dbService = require('../../services/db');
+const dbService = require('../../../services/db');
 const {
     loadScriptEnv,
     timeNow,
@@ -6,7 +6,7 @@ const {
     getDistanceMiles,
     isNumeric,
     protectedNames,
-} = require('../../services/shared');
+} = require('../../../services/shared');
 loadScriptEnv();
 
 const Fuse = require('fuse.js');

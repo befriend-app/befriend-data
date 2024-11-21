@@ -5,12 +5,11 @@ const { batchInsert, batchUpdate } = require('../../../services/db');
 loadScriptEnv();
 
 async function main() {
-    console.log("Add spotify genres from artists");
+    console.log('Add spotify genres from artists');
 
     const conn = await dbService.conn();
 
-    let artists = await conn('music_artists')
-        .whereNotNull('spotify_genres');
+    let artists = await conn('music_artists').whereNotNull('spotify_genres');
 
     let genres = await conn('music_spotify_genres');
 
@@ -21,14 +20,14 @@ async function main() {
 
     let spotify_genres = new Set();
 
-    for(let artist of artists) {
+    for (let artist of artists) {
         try {
             let genres = JSON.parse(artist.spotify_genres);
 
-            for(let g of genres) {
+            for (let g of genres) {
                 spotify_genres.add(g);
             }
-        } catch(e) {
+        } catch (e) {
             console.error(e);
         }
     }
@@ -37,27 +36,27 @@ async function main() {
 
     let batch_insert = [];
 
-    for(let genre of spotify_genres) {
-        if(!(genre in genresLookup)) {
+    for (let genre of spotify_genres) {
+        if (!(genre in genresLookup)) {
             batch_insert.push({
                 name: genre,
                 created: timeNow(),
-                updated: timeNow()
+                updated: timeNow(),
             });
         }
     }
 
-    if(batch_insert.length) {
-        await batchInsert('music_spotify_genres', batch_insert)
+    if (batch_insert.length) {
+        await batchInsert('music_spotify_genres', batch_insert);
     }
 
     console.log({
-        added: batch_insert.length
+        added: batch_insert.length,
     });
 }
 
 module.exports = {
-    main
+    main,
 };
 
 if (require.main === module) {
