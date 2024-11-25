@@ -15,6 +15,7 @@ module.exports = {
         languages_countries: `data:languages:countries`,
         life_stages: `data:life_stages`,
         politics: `data:politics`,
+        relationship_status: `data:relationship_status`,
         religions: `data:religions`,
         smoking: `data:smoking`,
         instruments: `data:instruments`,

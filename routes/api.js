@@ -253,6 +253,18 @@ router.get('/politics', function (req, res, next) {
     });
 });
 
+router.get('/relationship-status', function (req, res, next) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            await api.getRelationships(req, res);
+        } catch (e) {
+            console.error(e);
+        }
+
+        resolve();
+    });
+});
+
 router.get('/religions', function (req, res, next) {
     return new Promise(async (resolve, reject) => {
         try {

@@ -749,6 +749,53 @@ module.exports = {
             resolve();
         });
     },
+    getRelationships: function (req, res) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                //use cache
+                let cache_data = await getObj(cacheService.keys.relationship_status);
+
+                if (cache_data) {
+                    res.json(
+                        {
+                            items: cache_data,
+                        },
+                        200,
+                    );
+
+                    return resolve();
+                }
+
+                let conn = await dbService.conn();
+
+                let items = await conn('relationship_status').select(
+                    'token',
+                    'name',
+                    'is_visible',
+                    'sort_position',
+                    'updated',
+                );
+
+                try {
+                    await setCache(cacheService.keys.relationship_status, items);
+                } catch (e) {
+                    console.error(e);
+                }
+
+                res.json(
+                    {
+                        items: items,
+                    },
+                    200,
+                );
+            } catch (e) {
+                console.error(e);
+                res.json('Error retrieving data', 400);
+            }
+
+            resolve();
+        });
+    },
     getReligions: function (req, res) {
         return new Promise(async (resolve, reject) => {
             try {

@@ -6,6 +6,7 @@ function main() {
             await require('./sections').main();
 
             await require('./life_stages').main();
+            await require('./relationships').main();
 
             await require('./drinking').main();
             await require('./politics').main();
