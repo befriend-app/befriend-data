@@ -11,6 +11,7 @@ module.exports = {
         sections: `data:sections`,
         drinking: `data:drinking`,
         genders: `data:genders`,
+        kids_ages: `data:kids_ages`,
         languages: `data:languages`,
         languages_countries: `data:languages:countries`,
         life_stages: `data:life_stages`,

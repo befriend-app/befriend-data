@@ -5,6 +5,8 @@ function main() {
 
             await require('./sections').main();
 
+            await require('./kids_ages').main();
+
             await require('./life_stages').main();
             await require('./relationships').main();
 

@@ -133,6 +133,18 @@ router.get('/instruments', function (req, res, next) {
     });
 });
 
+router.get('/kids-ages', function (req, res, next) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            await api.getKidsAges(req, res);
+        } catch (e) {
+            console.error(e);
+        }
+
+        resolve();
+    });
+});
+
 router.get('/languages', function (req, res, next) {
     return new Promise(async (resolve, reject) => {
         try {

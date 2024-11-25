@@ -652,6 +652,56 @@ module.exports = {
             resolve();
         });
     },
+    getKidsAges: function (req, res) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                //use cache
+                let cache_data = await getObj(cacheService.keys.kids_ages);
+
+                if (cache_data) {
+                    res.json(
+                        {
+                            items: cache_data,
+                        },
+                        200,
+                    );
+
+                    return resolve();
+                }
+
+                let conn = await dbService.conn();
+
+                let items = await conn('kids_ages').select(
+                    'token',
+                    'name',
+                    'age_min',
+                    'age_max',
+                    'is_visible',
+                    'sort_position',
+                    'updated',
+                );
+
+                try {
+                    await setCache(cacheService.keys.kids_ages, items);
+                } catch (e) {
+                    console.error(e);
+                }
+
+                res.json(
+                    {
+                        items: items,
+                    },
+                    200,
+                );
+            } catch (e) {
+                console.error(e);
+                res.json('Error retrieving data', 400);
+            }
+
+            resolve();
+        });
+    },
+
     getLifeStages: function (req, res) {
         return new Promise(async (resolve, reject) => {
             try {
