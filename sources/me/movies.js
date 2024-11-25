@@ -249,7 +249,7 @@ async function addMovieGenres() {
         const movies_to_process = await conn('movies').where('genre_processed', 0);
 
         console.log({
-            movies_genre_process: movies_to_process.length,
+            movies_to_process: movies_to_process.length,
         });
 
         // Process movies in parallel batches
@@ -299,6 +299,14 @@ async function addMovieGenres() {
 
                     return inserts;
                 } catch (e) {
+                    if(e?.status === 404) {
+                        await conn('movies')
+                            .where('tmdb_id', movie.tmdb_id)
+                            .update({
+                                genre_processed: true,
+                                updated: timeNow(),
+                            })
+                    }
                     console.error(`Error processing movie ${movie.tmdb_id}:`, e.message);
                     return [];
                 }

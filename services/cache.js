@@ -10,6 +10,7 @@ module.exports = {
         states: `data:states`,
         sections: `data:sections`,
         drinking: `data:drinking`,
+        genders: `data:genders`,
         languages: `data:languages`,
         languages_countries: `data:languages:countries`,
         politics: `data:politics`,

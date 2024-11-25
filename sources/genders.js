@@ -10,16 +10,16 @@ function main() {
 
         let genders = [
             {
-                gender_token: 'male',
-                gender_name: 'Male',
+                gender_token: 'female',
+                gender_name: 'Female',
                 sort_position: 1,
                 is_visible: true,
                 created: timeNow(),
                 updated: timeNow(),
             },
             {
-                gender_token: 'female',
-                gender_name: 'Female',
+                gender_token: 'male',
+                gender_name: 'Male',
                 sort_position: 2,
                 is_visible: true,
                 created: timeNow(),
@@ -33,14 +33,6 @@ function main() {
                 created: timeNow(),
                 updated: timeNow(),
             },
-            {
-                gender_token: 'other',
-                gender_name: 'Other',
-                is_visible: true,
-                sort_position: 4,
-                created: timeNow(),
-                updated: timeNow(),
-            },
         ];
 
         for (let gender of genders) {
@@ -50,6 +42,12 @@ function main() {
 
             if (!gender_check) {
                 await conn('genders').insert(gender);
+            } else {
+                delete gender.created;
+
+                await conn('genders')
+                    .where('id', gender_check.id)
+                    .update(gender)
             }
         }
 
