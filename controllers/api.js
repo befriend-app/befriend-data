@@ -605,6 +605,53 @@ module.exports = {
             resolve();
         });
     },
+    getGenders: function (req, res) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                //use cache
+                let cache_data = await getObj(cacheService.keys.genders);
+
+                if (cache_data) {
+                    res.json(
+                        {
+                            items: cache_data,
+                        },
+                        200,
+                    );
+
+                    return resolve();
+                }
+
+                let conn = await dbService.conn();
+
+                let items = await conn('genders').select(
+                    'gender_token',
+                    'gender_name',
+                    'is_visible',
+                    'sort_position',
+                    'updated',
+                );
+
+                try {
+                    await setCache(cacheService.keys.genders, items);
+                } catch (e) {
+                    console.error(e);
+                }
+
+                res.json(
+                    {
+                        items: items,
+                    },
+                    200,
+                );
+            } catch (e) {
+                console.error(e);
+                res.json('Error retrieving data', 400);
+            }
+
+            resolve();
+        });
+    },
     getPolitics: function (req, res) {
         return new Promise(async (resolve, reject) => {
             try {
@@ -1356,6 +1403,7 @@ module.exports = {
                 let conn = await dbService.conn();
 
                 let items = await conn('me_sections').select(
+                    'token',
                     'section_key',
                     'section_name',
                     'icon',
