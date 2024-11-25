@@ -157,6 +157,17 @@ router.get('/languages/countries', function (req, res, next) {
     });
 });
 
+router.get('/life-stages', function (req, res, next) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            await api.getLifeStages(req, res);
+        } catch (e) {
+            console.error(e);
+        }
+
+        resolve();
+    });
+});
 
 router.get('/movie-genres', function (req, res, next) {
     return new Promise(async (resolve, reject) => {

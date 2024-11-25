@@ -13,6 +13,7 @@ module.exports = {
         genders: `data:genders`,
         languages: `data:languages`,
         languages_countries: `data:languages:countries`,
+        life_stages: `data:life_stages`,
         politics: `data:politics`,
         religions: `data:religions`,
         smoking: `data:smoking`,

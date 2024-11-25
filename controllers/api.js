@@ -652,6 +652,53 @@ module.exports = {
             resolve();
         });
     },
+    getLifeStages: function (req, res) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                //use cache
+                let cache_data = await getObj(cacheService.keys.life_stages);
+
+                if (cache_data) {
+                    res.json(
+                        {
+                            items: cache_data,
+                        },
+                        200,
+                    );
+
+                    return resolve();
+                }
+
+                let conn = await dbService.conn();
+
+                let items = await conn('life_stages').select(
+                    'token',
+                    'name',
+                    'is_visible',
+                    'sort_position',
+                    'updated',
+                );
+
+                try {
+                    await setCache(cacheService.keys.life_stages, items);
+                } catch (e) {
+                    console.error(e);
+                }
+
+                res.json(
+                    {
+                        items: items,
+                    },
+                    200,
+                );
+            } catch (e) {
+                console.error(e);
+                res.json('Error retrieving data', 400);
+            }
+
+            resolve();
+        });
+    },
     getPolitics: function (req, res) {
         return new Promise(async (resolve, reject) => {
             try {
