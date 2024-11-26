@@ -1,6 +1,6 @@
-const dbService = require('../../../services/db');
-const { timeNow, loadScriptEnv, sleep } = require('../../../services/shared');
-const { batchInsert, batchUpdate } = require('../../../services/db');
+const dbService = require('../../../../services/db');
+const { timeNow, loadScriptEnv, sleep } = require('../../../../services/shared');
+const { batchInsert, batchUpdate } = require('../../../../services/db');
 const { genreMap } = require('../genres_map');
 loadScriptEnv();
 

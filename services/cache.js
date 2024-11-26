@@ -23,6 +23,7 @@ module.exports = {
         music_genres: `data:music:genres`,
         movie_genres: `data:movie:genres`,
         movies: `data:movies`,
+        sports: `data:sports`,
         updated: {
             activities: {
                 types: `data:updated:activities:types`,

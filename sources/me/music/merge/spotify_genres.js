@@ -1,6 +1,6 @@
-const dbService = require('../../../services/db');
-const { timeNow, loadScriptEnv } = require('../../../services/shared');
-const { batchInsert, batchUpdate } = require('../../../services/db');
+const dbService = require('../../../../services/db');
+const { timeNow, loadScriptEnv } = require('../../../../services/shared');
+const { batchInsert, batchUpdate } = require('../../../../services/db');
 
 loadScriptEnv();
 
