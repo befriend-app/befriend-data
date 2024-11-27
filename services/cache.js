@@ -24,6 +24,9 @@ module.exports = {
         movie_genres: `data:movie:genres`,
         movies: `data:movies`,
         sports: `data:sports`,
+        sports_countries: `data:sports_countries`,
+        sports_leagues: `data:sports_leagues`,
+        sports_teams: `data:sports_teams`,
         updated: {
             activities: {
                 types: `data:updated:activities:types`,

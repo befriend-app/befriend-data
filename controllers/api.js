@@ -1697,4 +1697,271 @@ module.exports = {
             resolve();
         });
     },
+    // Add these methods to the module.exports object in controllers/api.js
+
+    getSports: function(req, res) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let cache_key = cacheService.keys.sports;
+                let cache_data = await getObj(cache_key);
+
+                if (cache_data) {
+                    res.json({ items: cache_data }, 200);
+                    return resolve();
+                }
+
+                let conn = await dbService.conn();
+                let items = await conn('sports')
+                    .select(
+                        'token',
+                        'name',
+                        'is_active',
+                        'is_play',
+                        'updated',
+                        'deleted'
+                    );
+
+                await setCache(cache_key, items);
+
+                res.json({ items: items }, 200);
+            } catch (e) {
+                console.error(e);
+                res.json('Error retrieving data', 400);
+            }
+            resolve();
+        });
+    },
+
+    getSportsCountries: function(req, res) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let cache_key = cacheService.keys.sports_countries;
+                let cache_data = await getObj(cache_key);
+
+                if (cache_data) {
+                    res.json({ items: cache_data }, 200);
+                    return resolve();
+                }
+
+                let conn = await dbService.conn();
+
+                let items = await conn('sports_countries AS sc')
+                    .join('sports AS s', 's.id', 'sc.sport_id')
+                    .join('open_countries AS oc', 'oc.id', 'sc.country_id')
+                    .whereNull('sc.deleted')
+                    .select(
+                        'oc.country_code',
+                        's.token',
+                        'sc.position',
+                        'sc.updated'
+                    )
+                    .orderBy(['oc.country_code', 'sc.position']);
+
+                // Organize by country code
+                let organized = {};
+                for(let item of items) {
+                    const countryCode = item.country_code;
+                    if(!organized[countryCode]) {
+                        organized[countryCode] = {};
+                    }
+                    organized[countryCode][item.token] = {
+                        position: item.position,
+                        updated: item.updated
+                    };
+                }
+
+                await setCache(cache_key, organized);
+
+                res.json({ items: organized }, 200);
+            } catch (e) {
+                console.error(e);
+                res.json('Error retrieving data', 400);
+            }
+            resolve();
+        });
+    },
+
+    getSportsLeagues: function(req, res) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let cache_key = cacheService.keys.sports_leagues;
+                let cache_data = await getObj(cache_key);
+
+                //todo remove
+                if (false && cache_data) {
+                    res.json({ items: cache_data }, 200);
+                    return resolve();
+                }
+
+                let conn = await dbService.conn();
+
+                // Get leagues with their sport tokens
+                let leagues = await conn('sports_leagues AS sl')
+                    .join('sports AS s', 's.id', 'sl.sport_id')
+                    .whereNull('sl.deleted')
+                    .select(
+                        'sl.token',
+                        'sl.name',
+                        'sl.short_name',
+                        's.token AS sport_token',
+                        'sl.external_id',
+                        'sl.is_active',
+                        'sl.position',
+                        'sl.updated',
+                        'sl.deleted'
+                    );
+
+                // Get league-country associations
+                let countries = await conn('sports_leagues_countries AS slc')
+                    .join('open_countries AS oc', 'oc.id', 'slc.country_id')
+                    .join('sports_leagues AS sl', 'sl.id', 'slc.league_id')
+                    .whereNull('slc.deleted')
+                    .select(
+                        'sl.token AS league_token',
+                        'oc.country_code',
+                        'slc.position',
+                        'slc.updated'
+                    );
+
+                // Organize the response
+                let organized = {
+                    leagues: {},
+                    countries: {}
+                };
+
+                // Add leagues
+                for(let league of leagues) {
+                    organized.leagues[league.token] = {
+                        token: league.token,
+                        name: league.name,
+                        short_name: league.short_name,
+                        sport_token: league.sport_token,
+                        external_id: league.external_id,
+                        is_active: league.is_active,
+                        position: league.position,
+                        updated: league.updated,
+                        deleted: league.deleted
+                    };
+                }
+
+                // Add country associations
+                for(let country of countries) {
+                    if(!organized.countries[country.country_code]) {
+                        organized.countries[country.country_code] = {};
+                    }
+                    organized.countries[country.country_code][country.league_token] = {
+                        position: country.position,
+                        updated: country.updated
+                    };
+                }
+
+                await setCache(cache_key, organized);
+
+                res.json({ items: organized }, 200);
+            } catch (e) {
+                console.error(e);
+                res.json('Error retrieving data', 400);
+            }
+            resolve();
+        });
+    },
+    getSportsTeams: function(req, res) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let cache_key = cacheService.keys.sports_teams;
+                let cache_data = await getObj(cache_key);
+
+                //todo remove
+                if (false && !req.query.updated && cache_data) {
+                    res.json({ items: cache_data }, 200);
+                    return resolve();
+                }
+
+                let conn = await dbService.conn();
+
+                let countries = await conn('open_countries');
+                let countries_dict = countries.reduce((acc, country) => {
+                    acc[country.id] = country;
+                    return acc;
+                }, {});
+
+                // Get teams
+                let query = conn('sports_teams AS st')
+                    .join('sports AS s', 's.id', 'st.sport_id')
+                    .select(
+                        'st.id',
+                        'st.token',
+                        'st.name',
+                        'st.short_name',
+                        'st.external_id',
+                        's.token AS sport_token',
+                        'st.country_id',
+                        'st.city',
+                        'st.popularity',
+                        'st.is_active',
+                        'st.updated',
+                        'st.deleted'
+                    );
+
+                if (req.query.updated) {
+                    query = query.where('st.updated', '>', req.query.updated);
+                }
+
+                let teams = await query;
+
+                // Create teams lookup dict
+                let teamsDict = teams.reduce((acc, team) => {
+                    team.country_code = countries_dict[team.country_id]?.country_code || null;
+
+                    acc[team.id] = team;
+                    return acc;
+                }, {});
+
+                // Get league associations
+                let leagues = await conn('sports_teams_leagues AS stl')
+                    .join('sports_leagues AS sl', 'sl.id', 'stl.league_id')
+                    .whereIn('stl.team_id', Object.keys(teamsDict))
+                    .whereNull('stl.deleted')
+                    .select(
+                        'stl.team_id',
+                        'sl.token AS league_token',
+                        'stl.season',
+                        'stl.is_active',
+                        'stl.updated'
+                    );
+
+                // Add league data to teams using lookup dict
+                for(let league of leagues) {
+                    let team = teamsDict[league.team_id];
+                    if(!team.leagues) {
+                        team.leagues = {};
+                    }
+                    team.leagues[league.league_token] = {
+                        season: league.season,
+                        is_active: league.is_active,
+                        updated: league.updated
+                    };
+                }
+
+                let items = Object.values(teamsDict).map(team => {
+                    let cleaned = {...team};
+                    delete cleaned.id;
+                    if(!cleaned.leagues) {
+                        cleaned.leagues = {};
+                    }
+                    return cleaned;
+                });
+
+                if (!req.query.updated) {
+                    await cacheService.setCache(cache_key, items);
+                }
+
+                res.json({ items: items }, 200);
+            } catch (e) {
+                console.error(e);
+                res.json('Error retrieving data', 400);
+            }
+            resolve();
+        });
+    },
 };

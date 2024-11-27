@@ -20,6 +20,7 @@ function main() {
                 token: item.token,
                 name: item.name,
                 is_active: true,
+                is_play: typeof item.is_play !== 'undefined' ? item.is_play : true,
                 updated: timeNow()
             }
 
@@ -246,7 +247,8 @@ module.exports = {
             name: 'Mixed Martial Arts',
             category: 'Combat Sports',
             is_active: true,
-            popularity: 880
+            popularity: 880,
+            is_play: false
         },
         {
             token: 'spo_wres',
@@ -295,42 +297,48 @@ module.exports = {
             name: 'Formula 1',
             category: 'Motorsports',
             is_active: true,
-            popularity: 920
+            popularity: 920,
+            is_play: false
         },
         {
             token: 'spo_moto',
             name: 'MotoGP',
             category: 'Motorsports',
             is_active: true,
-            popularity: 850
+            popularity: 850,
+            is_play: false
         },
         {
             token: 'spo_nasc',
             name: 'NASCAR',
             category: 'Motorsports',
             is_active: true,
-            popularity: 820
+            popularity: 820,
+            is_play: false
         },
         {
             token: 'spo_rall',
             name: 'Rally',
             category: 'Motorsports',
             is_active: true,
-            popularity: 780
+            popularity: 780,
+            is_play: false
         },
         {
             token: 'spo_indy',
             name: 'IndyCar',
             category: 'Motorsports',
             is_active: true,
-            popularity: 750
+            popularity: 750,
+            is_play: false
         },
         {
             token: 'spo_moto',
             name: 'Motocross',
             category: 'Motorsports',
             is_active: true,
-            popularity: 700
+            popularity: 700,
+            is_play: false
         },
         {
             token: 'spo_swim',

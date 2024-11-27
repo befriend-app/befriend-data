@@ -92,7 +92,7 @@ function main() {
                     Return all the current teams that compete in the ${league.league_name} in ${league.country_name}.
                     Only include actual existing teams, not historical or fictional ones.
                     Do not return any additional information before or after. Provide ONLY valid JSON.
-                    Append the country_code and league to each team token.
+                    Append the country_code and league to each team token. Max length for token is 40 characters.
                     Your response should be an array of items with the following format:
                     [{
                         name: "Full team name",

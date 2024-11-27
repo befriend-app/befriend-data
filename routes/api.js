@@ -325,4 +325,48 @@ router.get('/me/sections', function (req, res, next) {
     });
 });
 
+router.get('/sports', function (req, res, next) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            await api.getSports(req, res);
+        } catch (e) {
+            console.error(e);
+        }
+        resolve();
+    });
+});
+
+router.get('/sports/countries', function (req, res, next) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            await api.getSportsCountries(req, res);
+        } catch (e) {
+            console.error(e);
+        }
+        resolve();
+    });
+});
+
+router.get('/sports/leagues', function (req, res, next) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            await api.getSportsLeagues(req, res);
+        } catch (e) {
+            console.error(e);
+        }
+        resolve();
+    });
+});
+
+router.get('/sports/teams', function (req, res, next) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            await api.getSportsTeams(req, res);
+        } catch (e) {
+            console.error(e);
+        }
+        resolve();
+    });
+});
+
 module.exports = router;
