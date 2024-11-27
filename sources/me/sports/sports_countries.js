@@ -70,12 +70,20 @@ function main() {
                     //organize
                     let batch_insert = [];
 
+                    let country_sport_dict = {};
+
                     for(let i = 0; i < top_sports.length; i++) {
                         let s = top_sports[i];
 
                         if(!(s.token in sports_dict)) {
                             continue;
                         }
+
+                        if(s.token in country_sport_dict) {
+                            continue;
+                        }
+
+                        country_sport_dict[s.token] = 1;
 
                         batch_insert.push({
                             country_id: country.id,

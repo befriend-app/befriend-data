@@ -75,7 +75,7 @@ module.exports = {
         },
         {
             token: 'spo_amfo',
-            name: 'Football',
+            name: 'American Football',
             category: 'Team Sports',
             is_active: true,
             popularity: 890
