@@ -5,20 +5,19 @@ function main() {
 
             await require('./sections').main();
 
-            await require('./kids_ages').main();
-
-            await require('./life_stages').main();
-            await require('./relationships').main();
-
             await require('./drinking').main();
-            await require('./politics').main();
-            await require('./smoking').main();
-            await require('./religions').main();
-
             await require('./instruments').main();
+            await require('./kids_ages').main();
+            await require('./languages').main();
+            await require('./life_stages').main();
             await require('./movies').main();
             await require('./music').main();
+            await require('./politics').main();
+            await require('./relationships').main();
+            await require('./religions').main();
+            await require('./smoking').main();
             await require('./schools/add_schools').main();
+            await require('./sports').main();
         } catch (e) {
             console.error(e);
         }
