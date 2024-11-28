@@ -20,8 +20,10 @@ function main() {
 
             // Get leagues with their sports
             let leagues = await conn('sports_leagues as sl')
+                .join('sports AS s', 's.id', '=', 'sl.sport_id')
                 .join('sports_leagues_countries as slc', 'sl.id', 'slc.league_id')
                 .join('open_countries as oc', 'slc.country_id', 'oc.id')
+                .where('s.has_teams', true)
                 .whereNull('sl.deleted')
                 .whereNull('slc.deleted')
                 .select(
@@ -90,10 +92,15 @@ function main() {
 
                 let prompt = `
                     Return all the current teams that compete in the ${league.league_name} in ${league.country_name}.
-                    Only include actual existing teams, not historical or fictional ones.
-                    Do not return any additional information before or after. Provide ONLY valid JSON.
-                    Append the country_code and league to each team token. Max length for token is 40 characters.
-                    Your response should be an array of items with the following format:
+                    Exclude:
+                    - Tournament names
+                    - Equipment manufacturers
+                    - Individual athletes
+                    - Recreational teams
+                    - Historical teams
+                    Only return teams if this is a team-based league/sport.
+                    If this is not a team sport or the league doesn't have formal teams, return an empty array.
+                    Provide ONLY valid JSON in this format:
                     [{
                         name: "Full team name",
                         token: "unique_token_for_team",

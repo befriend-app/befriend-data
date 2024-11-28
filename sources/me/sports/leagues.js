@@ -12,7 +12,10 @@ async function getExistingData() {
         conn('sports_leagues').whereNull('deleted').select('id', 'token', 'name', 'sport_id'),
         conn('sports_leagues_countries').whereNull('deleted').select('id', 'league_id', 'country_id', 'position'),
         conn('open_countries').orderBy('country_name'),
-        conn('sports').whereNull('deleted').select('id', 'token', 'name')
+        conn('sports')
+            .where('has_teams', true)
+            .whereNull('deleted')
+            .select('id', 'token', 'name')
     ]);
 
     // Create lookup dictionaries

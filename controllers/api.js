@@ -1697,8 +1697,6 @@ module.exports = {
             resolve();
         });
     },
-    // Add these methods to the module.exports object in controllers/api.js
-
     getSports: function(req, res) {
         return new Promise(async (resolve, reject) => {
             try {
@@ -1711,11 +1709,13 @@ module.exports = {
                 }
 
                 let conn = await dbService.conn();
+
                 let items = await conn('sports')
                     .select(
                         'token',
                         'name',
                         'is_active',
+                        'has_teams',
                         'is_play',
                         'updated',
                         'deleted'
@@ -1731,7 +1731,6 @@ module.exports = {
             resolve();
         });
     },
-
     getSportsCountries: function(req, res) {
         return new Promise(async (resolve, reject) => {
             try {
