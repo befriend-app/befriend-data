@@ -299,12 +299,52 @@ function mergeTeamDuplicates() {
     });
 }
 
+function deleteInvalidResults() {
+    return new Promise(async (resolve, reject) => {
+         try {
+             let invalid_strings = [
+                 'response not possible',
+                 'no valid team',
+                 'no known active',
+                 'no reliable data',
+                 'not available',
+                 'no verified',
+                 'no current team',
+                 'no active team'
+             ];
+            let conn = await dbService.conn();
+
+            let teams = await conn('sports_teams')
+                .whereNull('deleted');
+
+            for(let team of teams) {
+                let isInvalid = invalid_strings.some(str => team.name.toLowerCase().includes(str));
+
+                if(isInvalid) {
+                    await conn('sports_teams')
+                        .where('id', team.id)
+                        .update({
+                            deleted: timeNow(),
+                            updated: timeNow()
+                        });
+                }
+            }
+         } catch(e) {
+             console.error(e);
+         }
+
+         resolve();
+    });
+}
+
 function main() {
     return new Promise(async (resolve, reject) => {
         try {
              await addTeams();
 
              await mergeTeamDuplicates();
+
+             await deleteInvalidResults();
         } catch(e) {
             console.error(e);
         }
