@@ -7,16 +7,16 @@ const { getProcess, keys: systemKeys, saveProcess } = require('../../services/sy
 loadScriptEnv();
 
 let startYear = 1940;
-let wholeYearProcessThru = 2010;
-
-let shows_dict = {};
-let genres_dict = {};
+let wholeYearProcessThru = 2020;
 
 let tables = {
     shows: 'tv_shows',
     genres: 'tv_genres',
     shows_genres: 'tv_shows_genres'
 }
+
+let shows_dict = {};
+let genres_dict = {};
 
 const PARALLEL_PROCESS = 1;
 
@@ -35,7 +35,6 @@ let updated = {
 
 let lastAirDate = null;
 let latestProcessedDate = null;
-
 
 async function loadSystemProcess() {
     lastAirDate = await getProcess(systemKeys.tv.date);
@@ -178,29 +177,6 @@ async function processShowsForDateRange(dateRange) {
             try {
                 await dbService.batchInsert(tables.shows_genres, batch_genres);
             } catch(e) {
-                const groupedByShow = batch_genres.reduce((acc, item) => {
-                    if (!acc[item.show_id]) {
-                        acc[item.show_id] = [];
-                    }
-
-                    if(!(acc[item.show_id][item.genre_id])) {
-                        acc[item.show_id][item.genre_id] = 0;
-                    }
-
-                    acc[item.show_id][item.genre_id]++;
-
-                    return acc;
-                }, {});
-
-                for(let k in groupedByShow) {
-                    let show = groupedByShow[k];
-
-                    for(let k2 in show) {
-                        if(show[k2] > 1) {
-                            debugger;
-                        }
-                    }
-                }
                 console.error(e);
             }
         }

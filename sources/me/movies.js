@@ -7,6 +7,7 @@ const { getProcess, keys: systemKeys, saveProcess } = require('../../services/sy
 loadScriptEnv();
 
 let startYear = 1890;
+let wholeYearProcessThru = 2000;
 
 const MAX_PAGES = 500;
 const BATCH_SIZE = 100;
@@ -91,12 +92,17 @@ async function addMoviesGenres(items) {
     }
 }
 
-async function processMonth(month) {
+async function processDateRange(dateRange) {
+    // Skip if this range is before our last processed date
+    if (lastProcessedDate && dateRange.end < lastProcessedDate) {
+        return;
+    }
+
     let current_page = 1;
     let hasMorePages = true;
 
     async function processPage(page) {
-        const url = `https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=${page}&sort_by=popularity.desc&primary_release_date.gte=${month.start}&primary_release_date.lte=${month.end}`;
+        const url = `https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=${page}&sort_by=popularity.desc&primary_release_date.gte=${dateRange.start}&primary_release_date.lte=${dateRange.end}`;
 
         try {
             const response = await axios.get(url, {
@@ -175,7 +181,7 @@ async function processMonth(month) {
 
         for (let i = 0; i < CONCURRENT_REQUESTS; i++) {
             const page = startPage + i;
-            pagePromises.push(processPage(page, month));
+            pagePromises.push(processPage(page));
         }
 
         try {
@@ -259,7 +265,6 @@ async function addMovies() {
     console.log('Add movies');
 
     try {
-        // Process by year-month ranges
         const currentYear = new Date().getFullYear();
 
         // If we have a last release date, start from a few months prior
@@ -271,19 +276,22 @@ async function addMovies() {
 
         for (let year = startYear; year <= currentYear; year++) {
             console.log(`Processing year ${year}`);
-            const months = getMonthRanges(year);
 
-            for (const month of months) {
-                // Skip if this month is before our last processed date
-                if (lastProcessedDate && month.end < lastProcessedDate) {
-                    continue;
+            let dateRange;
+
+            if (year < wholeYearProcessThru) {
+                // Process entire year at once for older content
+                dateRange = {
+                    start: `${year}-01-01`,
+                    end: `${year}-12-31`
+                };
+                await processDateRange(dateRange);
+            } else {
+                // Process month by month for recent content
+                const months = getMonthRanges(year);
+                for (const month of months) {
+                    await processDateRange(month);
                 }
-
-                console.log({
-                    month
-                });
-
-                await processMonth(month);
             }
         }
 
@@ -361,9 +369,13 @@ function isLeapYear(year) {
 }
 
 async function main() {
+    let ts = timeNow();
+
     try {
         console.log('Process movies');
         await cacheService.init();
+
+
 
         await loadData();
         await addGenres();
@@ -372,6 +384,13 @@ async function main() {
         console.error('Error in main execution:', error);
         throw error;
     }
+
+    console.log({
+        processing_time: {
+            minutes: (((timeNow() - ts) / 1000) / 60).toFixed(2),
+            seconds: (((timeNow() - ts) / 1000)).toFixed(1)
+        }
+    });
 }
 
 module.exports = {
