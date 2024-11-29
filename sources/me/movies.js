@@ -2,7 +2,7 @@ const axios = require('axios');
 const { loadScriptEnv, timeNow, generateToken } = require('../../services/shared');
 const dbService = require('../../services/db');
 const cacheService = require('../../services/cache');
-const { getProcess, systemKeys, saveProcess } = require('../../services/system');
+const { getProcess, keys: systemKeys, saveProcess } = require('../../services/system');
 
 loadScriptEnv();
 
@@ -388,8 +388,8 @@ async function main() {
         console.log('Process movies');
         await cacheService.init();
 
-        // await addGenres();
-        // await addMovies();
+        await addGenres();
+        await addMovies();
         await addMovieGenres();
     } catch (error) {
         console.error('Error in main execution:', error);

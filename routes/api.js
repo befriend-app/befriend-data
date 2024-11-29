@@ -369,4 +369,40 @@ router.get('/sports/teams', function (req, res, next) {
     });
 });
 
+router.get('/tv/genres', function (req, res, next) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            await api.getTvGenres(req, res);
+        } catch (e) {
+            console.error(e);
+        }
+
+        resolve();
+    });
+});
+
+router.get('/tv/shows', function (req, res, next) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            await api.getTvShows(req, res);
+        } catch (e) {
+            console.error(e);
+        }
+
+        resolve();
+    });
+});
+
+router.get('/tv/shows/genres', function (req, res, next) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            await api.getTvShowsGenres(req, res);
+        } catch (e) {
+            console.error(e);
+        }
+
+        resolve();
+    });
+});
+
 module.exports = router;

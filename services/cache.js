@@ -27,6 +27,7 @@ module.exports = {
         sports_countries: `data:sports_countries`,
         sports_leagues: `data:sports_leagues`,
         sports_teams: `data:sports_teams`,
+        tv_genres: `data:tv_genres`,
         updated: {
             activities: {
                 types: `data:updated:activities:types`,
@@ -68,6 +69,12 @@ module.exports = {
         music_artists_genres_offset: function (offset) {
             return `data:music:artists:genres:${offset}`;
         },
+        tv_shows_offset: function (offset) {
+            return `data:tv_shows:offset:${offset}`;
+        },
+        tv_shows_genres_offset: function (offset) {
+            return `data:tv_shows:genres:offset:${offset}`;
+        }
     },
     init: function () {
         return new Promise(async (resolve, reject) => {

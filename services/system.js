@@ -14,6 +14,9 @@ module.exports = {
                 genre: 'music_artists_last_genre',
             },
         },
+        tv: {
+            date: 'tv_shows_last_air_date'
+        }
     },
     getProcess: function (key) {
         return new Promise(async (resolve, reject) => {

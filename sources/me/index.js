@@ -18,6 +18,7 @@ function main() {
             await require('./smoking').main();
             await require('./schools/add_schools').main();
             await require('./sports').main();
+            await require('./tv_shows').main();
         } catch (e) {
             console.error(e);
         }

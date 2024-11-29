@@ -1963,4 +1963,192 @@ module.exports = {
             resolve();
         });
     },
+    getTvGenres: function(req, res) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let cache_data = await getObj(cacheService.keys.tv_genres);
+
+                if (cache_data) {
+                    res.json({ items: cache_data }, 200);
+                    return resolve();
+                }
+
+                let conn = await dbService.conn();
+                let items = await conn('tv_genres').select(
+                    'token',
+                    'name',
+                    'tmdb_id',
+                    'updated'
+                );
+
+                await setCache(cacheService.keys.tv_genres, items);
+
+                res.json({ items: items }, 200);
+            } catch (e) {
+                console.error(e);
+                res.json('Error retrieving data', 400);
+            }
+            resolve();
+        });
+    },
+    getTvShows: function(req, res) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const limit = module.exports.batchLimit;
+                let offset = Math.floor((parseInt(req.query.offset) || 0) / limit) * limit;
+                const cache_key = cacheService.keys.tv_shows_offset(offset);
+
+                if (!req.query.updated) {
+                    let cache_data = await cacheService.getObj(cache_key);
+
+                    //todo remove
+                    if (false && cache_data) {
+                        res.json({
+                            timestamp: timeNow(),
+                            next_offset: cache_data.length ? offset + limit : null,
+                            has_more: !!cache_data.length,
+                            items: cache_data,
+                        }, 200);
+                        return resolve();
+                    }
+                }
+
+                let conn = await dbService.conn();
+
+                let query = conn('tv_shows')
+                    .orderBy('id')
+                    .select(
+                        'token',
+                        'tmdb_id',
+                        'name',
+                        'tmdb_poster_path',
+                        'original_language',
+                        'first_air_date',
+                        'year_from',
+                        'year_to',
+                        'popularity',
+                        'vote_average',
+                        'vote_count',
+                        'networks',
+                        'origin_country',
+                        'season_count',
+                        'episode_count',
+                        'is_ended',
+                        'updated',
+                        'deleted'
+                    )
+                    .limit(limit + 1)
+                    .offset(offset);
+
+                if (req.query.updated) {
+                    query = query.where('updated', '>', req.query.updated);
+                }
+
+                let items = await query;
+                const hasMore = items.length > limit;
+
+                if (hasMore) {
+                    items = items.slice(0, limit);
+                }
+
+                items.map((item) => {
+                    item.first_air_date = item.first_air_date?.toISOString().split('T')[0] || null;
+                });
+
+                if (!req.query.updated && items.length) {
+                    await cacheService.setCache(cache_key, items);
+                }
+
+                res.json({
+                    timestamp: timeNow(),
+                    next_offset: hasMore ? offset + limit : null,
+                    has_more: hasMore,
+                    items: items,
+                }, 200);
+            } catch (e) {
+                console.error(e);
+                res.json('Error retrieving data', 400);
+            }
+            resolve();
+        });
+    },
+    getTvShowsGenres: function(req, res) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const limit = module.exports.batchLimit;
+                let offset = Math.floor((parseInt(req.query.offset) || 0) / limit) * limit;
+                const cache_key = cacheService.keys.tv_shows_genres_offset(offset);
+
+                if (!req.query.updated) {
+                    let cache_data = await cacheService.getObj(cache_key);
+
+                    //todo remove
+                    if (false && cache_data) {
+                        res.json({
+                            timestamp: timeNow(),
+                            next_offset: cache_data.length ? offset + limit : null,
+                            has_more: !!cache_data.length,
+                            items: cache_data,
+                        }, 200);
+                        return resolve();
+                    }
+                }
+
+                let conn = await dbService.conn();
+
+                const [shows, genres] = await Promise.all([
+                    conn('tv_shows').select('id', 'token'),
+                    conn('tv_genres').select('id', 'token')
+                ]);
+
+                const showsDict = shows.reduce((acc, s) => {
+                    acc[s.id] = s.token;
+                    return acc;
+                }, {});
+
+                const genresDict = genres.reduce((acc, g) => {
+                    acc[g.id] = g.token;
+                    return acc;
+                }, {});
+
+                let query = conn('tv_shows_genres')
+                    .select('show_id', 'genre_id', 'updated', 'deleted')
+                    .limit(limit + 1)
+                    .offset(offset);
+
+                if (req.query.updated) {
+                    query = query.where('updated', '>', req.query.updated);
+                }
+
+                let items = await query;
+
+                for (let item of items) {
+                    item.show_token = showsDict[item.show_id];
+                    item.genre_token = genresDict[item.genre_id];
+                    delete item.show_id;
+                    delete item.genre_id;
+                }
+
+                const hasMore = items.length > limit;
+                if (hasMore) {
+                    items = items.slice(0, limit);
+                }
+
+                if (!req.query.updated && items.length) {
+                    await cacheService.setCache(cache_key, items);
+                }
+
+                res.json({
+                    timestamp: timeNow(),
+                    next_offset: hasMore ? offset + limit : null,
+                    has_more: hasMore,
+                    items: items,
+                }, 200);
+            } catch (e) {
+                console.error(e);
+                res.json('Error retrieving data', 400);
+            }
+            resolve();
+        });
+    },
 };
