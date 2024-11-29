@@ -1091,7 +1091,8 @@ module.exports = {
             try {
                 let cache_data = await getObj(cacheService.keys.movie_genres);
 
-                if (cache_data) {
+                //todo remove
+                if (false && cache_data) {
                     res.json({ items: cache_data }, 200);
                     return resolve();
                 }

@@ -13,9 +13,6 @@ const MAX_PAGES = 500;
 const BATCH_SIZE = 100;
 const CONCURRENT_REQUESTS = 10;
 
-let lastProcessedDate = null;
-let lastReleaseDate = null;
-
 let tables = {
     movies: 'movies',
     genres: 'movie_genres',
@@ -28,9 +25,11 @@ let movies_genres_dict = {};
 
 let added = 0;
 let updated = 0;
+let genres_added = 0;
 let movies_genres_added = 0;
 
-let genres_added = 0;
+let lastProcessedDate = null;
+let lastReleaseDate = null;
 
 async function loadSystemProcess() {
     lastProcessedDate = await getProcess(systemKeys.movies.date);
@@ -94,8 +93,13 @@ async function addMoviesGenres(items) {
 
 async function processDateRange(dateRange) {
     // Skip if this range is before our last processed date
-    if (lastProcessedDate && dateRange.end < lastProcessedDate) {
-        return;
+    if (lastProcessedDate) {
+        const lastDate = new Date(lastProcessedDate);
+        lastDate.setMonth(lastDate.getMonth() - 3);
+        let lastDateStr = lastDate.toISOString().split('T')[0];
+        if(dateRange.end < lastDateStr) {
+            return;
+        }
     }
 
     let current_page = 1;
@@ -131,7 +135,7 @@ async function processDateRange(dateRange) {
                 const existing = movies_dict[movie.id];
 
                 if (!existing) {
-                    pageBatchInsert.push({
+                    let data = {
                         tmdb_id: movie.id,
                         tmdb_poster_path: movie.poster_path,
                         token: generateToken(10),
@@ -143,11 +147,19 @@ async function processDateRange(dateRange) {
                         popularity: movie.popularity,
                         created: timeNow(),
                         updated: timeNow(),
-                    });
+                    };
+
+                    pageBatchInsert.push(data);
+
+                    movies_dict[movie.id] = data;
 
                     pageAdded++;
                 } else if (movie.popularity !== existing.popularity
                     || movie.vote_count !== existing.vote_count) {
+
+                    if(!existing.id) {
+                        continue;
+                    }
 
                     pageBatchUpdate.push({
                         id: existing.id,
@@ -290,6 +302,8 @@ async function addMovies() {
                 // Process month by month for recent content
                 const months = getMonthRanges(year);
                 for (const month of months) {
+                    console.log({ month });
+
                     await processDateRange(month);
                 }
             }
@@ -374,8 +388,6 @@ async function main() {
     try {
         console.log('Process movies');
         await cacheService.init();
-
-
 
         await loadData();
         await addGenres();
