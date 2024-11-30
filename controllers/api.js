@@ -1151,6 +1151,8 @@ module.exports = {
                         'original_language',
                         'release_date',
                         'popularity',
+                        'vote_count',
+                        'vote_average',
                         'updated',
                         'deleted',
                     )
