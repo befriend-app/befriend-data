@@ -1,7 +1,9 @@
+downloads
 node_modules
+tmp
+
 .env
 .idea
 .vscode
 .DS_Store
 package-lock.json
-tmp
