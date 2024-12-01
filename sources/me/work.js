@@ -1,11 +1,14 @@
 const dbService = require('../../services/db');
 const { timeNow, loadScriptEnv } = require('../../services/shared');
 const { batchInsert } = require('../../services/db');
+const { deleteKeys, keys } = require('../../services/cache');
 loadScriptEnv();
 
 function main() {
     return new Promise(async (resolve, reject) => {
         console.log('Add work');
+
+        await deleteKeys([keys.work_industries, keys.work_roles]);
 
         let tables = {
             industries: 'work_industries',
@@ -212,7 +215,7 @@ module.exports = {
     roles: [
         {
             "token": "cat_biz",
-            "name": "Business & Management",
+            "name": "Business",
             "positions": [
                 {
                     "token": "pos_ceo",
@@ -608,7 +611,7 @@ module.exports = {
         },
         {
             "token": "cat_crt",
-            "name": "Creative & Media",
+            "name": "Creative",
             "positions": [
                 {
                     "token": "pos_grd",
@@ -802,7 +805,7 @@ module.exports = {
         },
         {
             "token": "cat_trd",
-            "name": "Trades & Construction",
+            "name": "Trades",
             "positions": [
                 {
                     "token": "pos_ele",
@@ -940,7 +943,7 @@ module.exports = {
         },
         {
             "token": "cat_gov",
-            "name": "Government & Public Service",
+            "name": "Public Service",
             "positions": [
                 {
                     "token": "pos_pol",
@@ -1032,7 +1035,7 @@ module.exports = {
         },
         {
             "token": "cat_dig",
-            "name": "Digital Content & Social Media",
+            "name": "Digital Content",
             "positions": [
                 {
                     "token": "pos_inf",
