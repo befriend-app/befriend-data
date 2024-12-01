@@ -28,6 +28,8 @@ module.exports = {
         sports_leagues: `data:sports_leagues`,
         sports_teams: `data:sports_teams`,
         tv_genres: `data:tv_genres`,
+        work_industries: `data:work:industries`,
+        work_roles: `data:work:roles`,
         updated: {
             activities: {
                 types: `data:updated:activities:types`,

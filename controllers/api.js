@@ -2154,4 +2154,72 @@ module.exports = {
             resolve();
         });
     },
+    getWorkIndustries: function (req, res) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let cache_key = cacheService.keys.work_industries;
+                let cache_data = await getObj(cache_key);
+
+                if (cache_data) {
+                    res.json({ items: cache_data }, 200);
+                    return resolve();
+                }
+
+                let conn = await dbService.conn();
+
+                let items = await conn('work_industries')
+                    .select(
+                        'token',
+                        'name',
+                        'is_visible',
+                        'updated',
+                        'deleted'
+                    )
+                    .orderBy('name');
+
+                await setCache(cache_key, items);
+
+                res.json({ items: items }, 200);
+            } catch (e) {
+                console.error(e);
+                res.json('Error retrieving industries', 400);
+            }
+            resolve();
+        });
+    },
+    getWorkRoles: function (req, res) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let cache_key = cacheService.keys.work_roles;
+                let cache_data = await getObj(cache_key);
+
+                if (cache_data) {
+                    res.json({ items: cache_data }, 200);
+                    return resolve();
+                }
+
+                let conn = await dbService.conn();
+
+                let items = await conn('work_roles')
+                    .select(
+                        'token',
+                        'name',
+                        'category_token',
+                        'category_name',
+                        'is_visible',
+                        'updated',
+                        'deleted'
+                    )
+                    .orderBy(['category_token', 'name']);
+
+                await setCache(cache_key, items);
+
+                res.json({ items: items }, 200);
+            } catch (e) {
+                console.error(e);
+                res.json('Error retrieving roles', 400);
+            }
+            resolve();
+        });
+    },
 };

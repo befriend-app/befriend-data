@@ -405,4 +405,28 @@ router.get('/tv/shows/genres', function (req, res, next) {
     });
 });
 
+router.get('/work/industries', function (req, res, next) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            await api.getWorkIndustries(req, res);
+        } catch (e) {
+            console.error(e);
+        }
+
+        resolve();
+    });
+});
+
+router.get('/work/roles', function (req, res, next) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            await api.getWorkRoles(req, res);
+        } catch (e) {
+            console.error(e);
+        }
+
+        resolve();
+    });
+});
+
 module.exports = router;
