@@ -1,7 +1,6 @@
 const fs = require('fs');
 const dayjs = require('dayjs');
 const process = require('process');
-const dbService = require('./db');
 
 const utc = require('dayjs/plugin/utc');
 const timezone = require('dayjs/plugin/timezone');
@@ -23,12 +22,64 @@ function cloneObj(obj) {
     }
 }
 
+function createDirectoryIfNotExistsRecursive (dirname) {
+    return new Promise(async (resolve, reject) => {
+        let slash = '/';
+
+        let directories_backwards = [dirname];
+        let minimize_dir = dirname;
+        let directories_needed = [];
+        let directories_forwards = [];
+
+        while (minimize_dir = minimize_dir.substring(0, minimize_dir.lastIndexOf(slash))) {
+            directories_backwards.push(minimize_dir);
+        }
+
+        //stop on first directory found
+        for(const d in directories_backwards) {
+            if(!(fs.existsSync(directories_backwards[d]))) {
+                directories_needed.push(directories_backwards[d]);
+            } else {
+                break;
+            }
+        }
+
+        //no directories missing
+        if(!directories_needed.length) {
+            return resolve();
+        }
+
+        // make all directories in ascending order
+        directories_forwards = directories_needed.reverse();
+
+        for(const d in directories_forwards) {
+            try {
+                await require('fs').promises.mkdir(directories_forwards[d]);
+            } catch(e) {
+            }
+        }
+
+        resolve();
+    });
+}
+
+function deleteFile(file_path) {
+    return new Promise(async (resolve, reject) => {
+        fs.unlink(file_path, (err) => {
+            if (err) {
+                return reject(err);
+            } else {
+                resolve();
+            }
+        });
+    });
+}
+
 function generateToken(length) {
     if (!length) {
         length = 32;
     }
 
-    //edit the token allowed characters
     let a = 'abcdefghijklmnopqrstuvwxyz1234567890'.split('');
     let b = [];
 
@@ -96,6 +147,19 @@ function getRepoRoot() {
     let path_split_slice = path_split.slice(0, path_split.length - 1);
 
     return path_split_slice.join(slash);
+}
+
+function getFileSize(file_path) {
+    return new Promise(async (resolve, reject) => {
+        fs.stat(file_path, (err, stats) => {
+            if (err) {
+                console.error('Error getting file size:', err);
+                return reject(err)
+            }
+
+            return resolve(stats.size);
+        });
+    });
 }
 
 function isNumeric(val) {
@@ -202,11 +266,14 @@ function timeNow(seconds) {
 
 module.exports = {
     cloneObj,
+    createDirectoryIfNotExistsRecursive,
+    deleteFile,
     generateToken,
     getDistanceMeters,
     getDistanceMiles,
     getMetersFromMilesOrKm,
     getRepoRoot,
+    getFileSize,
     isNumeric,
     isProdApp,
     joinPaths,
