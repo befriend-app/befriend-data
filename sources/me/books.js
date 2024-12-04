@@ -576,7 +576,7 @@ async function processBooks() {
                 token: generateToken(10),
                 title: data.title.substring(0, 255),
                 description: data.description?.value || data.description || null,
-                first_publish_date: data.first_publish_date || null,
+                first_publish_date: data.first_publish_date?.substring(0, 32) || null,
                 cover_id: data.covers?.[0]?.toString() || null,
                 rating_average: ratingCount > 0 ? (ratingSum / ratingCount) : null,
                 rating_count: ratingCount || null,

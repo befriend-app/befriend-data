@@ -1,5 +1,7 @@
 const dbService = require('../services/db');
 const { timeNow, loadScriptEnv } = require('../services/shared');
+const { deleteKeys } = require('../services/cache');
+const cacheService = require('../services/cache');
 loadScriptEnv();
 
 function main() {
@@ -10,9 +12,17 @@ function main() {
 
         let genders = [
             {
+                gender_token: 'any',
+                gender_name: 'Any',
+                sort_position: 1,
+                is_visible: false,
+                created: timeNow(),
+                updated: timeNow(),
+            },
+            {
                 gender_token: 'female',
                 gender_name: 'Female',
-                sort_position: 1,
+                sort_position: 2,
                 is_visible: true,
                 created: timeNow(),
                 updated: timeNow(),
@@ -20,7 +30,7 @@ function main() {
             {
                 gender_token: 'male',
                 gender_name: 'Male',
-                sort_position: 2,
+                sort_position: 3,
                 is_visible: true,
                 created: timeNow(),
                 updated: timeNow(),
@@ -28,7 +38,7 @@ function main() {
             {
                 gender_token: 'non-binary',
                 gender_name: 'Non-binary',
-                sort_position: 3,
+                sort_position: 4,
                 is_visible: true,
                 created: timeNow(),
                 updated: timeNow(),
@@ -50,6 +60,8 @@ function main() {
                     .update(gender)
             }
         }
+
+        await deleteKeys(cacheService.keys.genders);
 
         console.log('Genders added');
 
