@@ -154,12 +154,7 @@ function main() {
 
             await cacheService.init();
 
-            //remove previous cache if any
-            let delete_keys = await cacheService.getKeys(`${cacheService.keys.activity_type('')}*`);
-
-            delete_keys.push(cacheService.keys.activity_types);
-
-            await cacheService.deleteKeys(delete_keys);
+            await cacheService.deleteKeys(cacheService.keys.activity_types);
 
             //add venue categories
             await venue_categories.main();
