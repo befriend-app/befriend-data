@@ -5,6 +5,8 @@ let activity_types = require('./activity-types');
 let venue_categories = require('./add_venues_categories');
 
 const { timeNow, loadScriptEnv, cloneObj } = require('../../services/shared');
+const { deleteKeys } = require('../../services/cache');
+const { del } = require('express/lib/application');
 
 loadScriptEnv();
 
@@ -230,6 +232,10 @@ function main() {
                 console.error(e);
             }
         }
+
+        await deleteKeys(cacheService.keys.activity_types);
+        await deleteKeys(cacheService.keys.venues_categories);
+        await deleteKeys(cacheService.keys.activity_venue_categories);
 
         console.log('Activity types added');
 
