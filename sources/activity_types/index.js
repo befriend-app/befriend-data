@@ -86,32 +86,34 @@ function processActivity(activity, int, parent_ids, bool) {
 
             let update = {};
 
-            if(activity.name !== at_check.activity_name) {
+            if (activity.name !== at_check.activity_name) {
                 update.activity_name = activity.name;
             }
 
-            if(activity_full_name !== at_check.activity_name_full) {
+            if (activity.token !== at_check.activity_type_token) {
+                update.activity_type_token = activity.token;
+            }
+
+            if (activity_full_name !== at_check.activity_name_full) {
                 update.activity_name_full = activity_full_name;
             }
 
-            if(activity.title !== at_check.activity_title) {
+            if (activity.title !== at_check.activity_title) {
                 update.activity_title = activity.title;
             }
 
-            if(activity.image !== at_check.activity_image) {
+            if (activity.image !== at_check.activity_image) {
                 update.activity_image = activity.image;
             }
 
-            if(activity.emoji !== at_check.activity_emoji) {
+            if (activity.emoji !== at_check.activity_emoji) {
                 update.activity_emoji = activity.emoji;
             }
 
-            if(Object.keys(update).length) {
+            if (Object.keys(update).length) {
                 update.updated = timeNow();
 
-                await conn('activity_types')
-                    .where('id', id)
-                    .update(update);
+                await conn('activity_types').where('id', id).update(update);
             }
         }
 

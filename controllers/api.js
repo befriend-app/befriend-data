@@ -1058,11 +1058,11 @@ module.exports = {
                     let country = countries_dict[item.country_id];
                     let language = languages_dict[item.language_id];
 
-                    if(!country || !language) {
+                    if (!country || !language) {
                         return acc;
                     }
 
-                    if(!(country.country_code in acc)) {
+                    if (!(country.country_code in acc)) {
                         acc[country.country_code] = {};
                     }
 
@@ -1070,8 +1070,8 @@ module.exports = {
                         country_code: country.country_code,
                         token: language.token,
                         sort_position: item.sort_position,
-                        updated: item.updated
-                    }
+                        updated: item.updated,
+                    };
 
                     return acc;
                 }, {});
@@ -1700,7 +1700,7 @@ module.exports = {
             resolve();
         });
     },
-    getSports: function(req, res) {
+    getSports: function (req, res) {
         return new Promise(async (resolve, reject) => {
             try {
                 let cache_key = cacheService.keys.sports;
@@ -1713,16 +1713,15 @@ module.exports = {
 
                 let conn = await dbService.conn();
 
-                let items = await conn('sports')
-                    .select(
-                        'token',
-                        'name',
-                        'is_active',
-                        'has_teams',
-                        'is_play',
-                        'updated',
-                        'deleted'
-                    );
+                let items = await conn('sports').select(
+                    'token',
+                    'name',
+                    'is_active',
+                    'has_teams',
+                    'is_play',
+                    'updated',
+                    'deleted',
+                );
 
                 await setCache(cache_key, items);
 
@@ -1734,7 +1733,7 @@ module.exports = {
             resolve();
         });
     },
-    getSportsCountries: function(req, res) {
+    getSportsCountries: function (req, res) {
         return new Promise(async (resolve, reject) => {
             try {
                 let cache_key = cacheService.keys.sports_countries;
@@ -1751,24 +1750,19 @@ module.exports = {
                     .join('sports AS s', 's.id', 'sc.sport_id')
                     .join('open_countries AS oc', 'oc.id', 'sc.country_id')
                     .whereNull('sc.deleted')
-                    .select(
-                        'oc.country_code',
-                        's.token',
-                        'sc.position',
-                        'sc.updated'
-                    )
+                    .select('oc.country_code', 's.token', 'sc.position', 'sc.updated')
                     .orderBy(['oc.country_code', 'sc.position']);
 
                 // Organize by country code
                 let organized = {};
-                for(let item of items) {
+                for (let item of items) {
                     const countryCode = item.country_code;
-                    if(!organized[countryCode]) {
+                    if (!organized[countryCode]) {
                         organized[countryCode] = {};
                     }
                     organized[countryCode][item.token] = {
                         position: item.position,
-                        updated: item.updated
+                        updated: item.updated,
                     };
                 }
 
@@ -1783,7 +1777,7 @@ module.exports = {
         });
     },
 
-    getSportsLeagues: function(req, res) {
+    getSportsLeagues: function (req, res) {
         return new Promise(async (resolve, reject) => {
             try {
                 let cache_key = cacheService.keys.sports_leagues;
@@ -1810,7 +1804,7 @@ module.exports = {
                         'sl.is_active',
                         'sl.position',
                         'sl.updated',
-                        'sl.deleted'
+                        'sl.deleted',
                     );
 
                 // Get league-country associations
@@ -1822,17 +1816,17 @@ module.exports = {
                         'sl.token AS league_token',
                         'oc.country_code',
                         'slc.position',
-                        'slc.updated'
+                        'slc.updated',
                     );
 
                 // Organize the response
                 let organized = {
                     leagues: {},
-                    countries: {}
+                    countries: {},
                 };
 
                 // Add leagues
-                for(let league of leagues) {
+                for (let league of leagues) {
                     organized.leagues[league.token] = {
                         token: league.token,
                         name: league.name,
@@ -1842,18 +1836,18 @@ module.exports = {
                         is_active: league.is_active,
                         position: league.position,
                         updated: league.updated,
-                        deleted: league.deleted
+                        deleted: league.deleted,
                     };
                 }
 
                 // Add country associations
-                for(let country of countries) {
-                    if(!organized.countries[country.country_code]) {
+                for (let country of countries) {
+                    if (!organized.countries[country.country_code]) {
                         organized.countries[country.country_code] = {};
                     }
                     organized.countries[country.country_code][country.league_token] = {
                         position: country.position,
-                        updated: country.updated
+                        updated: country.updated,
                     };
                 }
 
@@ -1867,7 +1861,7 @@ module.exports = {
             resolve();
         });
     },
-    getSportsTeams: function(req, res) {
+    getSportsTeams: function (req, res) {
         return new Promise(async (resolve, reject) => {
             try {
                 let cache_key = cacheService.keys.sports_teams;
@@ -1902,7 +1896,7 @@ module.exports = {
                         'st.popularity',
                         'st.is_active',
                         'st.updated',
-                        'st.deleted'
+                        'st.deleted',
                     );
 
                 if (req.query.updated) {
@@ -1929,26 +1923,26 @@ module.exports = {
                         'sl.token AS league_token',
                         'stl.season',
                         'stl.is_active',
-                        'stl.updated'
+                        'stl.updated',
                     );
 
                 // Add league data to teams using lookup dict
-                for(let league of leagues) {
+                for (let league of leagues) {
                     let team = teamsDict[league.team_id];
-                    if(!team.leagues) {
+                    if (!team.leagues) {
                         team.leagues = {};
                     }
                     team.leagues[league.league_token] = {
                         season: league.season,
                         is_active: league.is_active,
-                        updated: league.updated
+                        updated: league.updated,
                     };
                 }
 
-                let items = Object.values(teamsDict).map(team => {
-                    let cleaned = {...team};
+                let items = Object.values(teamsDict).map((team) => {
+                    let cleaned = { ...team };
                     delete cleaned.id;
-                    if(!cleaned.leagues) {
+                    if (!cleaned.leagues) {
                         cleaned.leagues = {};
                     }
                     return cleaned;
@@ -1966,7 +1960,7 @@ module.exports = {
             resolve();
         });
     },
-    getTvGenres: function(req, res) {
+    getTvGenres: function (req, res) {
         return new Promise(async (resolve, reject) => {
             try {
                 let cache_data = await getObj(cacheService.keys.tv_genres);
@@ -1977,12 +1971,7 @@ module.exports = {
                 }
 
                 let conn = await dbService.conn();
-                let items = await conn('tv_genres').select(
-                    'token',
-                    'name',
-                    'tmdb_id',
-                    'updated'
-                );
+                let items = await conn('tv_genres').select('token', 'name', 'tmdb_id', 'updated');
 
                 await setCache(cacheService.keys.tv_genres, items);
 
@@ -1994,7 +1983,7 @@ module.exports = {
             resolve();
         });
     },
-    getTvShows: function(req, res) {
+    getTvShows: function (req, res) {
         return new Promise(async (resolve, reject) => {
             try {
                 const limit = module.exports.batchLimit;
@@ -2006,12 +1995,15 @@ module.exports = {
 
                     //todo remove
                     if (false && cache_data) {
-                        res.json({
-                            timestamp: timeNow(),
-                            next_offset: cache_data.length ? offset + limit : null,
-                            has_more: !!cache_data.length,
-                            items: cache_data,
-                        }, 200);
+                        res.json(
+                            {
+                                timestamp: timeNow(),
+                                next_offset: cache_data.length ? offset + limit : null,
+                                has_more: !!cache_data.length,
+                                items: cache_data,
+                            },
+                            200,
+                        );
                         return resolve();
                     }
                 }
@@ -2038,7 +2030,7 @@ module.exports = {
                         'episode_count',
                         'is_ended',
                         'updated',
-                        'deleted'
+                        'deleted',
                     )
                     .limit(limit + 1)
                     .offset(offset);
@@ -2062,12 +2054,15 @@ module.exports = {
                     await cacheService.setCache(cache_key, items);
                 }
 
-                res.json({
-                    timestamp: timeNow(),
-                    next_offset: hasMore ? offset + limit : null,
-                    has_more: hasMore,
-                    items: items,
-                }, 200);
+                res.json(
+                    {
+                        timestamp: timeNow(),
+                        next_offset: hasMore ? offset + limit : null,
+                        has_more: hasMore,
+                        items: items,
+                    },
+                    200,
+                );
             } catch (e) {
                 console.error(e);
                 res.json('Error retrieving data', 400);
@@ -2075,7 +2070,7 @@ module.exports = {
             resolve();
         });
     },
-    getTvShowsGenres: function(req, res) {
+    getTvShowsGenres: function (req, res) {
         return new Promise(async (resolve, reject) => {
             try {
                 const limit = module.exports.batchLimit;
@@ -2087,12 +2082,15 @@ module.exports = {
 
                     //todo remove
                     if (false && cache_data) {
-                        res.json({
-                            timestamp: timeNow(),
-                            next_offset: cache_data.length ? offset + limit : null,
-                            has_more: !!cache_data.length,
-                            items: cache_data,
-                        }, 200);
+                        res.json(
+                            {
+                                timestamp: timeNow(),
+                                next_offset: cache_data.length ? offset + limit : null,
+                                has_more: !!cache_data.length,
+                                items: cache_data,
+                            },
+                            200,
+                        );
                         return resolve();
                     }
                 }
@@ -2101,7 +2099,7 @@ module.exports = {
 
                 const [shows, genres] = await Promise.all([
                     conn('tv_shows').select('id', 'token'),
-                    conn('tv_genres').select('id', 'token')
+                    conn('tv_genres').select('id', 'token'),
                 ]);
 
                 const showsDict = shows.reduce((acc, s) => {
@@ -2141,12 +2139,15 @@ module.exports = {
                     await cacheService.setCache(cache_key, items);
                 }
 
-                res.json({
-                    timestamp: timeNow(),
-                    next_offset: hasMore ? offset + limit : null,
-                    has_more: hasMore,
-                    items: items,
-                }, 200);
+                res.json(
+                    {
+                        timestamp: timeNow(),
+                        next_offset: hasMore ? offset + limit : null,
+                        has_more: hasMore,
+                        items: items,
+                    },
+                    200,
+                );
             } catch (e) {
                 console.error(e);
                 res.json('Error retrieving data', 400);
@@ -2168,13 +2169,7 @@ module.exports = {
                 let conn = await dbService.conn();
 
                 let items = await conn('work_industries')
-                    .select(
-                        'token',
-                        'name',
-                        'is_visible',
-                        'updated',
-                        'deleted'
-                    )
+                    .select('token', 'name', 'is_visible', 'updated', 'deleted')
                     .orderBy('name');
 
                 await setCache(cache_key, items);
@@ -2208,7 +2203,7 @@ module.exports = {
                         'category_name',
                         'is_visible',
                         'updated',
-                        'deleted'
+                        'deleted',
                     )
                     .orderBy(['category_token', 'name']);
 

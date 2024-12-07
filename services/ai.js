@@ -1,6 +1,4 @@
-const {
-    loadScriptEnv, timeNow, sleep,
-} = require('./shared');
+const { loadScriptEnv, timeNow, sleep } = require('./shared');
 
 loadScriptEnv();
 
@@ -19,7 +17,7 @@ const deepInfra = new OpenAI({
 
 module.exports = {
     dinfra: {
-        promptJSON: function(prompt) {
+        promptJSON: function (prompt) {
             return new Promise(async (resolve, reject) => {
                 try {
                     const completion = await deepInfra.chat.completions.create({
@@ -30,21 +28,24 @@ module.exports = {
                     let response = completion.choices[0].message.content;
 
                     // Handle potential text before/after JSON
-                    response = response.substring(response.indexOf('['), response.lastIndexOf(']') + 1);
+                    response = response.substring(
+                        response.indexOf('['),
+                        response.lastIndexOf(']') + 1,
+                    );
 
                     const results = JSON.parse(response);
 
                     resolve(results);
-                } catch(e) {
+                } catch (e) {
                     return reject(e);
                 }
             });
-        }
+        },
     },
     claude: {
-        prompt: function(prompt, max_tokens = null) {
+        prompt: function (prompt, max_tokens = null) {
             return new Promise(async (resolve, reject) => {
-                if(typeof prompt === 'object') {
+                if (typeof prompt === 'object') {
                     prompt = JSON.stringify(prompt);
                 }
 
@@ -52,8 +53,8 @@ module.exports = {
                     input: 0,
                     cache_input: 0,
                     cache_read_input: 0,
-                    output: 0
-                }
+                    output: 0,
+                };
 
                 try {
                     const response = await axios({
@@ -67,8 +68,7 @@ module.exports = {
                         data: {
                             model: 'claude-3-5-sonnet-20241022',
                             max_tokens: max_tokens || 2048,
-                            system: [
-                            ],
+                            system: [],
                             messages: [
                                 {
                                     role: 'user',
@@ -91,13 +91,13 @@ module.exports = {
                 }
             });
         },
-        promptCache: function(cached_data, prompt) {
+        promptCache: function (cached_data, prompt) {
             return new Promise(async (resolve, reject) => {
-                if(typeof cached_data === 'object') {
+                if (typeof cached_data === 'object') {
                     cached_data = JSON.stringify(cached_data);
                 }
 
-                if(typeof prompt === 'object') {
+                if (typeof prompt === 'object') {
                     prompt = JSON.stringify(prompt);
                 }
 
@@ -105,8 +105,8 @@ module.exports = {
                     input: 0,
                     cache_input: 0,
                     cache_read_input: 0,
-                    output: 0
-                }
+                    output: 0,
+                };
 
                 try {
                     const response = await axios({
@@ -149,6 +149,6 @@ module.exports = {
                     return reject(error);
                 }
             });
-        }
-    }
+        },
+    },
 };

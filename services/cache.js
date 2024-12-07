@@ -76,7 +76,7 @@ module.exports = {
         },
         tv_shows_genres_offset: function (offset) {
             return `data:tv_shows:genres:offset:${offset}`;
-        }
+        },
     },
     init: function () {
         return new Promise(async (resolve, reject) => {

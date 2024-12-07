@@ -32,7 +32,7 @@ function addTeams() {
                     'sl.name as league_name',
                     'sl.sport_id',
                     'oc.id AS country_id',
-                    'oc.country_name'
+                    'oc.country_name',
                 )
                 .orderBy('sl.id');
 
@@ -44,7 +44,7 @@ function addTeams() {
             // Create lookup dictionaries
             let teams_dict = {
                 byToken: {},
-                byLeague: {}
+                byLeague: {},
             };
 
             // Build team lookup by token
@@ -54,12 +54,12 @@ function addTeams() {
 
             // Build league-specific lookups
             for (let assoc of teams_leagues) {
-                let team = teams.find(t => t.id === assoc.team_id);
+                let team = teams.find((t) => t.id === assoc.team_id);
                 if (team) {
                     if (!teams_dict.byLeague[assoc.league_id]) {
                         teams_dict.byLeague[assoc.league_id] = {
                             byName: {},
-                            byTeamId: {}
+                            byTeamId: {},
                         };
                     }
                     teams_dict.byLeague[assoc.league_id].byName[team.name.toLowerCase()] = team;
@@ -68,14 +68,14 @@ function addTeams() {
             }
 
             // Process each league
-            for(let i = 0; i < leagues.length; i++) {
+            for (let i = 0; i < leagues.length; i++) {
                 let league = leagues[i];
 
                 console.log({
                     id: league.id,
                     league: league.league_name,
                     country: league.country_name,
-                    process: `${i+1}/${leagues.length}`,
+                    process: `${i + 1}/${leagues.length}`,
                 });
 
                 // Check if league has already been processed
@@ -86,7 +86,7 @@ function addTeams() {
                     .whereNull('lt.deleted')
                     .whereNull('t.deleted');
 
-                if(check.length) {
+                if (check.length) {
                     continue;
                 }
 
@@ -111,22 +111,27 @@ function addTeams() {
                 try {
                     let league_teams = await aiService.claude.promptCache(prompt, {
                         league: league.league_name,
-                        country: league.country_name
+                        country: league.country_name,
                     });
 
-                    console.log(`Processing ${league_teams.length} teams for ${league.league_name}`);
+                    console.log(
+                        `Processing ${league_teams.length} teams for ${league.league_name}`,
+                    );
 
                     // Process teams
-                    for(let team of league_teams) {
+                    for (let team of league_teams) {
                         // Check if team exists by token or within this league
-                        let existingTeam = teams_dict.byToken[team.token] ||
+                        let existingTeam =
+                            teams_dict.byToken[team.token] ||
                             teams_dict.byLeague[league.id]?.byName[team.name.toLowerCase()];
 
-                        console.log(`Processing team: ${team.name} (${existingTeam ? 'exists' : 'new'})`);
+                        console.log(
+                            `Processing team: ${team.name} (${existingTeam ? 'exists' : 'new'})`,
+                        );
 
                         let teamId;
 
-                        if(!existingTeam) {
+                        if (!existingTeam) {
                             // Create new team
                             let teamData = {
                                 token: team.token,
@@ -136,7 +141,7 @@ function addTeams() {
                                 country_id: league.country_id,
                                 is_active: true,
                                 created: timeNow(),
-                                updated: timeNow()
+                                updated: timeNow(),
                             };
 
                             // Insert team
@@ -150,12 +155,13 @@ function addTeams() {
                             if (!teams_dict.byLeague[league.id]) {
                                 teams_dict.byLeague[league.id] = {
                                     byName: {},
-                                    byTeamId: {}
+                                    byTeamId: {},
                                 };
                             }
 
                             // Add to league lookup
-                            teams_dict.byLeague[league.id].byName[team.name.toLowerCase()] = teamData;
+                            teams_dict.byLeague[league.id].byName[team.name.toLowerCase()] =
+                                teamData;
 
                             teamId = id;
                         } else {
@@ -169,7 +175,7 @@ function addTeams() {
                                 league_id: league.id,
                                 team_id: teamId,
                                 created: timeNow(),
-                                updated: timeNow()
+                                updated: timeNow(),
                             };
 
                             let [id] = await conn(table_leagues_teams).insert(leagueTeamData);
@@ -178,12 +184,12 @@ function addTeams() {
                             if (!teams_dict.byLeague[league.id]) {
                                 teams_dict.byLeague[league.id] = {
                                     byName: {},
-                                    byTeamId: {}
+                                    byTeamId: {},
                                 };
                             }
                             teams_dict.byLeague[league.id].byTeamId[teamId] = {
                                 ...leagueTeamData,
-                                id
+                                id,
                             };
 
                             // console.log(`Created league association for: ${team.name}`);
@@ -191,16 +197,14 @@ function addTeams() {
                             console.log(`League association already exists for: ${team.name}`);
                         }
                     }
-
-                } catch(e) {
+                } catch (e) {
                     console.error(`Error processing ${league.league_name}:`, e);
                 }
             }
 
             console.log('Sports teams by league added');
             resolve();
-
-        } catch(e) {
+        } catch (e) {
             console.error('Main error:', e);
             reject(e);
         }
@@ -214,11 +218,7 @@ function mergeTeamDuplicates() {
 
             // Group teams by sport, name, city and country
             const teams = await conn('sports_teams as st')
-                .select(
-                    'st.*',
-                    'oc.country_code',
-                    'oc.country_name'
-                )
+                .select('st.*', 'oc.country_code', 'oc.country_name')
                 .leftJoin('open_countries as oc', 'oc.id', 'st.country_id')
                 .whereNull('st.deleted');
 
@@ -238,15 +238,16 @@ function mergeTeamDuplicates() {
                 // Sort by popularity and active status to find primary record
                 duplicates.sort((a, b) => {
                     if (a.is_active !== b.is_active) return b.is_active - a.is_active;
-                    if (a.popularity !== b.popularity) return (b.popularity || 0) - (a.popularity || 0);
+                    if (a.popularity !== b.popularity)
+                        return (b.popularity || 0) - (a.popularity || 0);
                     return a.id - b.id;
                 });
 
                 const primaryTeam = duplicates[0];
-                const duplicateIds = duplicates.slice(1).map(d => d.id);
+                const duplicateIds = duplicates.slice(1).map((d) => d.id);
 
                 // Begin transaction
-                await conn.transaction(async trx => {
+                await conn.transaction(async (trx) => {
                     try {
                         // Update league associations
                         await trx('sports_teams_leagues')
@@ -254,33 +255,33 @@ function mergeTeamDuplicates() {
                             .whereNull('deleted')
                             .update({
                                 team_id: primaryTeam.id,
-                                updated: timeNow()
+                                updated: timeNow(),
                             });
 
                         // Soft delete duplicate teams
-                        await trx('sports_teams')
-                            .whereIn('id', duplicateIds)
-                            .update({
-                                deleted: timeNow(),
-                                updated: timeNow()
-                            });
+                        await trx('sports_teams').whereIn('id', duplicateIds).update({
+                            deleted: timeNow(),
+                            updated: timeNow(),
+                        });
 
                         // Update primary team's popularity if needed
                         if (!primaryTeam.popularity) {
-                            const maxPopularity = Math.max(...duplicates.map(d => d.popularity || 0));
+                            const maxPopularity = Math.max(
+                                ...duplicates.map((d) => d.popularity || 0),
+                            );
                             if (maxPopularity > 0) {
-                                await trx('sports_teams')
-                                    .where('id', primaryTeam.id)
-                                    .update({
-                                        popularity: maxPopularity,
-                                        updated: timeNow()
-                                    });
+                                await trx('sports_teams').where('id', primaryTeam.id).update({
+                                    popularity: maxPopularity,
+                                    updated: timeNow(),
+                                });
                             }
                         }
 
                         await trx.commit();
 
-                        console.log(`Merged ${duplicateIds.length} duplicates into team ${primaryTeam.id} (${primaryTeam.name})`);
+                        console.log(
+                            `Merged ${duplicateIds.length} duplicates into team ${primaryTeam.id} (${primaryTeam.name})`,
+                        );
                     } catch (error) {
                         await trx.rollback();
                         throw error;
@@ -290,9 +291,9 @@ function mergeTeamDuplicates() {
 
             return resolve({
                 totalGroups: Object.keys(groups).length,
-                mergedGroups: Object.values(groups).filter(g => g.length > 1).length
+                mergedGroups: Object.values(groups).filter((g) => g.length > 1).length,
             });
-        } catch(e) {
+        } catch (e) {
             console.error(e);
             return reject(e);
         }
@@ -301,58 +302,57 @@ function mergeTeamDuplicates() {
 
 function deleteInvalidResults() {
     return new Promise(async (resolve, reject) => {
-         try {
-             let invalid_strings = [
-                 'response not possible',
-                 'no valid team',
-                 'no known active',
-                 'no reliable data',
-                 'not available',
-                 'no verified',
-                 'no current team',
-                 'no active team'
-             ];
+        try {
+            let invalid_strings = [
+                'response not possible',
+                'no valid team',
+                'no known active',
+                'no reliable data',
+                'not available',
+                'no verified',
+                'no current team',
+                'no active team',
+            ];
             let conn = await dbService.conn();
 
-            let teams = await conn('sports_teams')
-                .whereNull('deleted');
+            let teams = await conn('sports_teams').whereNull('deleted');
 
-            for(let team of teams) {
-                let isInvalid = invalid_strings.some(str => team.name.toLowerCase().includes(str));
+            for (let team of teams) {
+                let isInvalid = invalid_strings.some((str) =>
+                    team.name.toLowerCase().includes(str),
+                );
 
-                if(isInvalid) {
-                    await conn('sports_teams')
-                        .where('id', team.id)
-                        .update({
-                            deleted: timeNow(),
-                            updated: timeNow()
-                        });
+                if (isInvalid) {
+                    await conn('sports_teams').where('id', team.id).update({
+                        deleted: timeNow(),
+                        updated: timeNow(),
+                    });
                 }
             }
-         } catch(e) {
-             console.error(e);
-         }
+        } catch (e) {
+            console.error(e);
+        }
 
-         resolve();
+        resolve();
     });
 }
 
 function main() {
     return new Promise(async (resolve, reject) => {
         try {
-             await addTeams();
+            await addTeams();
 
-             await mergeTeamDuplicates();
+            await mergeTeamDuplicates();
 
-             await deleteInvalidResults();
-        } catch(e) {
+            await deleteInvalidResults();
+        } catch (e) {
             console.error(e);
         }
     });
 }
 
 module.exports = {
-    main
+    main,
 };
 
 if (require.main === module) {

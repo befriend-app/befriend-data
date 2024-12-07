@@ -1,7 +1,8 @@
+
 module.exports = [
     {
         name: 'Meet',
-        token: 'pp6n0vl69ob4m65n18yy',
+        token: 'meet-parent',
         emoji: '🤝',
         title: 'Meet',
         notification: 'Meet',
@@ -14,7 +15,7 @@ module.exports = [
         sub: [
             {
                 name: 'Any',
-                token: 'epcqpzswwzdwzz1dhgkz',
+                token: 'meet-any',
                 emoji: '🤝',
                 title: 'Meet',
                 notification: 'Meet',
@@ -26,7 +27,7 @@ module.exports = [
             },
             {
                 name: 'Cafe',
-                token: 'ey648yzjd434c7e852a5',
+                token: 'meet-cafe',
                 emoji: '☕',
                 title: 'Meet at Cafe',
                 notification: 'Meet at Cafe',
@@ -36,7 +37,7 @@ module.exports = [
             },
             {
                 name: 'Restaurant',
-                token: 'ahb2ckxtrtuxqfg8v9yi',
+                token: 'meet-restaurant',
                 emoji: '🍽️',
                 title: 'Meet at Restaurant',
                 notification: 'Meet at Restaurant',
@@ -46,7 +47,7 @@ module.exports = [
             },
             {
                 name: 'Park',
-                token: 'qm5urygtxypy8vvo9vp6',
+                token: 'meet-park',
                 emoji: '🌳',
                 title: 'Meet at Park',
                 notification: 'Meet at Park',
@@ -56,7 +57,7 @@ module.exports = [
             },
             {
                 name: 'Work Space',
-                token: 'wv1iyebril0mji8zipo6',
+                token: 'meet-work-space',
                 emoji: '💼',
                 title: 'Meet at Work Space',
                 notification: 'Meet at Work Space',
@@ -66,7 +67,7 @@ module.exports = [
             },
             {
                 name: 'Hotel',
-                token: 'n29is6q5d1gbxoi2yeqs',
+                token: 'meet-hotel',
                 emoji: '🏨',
                 title: 'Meet at Hotel',
                 notification: 'Meet at Hotel',
@@ -76,7 +77,7 @@ module.exports = [
             },
             {
                 name: 'Bar',
-                token: 't934luppuf52n7g2x91f',
+                token: 'meet-bar',
                 emoji: '🍺',
                 title: 'Meet at Bar',
                 notification: 'Meet at Bar',
@@ -86,7 +87,7 @@ module.exports = [
             },
             {
                 name: 'Lounge',
-                token: 'cilgi5qj9hmv3o1bdcy8',
+                token: 'meet-lounge',
                 emoji: '🛋️',
                 title: 'Meet at Lounge',
                 notification: 'Meet at Lounge',
@@ -96,7 +97,7 @@ module.exports = [
             },
             {
                 name: 'Mall',
-                token: 'wk108qq43vyxb2mb8ukl',
+                token: 'meet-mall',
                 emoji: '🏬',
                 title: 'Meet at Mall',
                 notification: 'Meet at Mall',
@@ -106,7 +107,7 @@ module.exports = [
             },
             {
                 name: 'Library',
-                token: 'v1igyy2ljkuij7o3pmog',
+                token: 'meet-library',
                 emoji: '📚',
                 title: 'Meet at Library',
                 notification: 'Meet at Library',
@@ -116,7 +117,7 @@ module.exports = [
             },
             {
                 name: 'Campus',
-                token: '64ue37y1cmwbipjmitdc',
+                token: 'meet-campus',
                 emoji: '🎓',
                 title: 'Meet on Campus',
                 notification: 'Meet on Campus',
@@ -126,7 +127,7 @@ module.exports = [
             },
             {
                 name: 'Community',
-                token: '99j1z5dqgjmi1nb22e97',
+                token: 'meet-community',
                 emoji: '🏛️',
                 title: 'Community Places',
                 notification: 'Meet at Community Center',
@@ -136,7 +137,7 @@ module.exports = [
             },
             {
                 name: 'Spiritual',
-                token: 'saranwv6c5wi4rok03yh',
+                token: 'meet-spiritual',
                 emoji: '⛪',
                 title: 'Spiritual Places',
                 notification: 'Meet at Spiritual',
@@ -148,7 +149,7 @@ module.exports = [
     },
     {
         name: 'Eat',
-        token: '68vrgwc22yx14vr9969y',
+        token: 'eat-parent',
         emoji: '🍽️',
         title: 'Places to Eat',
         notification: 'Eat',
@@ -159,7 +160,7 @@ module.exports = [
         sub: [
             {
                 name: 'Any',
-                token: 'h4qpsbsvufbyf89mcic5',
+                token: 'eat-any',
                 emoji: '🍽️',
                 title: 'Places to Eat',
                 notification: 'Eat',
@@ -168,7 +169,7 @@ module.exports = [
             },
             {
                 name: 'Breakfast',
-                token: '6rn8lu3h6pm97dipgyy8',
+                token: 'eat-breakfast',
                 emoji: '🥞',
                 title: 'Breakfast Places',
                 notification: 'Breakfast',
@@ -178,7 +179,7 @@ module.exports = [
             },
             {
                 name: 'Lunch',
-                token: 'v6je64are6ts8i6546c2',
+                token: 'eat-lunch',
                 emoji: '🥪',
                 title: 'Lunch Places',
                 notification: 'Lunch',
@@ -188,7 +189,7 @@ module.exports = [
             },
             {
                 name: 'Dinner',
-                token: 'leprzbolioog916v5joe',
+                token: 'eat-dinner',
                 emoji: '🍽️',
                 title: 'Dinner Places',
                 notification: 'Dinner',
@@ -198,7 +199,7 @@ module.exports = [
             },
             {
                 name: 'Dessert',
-                token: 'dyxgdb3bccz0sy8xjefq',
+                token: 'eat-dessert',
                 emoji: '🍰',
                 title: 'Dessert Places',
                 notification: 'Dessert',
@@ -208,7 +209,7 @@ module.exports = [
                 sub: [
                     {
                         name: 'Any',
-                        token: 'r9zofoj5vzib4c4542gt',
+                        token: 'eat-dessert-any',
                         emoji: '🍰',
                         title: 'Dessert Places',
                         notification: 'Dessert',
@@ -217,7 +218,7 @@ module.exports = [
                     },
                     {
                         name: 'Ice Cream',
-                        token: '9ude661dfzlu6nc9hq6t',
+                        token: 'eat-dessert-ice-cream',
                         emoji: '🍦',
                         title: 'Ice Cream Places',
                         notification: 'Ice Cream',
@@ -227,7 +228,7 @@ module.exports = [
                     },
                     {
                         name: 'Donut',
-                        token: 'i5hbr9q5hyz175bpgln4',
+                        token: 'eat-dessert-donut',
                         emoji: '🍩',
                         title: 'Donut Places',
                         notification: 'Donut',
@@ -237,7 +238,7 @@ module.exports = [
                     },
                     {
                         name: 'Bakery',
-                        token: 'didfwxw2uw3rm5ijjk8p',
+                        token: 'eat-dessert-bakery',
                         emoji: '🥖',
                         title: 'Bakeries',
                         notification: 'Bakery',
@@ -247,7 +248,7 @@ module.exports = [
                     },
                     {
                         name: 'Cupcake',
-                        token: '6s58j8g5hvdtp3igu7lf',
+                        token: 'eat-dessert-cupcake',
                         emoji: '🧁',
                         title: 'Cupcake Places',
                         notification: 'Cupcake',
@@ -257,7 +258,7 @@ module.exports = [
                     },
                     {
                         name: 'Frozen Yogurt',
-                        token: 'x7tfkupeykghkryn3tag',
+                        token: 'eat-dessert-frozen-yogurt',
                         emoji: '🍨',
                         title: 'Frozen Yogurt Places',
                         notification: 'Frozen Yogurt',
@@ -267,7 +268,7 @@ module.exports = [
                     },
                     {
                         name: 'Gelato',
-                        token: '5es65eprfmfls799zewk',
+                        token: 'eat-dessert-gelato',
                         emoji: '🍧',
                         title: 'Gelato Places',
                         notification: 'Gelato',
@@ -277,7 +278,7 @@ module.exports = [
                     },
                     {
                         name: 'Pastry',
-                        token: 'pkukssqrnp39rkewjjnt',
+                        token: 'eat-dessert-pastry',
                         emoji: '🥐',
                         title: 'Pastry Places',
                         notification: 'Pastry',
@@ -287,7 +288,7 @@ module.exports = [
                     },
                     {
                         name: 'Pie',
-                        token: 'jtv5s947gvrxb4p3ce88',
+                        token: 'eat-dessert-pie',
                         emoji: '🥧',
                         title: 'Pie Places',
                         notification: 'Pie',
@@ -297,7 +298,7 @@ module.exports = [
                     },
                     {
                         name: 'Waffle',
-                        token: 'hzlqnph7tbuxnmwize2c',
+                        token: 'eat-dessert-waffle',
                         emoji: '🧇',
                         title: 'Waffle Places',
                         notification: 'Waffle',
@@ -309,7 +310,7 @@ module.exports = [
             },
             {
                 name: 'Food Type',
-                token: 'dudprk8vl1hmp2nuelz7',
+                token: 'eat-food-type',
                 emoji: '🍽️',
                 title: 'Places to Eat',
                 notification: 'Eat',
@@ -322,7 +323,7 @@ module.exports = [
                 sub: [
                     {
                         name: 'Any',
-                        token: '9e3l4b3imutyqc5sw8js',
+                        token: 'eat-food-type-any',
                         emoji: '🍽️',
                         title: 'Places to Eat',
                         notification: 'Eat',
@@ -336,7 +337,7 @@ module.exports = [
                     },
                     {
                         name: 'Pizza',
-                        token: 'uu2g9lbnqv01g81t8lle',
+                        token: 'eat-food-type-pizza',
                         emoji: '🍕',
                         title: 'Pizza Places',
                         notification: 'Pizza',
@@ -346,7 +347,7 @@ module.exports = [
                     },
                     {
                         name: 'BBQ',
-                        token: 'oc2egei9y6d1p96dgrrt',
+                        token: 'eat-food-type-bbq',
                         emoji: '🍖',
                         title: 'BBQ Places',
                         notification: 'BBQ',
@@ -356,7 +357,7 @@ module.exports = [
                     },
                     {
                         name: 'Salad',
-                        token: '5qr4s86we2ca0tobigyg',
+                        token: 'eat-food-type-salad',
                         emoji: '🥗',
                         title: 'Salad Places',
                         notification: 'Salad',
@@ -366,7 +367,7 @@ module.exports = [
                     },
                     {
                         name: 'Burger',
-                        token: 'rz43i9speej7rg0rsnjw',
+                        token: 'eat-food-type-burger',
                         emoji: '🍔',
                         title: 'Burger Places',
                         notification: 'Burger',
@@ -376,7 +377,7 @@ module.exports = [
                     },
                     {
                         name: 'Sushi',
-                        token: 'b3m2ywquduusr57de57j',
+                        token: 'eat-food-type-sushi',
                         emoji: '🍱',
                         title: 'Sushi Places',
                         notification: 'Sushi',
@@ -386,7 +387,7 @@ module.exports = [
                     },
                     {
                         name: 'Steak',
-                        token: '0ycmlaue2fxzfssd27w0',
+                        token: 'eat-food-type-steak',
                         emoji: '🥩',
                         title: 'Steak Restaurants',
                         notification: 'Steak',
@@ -396,7 +397,7 @@ module.exports = [
                     },
                     {
                         name: 'Seafood',
-                        token: 'tma6d8xlecn8jnh86x1c',
+                        token: 'eat-food-type-seafood',
                         emoji: '🦐',
                         title: 'Seafood Restaurants',
                         notification: 'Seafood',
@@ -406,7 +407,7 @@ module.exports = [
                     },
                     {
                         name: 'Wings',
-                        token: '7iwmg6s5yolbschoik79',
+                        token: 'eat-food-type-wings',
                         emoji: '🍗',
                         title: 'Wing Places',
                         notification: 'wings',
@@ -416,7 +417,7 @@ module.exports = [
                     },
                     {
                         name: 'Fried Chicken',
-                        token: '5q4nc16j3yy6f6lldiiz',
+                        token: 'eat-food-type-fried-chicken',
                         emoji: '🍗',
                         title: 'Fried Chicken Places',
                         notification: 'Fried Chicken',
@@ -426,7 +427,7 @@ module.exports = [
                     },
                     {
                         name: 'Hot Dog',
-                        token: '18p5f54dgelqlz3vsxjc',
+                        token: 'eat-food-type-hot-dog',
                         emoji: '🌭',
                         title: 'Hot Dog Places',
                         notification: 'Hot Dog',
@@ -436,7 +437,7 @@ module.exports = [
                     },
                     {
                         name: 'Fish & Chips',
-                        token: 'ggu538tkao5nbgwfyxxe',
+                        token: 'eat-food-type-fish-&-chips',
                         emoji: '🐟',
                         title: 'Fish & Chips Places',
                         notification: 'Fish & Chips',
@@ -446,7 +447,7 @@ module.exports = [
                     },
                     {
                         name: 'Mac & Cheese',
-                        token: 'ithsovcxgjp3g71sjc16',
+                        token: 'eat-food-type-mac-&-cheese',
                         emoji: '🧀',
                         title: 'Mac & Cheese Places',
                         notification: 'Mac & Cheese',
@@ -456,7 +457,7 @@ module.exports = [
                     },
                     {
                         name: 'Sandwich',
-                        token: 'vzc3zswovm839tlfl013',
+                        token: 'eat-food-type-sandwich',
                         emoji: '🥪',
                         title: 'Sandwich Places',
                         notification: 'Sandwich',
@@ -466,7 +467,7 @@ module.exports = [
                     },
                     {
                         name: 'Soup',
-                        token: 'xrpg3vu628zsgkcb4rur',
+                        token: 'eat-food-type-soup',
                         emoji: '🥣',
                         title: 'Soup Places',
                         notification: 'Soup',
@@ -476,7 +477,7 @@ module.exports = [
                     },
                     {
                         name: 'Dumpling',
-                        token: 'sky33ry7mzdl497slq9t',
+                        token: 'eat-food-type-dumpling',
                         emoji: '🥟',
                         title: 'Dumpling Places',
                         notification: 'Dumplings',
@@ -486,7 +487,7 @@ module.exports = [
                     },
                     {
                         name: 'Empanada',
-                        token: '9jry2pv8pjwr8c1sgj46',
+                        token: 'eat-food-type-empanada',
                         emoji: '🥟',
                         title: 'Empanada Places',
                         notification: 'Empanadas',
@@ -496,7 +497,7 @@ module.exports = [
                     },
                     {
                         name: 'Falafel',
-                        token: 'qpkxp3zrrkygrwj2bwkb',
+                        token: 'eat-food-type-falafel',
                         emoji: '🧆',
                         title: 'Falafel Places',
                         notification: 'Falafel',
@@ -506,7 +507,7 @@ module.exports = [
                     },
                     {
                         name: 'Fast Food',
-                        token: '09yd87pqh76p7crgzf3g',
+                        token: 'eat-food-type-fast-food',
                         emoji: '🍟',
                         title: 'Fast Food Places',
                         notification: 'Fast Food',
@@ -516,7 +517,7 @@ module.exports = [
                     },
                     {
                         name: 'Fondue',
-                        token: 'pb8x3vuir83iw9x7o9qd',
+                        token: 'eat-food-type-fondue',
                         emoji: '🧀',
                         title: 'Fondue Places',
                         notification: 'Fondue',
@@ -526,7 +527,7 @@ module.exports = [
                     },
                     {
                         name: 'Halal',
-                        token: 'o0m6che2l6xqmkoqtgaf',
+                        token: 'eat-food-type-halal',
                         emoji: '🥙',
                         title: 'Halal Places',
                         notification: 'Halal',
@@ -536,7 +537,7 @@ module.exports = [
                     },
                     {
                         name: 'Poke',
-                        token: '8d3n36208lp4xo1jq4os',
+                        token: 'eat-food-type-poke',
                         emoji: '🐟',
                         title: 'Poke Places',
                         notification: 'Poke',
@@ -546,7 +547,7 @@ module.exports = [
                     },
                     {
                         name: 'Hotpot',
-                        token: 'tyvpv19qlp37nrahqcf5',
+                        token: 'eat-food-type-hotpot',
                         emoji: '🍲',
                         title: 'Hotpot Places',
                         notification: 'Hotpot',
@@ -556,7 +557,7 @@ module.exports = [
                     },
                     {
                         name: 'Kebab',
-                        token: '65mrzo9u2yortuoevzgg',
+                        token: 'eat-food-type-kebab',
                         emoji: '🥙',
                         title: 'Kebab Places',
                         notification: 'Kebab',
@@ -566,7 +567,7 @@ module.exports = [
                     },
                     {
                         name: 'Noodle',
-                        token: 'bhmbpch1wvyrtq51zmo8',
+                        token: 'eat-food-type-noodle',
                         emoji: '🍜',
                         title: 'Noodle Places',
                         notification: 'Noodles',
@@ -576,7 +577,7 @@ module.exports = [
                     },
                     {
                         name: 'Satay',
-                        token: 'hdkhyfjt64594n98fkh5',
+                        token: 'eat-food-type-satay',
                         emoji: '🍖',
                         title: 'Satay Places',
                         notification: 'Satay',
@@ -586,7 +587,7 @@ module.exports = [
                     },
                     {
                         name: 'Shawarma',
-                        token: 'gi1b51rlphm0yrtqyji2',
+                        token: 'eat-food-type-shawarma',
                         emoji: '🥙',
                         title: 'Shawarma Places',
                         notification: 'Shawarma',
@@ -596,7 +597,7 @@ module.exports = [
                     },
                     {
                         name: 'Vegan',
-                        token: 'fh7nwdj9qnrcr8ts1sy3',
+                        token: 'eat-food-type-vegan',
                         emoji: '🥬',
                         title: 'Vegan Places',
                         notification: 'Vegan',
@@ -606,7 +607,7 @@ module.exports = [
                     },
                     {
                         name: 'Snack',
-                        token: 'y2or7072fs9pfouvd1w8',
+                        token: 'eat-food-type-snack',
                         emoji: '🍿',
                         title: 'Snack Places',
                         notification: 'Snack',
@@ -616,7 +617,7 @@ module.exports = [
                     },
                     {
                         name: 'Gluten-Free',
-                        token: 'zrxevze2nhus355d368e',
+                        token: 'eat-food-type-gluten-free',
                         emoji: '🌾',
                         title: 'Gluten-Free Places',
                         notification: 'Gluten-Free',
@@ -628,7 +629,7 @@ module.exports = [
             },
             {
                 name: 'Ethnic',
-                token: 'ja0j7hfgpuxvmclrs9f6',
+                token: 'eat-ethnic',
                 emoji: '🌍',
                 title: 'Ethnic Restaurants',
                 notification: 'Ethnic Restaurant',
@@ -641,7 +642,7 @@ module.exports = [
                 sub: [
                     {
                         name: 'Any',
-                        token: 'viu29o6vec76sgntbi4w',
+                        token: 'eat-ethnic-any',
                         emoji: '🌍',
                         title: 'Ethnic Restaurants',
                         notification: 'Ethnic Restaurant',
@@ -659,7 +660,7 @@ module.exports = [
                     },
                     {
                         name: 'Italian',
-                        token: 'bowk43o9wphl88td266k',
+                        token: 'eat-ethnic-italian',
                         emoji: '🍝',
                         title: 'Italian Restaurants',
                         duration: 90,
@@ -668,7 +669,7 @@ module.exports = [
                     },
                     {
                         name: 'Chinese',
-                        token: 'naegu24ydmf8mbe1s3f4',
+                        token: 'eat-ethnic-chinese',
                         emoji: '🥢',
                         title: 'Chinese Restaurants',
                         duration: 90,
@@ -677,7 +678,7 @@ module.exports = [
                     },
                     {
                         name: 'Mexican',
-                        token: 'wz9de1h8p3l65oe0nj34',
+                        token: 'eat-ethnic-mexican',
                         emoji: '🌮',
                         title: 'Mexican Restaurants',
                         duration: 90,
@@ -686,7 +687,7 @@ module.exports = [
                     },
                     {
                         name: 'Japanese',
-                        token: 'fmqv1vqe2w12l0bmo6v2',
+                        token: 'eat-ethnic-japanese',
                         emoji: '🍱',
                         title: 'Japanese Restaurants',
                         duration: 90,
@@ -695,7 +696,7 @@ module.exports = [
                     },
                     {
                         name: 'Indian',
-                        token: 'lf5r7xuzmung4157m9nd',
+                        token: 'eat-ethnic-indian',
                         emoji: '🍛',
                         title: 'Indian Restaurants',
                         duration: 90,
@@ -704,7 +705,7 @@ module.exports = [
                     },
                     {
                         name: 'American',
-                        token: '9b8x7qrhxdtdaw8p7cic',
+                        token: 'eat-ethnic-american',
                         emoji: '🍔',
                         title: 'American Restaurants',
                         duration: 90,
@@ -713,7 +714,7 @@ module.exports = [
                     },
                     {
                         name: 'Thai',
-                        token: 'ge9hd6ifibyh1o4kqpwg',
+                        token: 'eat-ethnic-thai',
                         emoji: '🥘',
                         title: 'Thai Restaurants',
                         duration: 90,
@@ -722,7 +723,7 @@ module.exports = [
                     },
                     {
                         name: 'French',
-                        token: 'dueitgvm6dfvgi0jm5tw',
+                        token: 'eat-ethnic-french',
                         emoji: '🥐',
                         title: 'French Restaurants',
                         duration: 90,
@@ -731,7 +732,7 @@ module.exports = [
                     },
                     {
                         name: 'Mediterranean',
-                        token: '344kruu14mm12xf4ujoe',
+                        token: 'eat-ethnic-mediterranean',
                         emoji: '🥙',
                         title: 'Mediterranean Restaurants',
                         duration: 90,
@@ -740,7 +741,7 @@ module.exports = [
                     },
                     {
                         name: 'Spanish',
-                        token: '4jqb3j98yl8sj3rd7ncw',
+                        token: 'eat-ethnic-spanish',
                         emoji: '🥘',
                         title: 'Spanish Restaurants',
                         duration: 90,
@@ -749,7 +750,7 @@ module.exports = [
                     },
                     {
                         name: 'Vietnamese',
-                        token: '5bm6m3a2c0fxi3j2e61c',
+                        token: 'eat-ethnic-vietnamese',
                         emoji: '🍜',
                         title: 'Vietnamese Restaurants',
                         duration: 90,
@@ -758,7 +759,7 @@ module.exports = [
                     },
                     {
                         name: 'Korean',
-                        token: 'xnyoaode1f4qfg7u4akn',
+                        token: 'eat-ethnic-korean',
                         emoji: '🍚',
                         title: 'Korean Restaurants',
                         duration: 90,
@@ -767,7 +768,7 @@ module.exports = [
                     },
                     {
                         name: 'Middle Eastern',
-                        token: 'xw7itv86bjef6bz6g5uf',
+                        token: 'eat-ethnic-middle-eastern',
                         emoji: '🧆',
                         title: 'Middle Eastern Restaurants',
                         duration: 90,
@@ -776,7 +777,7 @@ module.exports = [
                     },
                     {
                         name: 'Brazilian',
-                        token: 'dtqoa2o76thilew03kyd',
+                        token: 'eat-ethnic-brazilian',
                         emoji: '🥩',
                         title: 'Brazilian Restaurants',
                         duration: 90,
@@ -785,7 +786,7 @@ module.exports = [
                     },
                     {
                         name: 'Caribbean',
-                        token: '6i89fys8xbd9vi1agopj',
+                        token: 'eat-ethnic-caribbean',
                         emoji: '🌴',
                         title: 'Caribbean Restaurants',
                         duration: 90,
@@ -794,7 +795,7 @@ module.exports = [
                     },
                     {
                         name: 'German',
-                        token: 'ioy7vcl83x8lizfo7odq',
+                        token: 'eat-ethnic-german',
                         emoji: '🥨',
                         title: 'German Restaurants',
                         duration: 90,
@@ -803,7 +804,7 @@ module.exports = [
                     },
                     {
                         name: 'Greek',
-                        token: '73z2xwccrgut8nsw1zvz',
+                        token: 'eat-ethnic-greek',
                         emoji: '🥗',
                         title: 'Greek Restaurants',
                         duration: 90,
@@ -812,7 +813,7 @@ module.exports = [
                     },
                     {
                         name: 'African',
-                        token: 'kih5gfmy92avls2bdrci',
+                        token: 'eat-ethnic-african',
                         emoji: '🍖',
                         title: 'African Restaurants',
                         duration: 90,
@@ -821,7 +822,7 @@ module.exports = [
                     },
                     {
                         name: 'Lebanese',
-                        token: 'bxyrl37gh1vj46g3nqxf',
+                        token: 'eat-ethnic-lebanese',
                         emoji: '🥙',
                         title: 'Lebanese Restaurants',
                         duration: 90,
@@ -830,7 +831,7 @@ module.exports = [
                     },
                     {
                         name: 'Cajun',
-                        token: 'jjhrgm2a6l9tdv560hje',
+                        token: 'eat-ethnic-cajun',
                         emoji: '🦐',
                         title: 'Cajun Restaurants',
                         duration: 90,
@@ -839,7 +840,7 @@ module.exports = [
                     },
                     {
                         name: 'Hawaiian',
-                        token: '7p5xpinw9v31y4oqsbhc',
+                        token: 'eat-ethnic-hawaiian',
                         emoji: '🌺',
                         title: 'Hawaiian Restaurants',
                         duration: 90,
@@ -848,7 +849,7 @@ module.exports = [
                     },
                     {
                         name: 'Australian',
-                        token: '41xjrncqsly5j9ubrif5',
+                        token: 'eat-ethnic-australian',
                         emoji: '🦘',
                         title: 'Australian Restaurants',
                         duration: 90,
@@ -857,7 +858,7 @@ module.exports = [
                     },
                     {
                         name: 'Turkish',
-                        token: 'qy8q8sxb53tuelvjz7mh',
+                        token: 'eat-ethnic-turkish',
                         emoji: '🥙',
                         title: 'Turkish Restaurants',
                         duration: 90,
@@ -866,7 +867,7 @@ module.exports = [
                     },
                     {
                         name: 'Argentinian',
-                        token: 'jhvgw7nuzscwpv19cg5o',
+                        token: 'eat-ethnic-argentinian',
                         emoji: '🥩',
                         title: 'Argentinian Restaurants',
                         duration: 90,
@@ -875,7 +876,7 @@ module.exports = [
                     },
                     {
                         name: 'Filipino',
-                        token: 'lrvxuysxwk2ef083mv72',
+                        token: 'eat-ethnic-filipino',
                         emoji: '🍚',
                         title: 'Filipino Restaurants',
                         duration: 90,
@@ -884,7 +885,7 @@ module.exports = [
                     },
                     {
                         name: 'Polish',
-                        token: '85l0hd5f7887dgh61r1u',
+                        token: 'eat-ethnic-polish',
                         emoji: '🥨',
                         title: 'Polish Restaurants',
                         duration: 90,
@@ -893,7 +894,7 @@ module.exports = [
                     },
                     {
                         name: 'Russian',
-                        token: 'koo6jixv4d3u82azvptq',
+                        token: 'eat-ethnic-russian',
                         emoji: '🥟',
                         title: 'Russian Restaurants',
                         duration: 90,
@@ -902,7 +903,7 @@ module.exports = [
                     },
                     {
                         name: 'Hungarian',
-                        token: '1sbn4rsr3232hrtqnbpa',
+                        token: 'eat-ethnic-hungarian',
                         emoji: '🍖',
                         title: 'Hungarian Restaurants',
                         duration: 90,
@@ -911,7 +912,7 @@ module.exports = [
                     },
                     {
                         name: 'Ethiopian',
-                        token: 'zygwequby5xywqcd1f7g',
+                        token: 'eat-ethnic-ethiopian',
                         emoji: '🍛',
                         title: 'Ethiopian Restaurants',
                         duration: 90,
@@ -920,7 +921,7 @@ module.exports = [
                     },
                     {
                         name: 'Peruvian',
-                        token: '97v9fv45qynug9348suu',
+                        token: 'eat-ethnic-peruvian',
                         emoji: '🌽',
                         title: 'Peruvian Restaurants',
                         duration: 90,
@@ -929,7 +930,7 @@ module.exports = [
                     },
                     {
                         name: 'Sri Lankan',
-                        token: '7i4955oku5tl1njvw9cv',
+                        token: 'eat-ethnic-sri-lankan',
                         emoji: '🍛',
                         title: 'Sri Lankan Restaurants',
                         duration: 90,
@@ -938,7 +939,7 @@ module.exports = [
                     },
                     {
                         name: 'Moroccan',
-                        token: '6acknezw3bw8zuf5gl4z',
+                        token: 'eat-ethnic-moroccan',
                         emoji: '🍖',
                         title: 'Moroccan Restaurants',
                         duration: 90,
@@ -947,7 +948,7 @@ module.exports = [
                     },
                     {
                         name: 'Syrian',
-                        token: '4jhot3eb4tty73zk5483',
+                        token: 'eat-ethnic-syrian',
                         emoji: '🥙',
                         title: 'Syrian Restaurants',
                         duration: 90,
@@ -956,7 +957,7 @@ module.exports = [
                     },
                     {
                         name: 'Afghan',
-                        token: 'ock5cqc3lvnd8udld505',
+                        token: 'eat-ethnic-afghan',
                         emoji: '🍖',
                         title: 'Afghan Restaurants',
                         duration: 90,
@@ -965,7 +966,7 @@ module.exports = [
                     },
                     {
                         name: 'Tibetan',
-                        token: 'hqwtp6cmmvhqfl69thco',
+                        token: 'eat-ethnic-tibetan',
                         emoji: '🍜',
                         title: 'Tibetan Restaurants',
                         duration: 90,
@@ -974,7 +975,7 @@ module.exports = [
                     },
                     {
                         name: 'Burmese',
-                        token: 'p1p8xcmzqgubwpgf5xds',
+                        token: 'eat-ethnic-burmese',
                         emoji: '🍜',
                         title: 'Burmese Restaurants',
                         duration: 90,
@@ -983,7 +984,7 @@ module.exports = [
                     },
                     {
                         name: 'Singaporean',
-                        token: 'r8nw8nu024687d7kjmz5',
+                        token: 'eat-ethnic-singaporean',
                         emoji: '🍜',
                         title: 'Singaporean Restaurants',
                         duration: 90,
@@ -992,7 +993,7 @@ module.exports = [
                     },
                     {
                         name: 'Bangladeshi',
-                        token: 'hh41h0jiyime92p1mq2j',
+                        token: 'eat-ethnic-bangladeshi',
                         emoji: '🍛',
                         title: 'Bangladeshi Restaurants',
                         duration: 90,
@@ -1001,7 +1002,7 @@ module.exports = [
                     },
                     {
                         name: 'Indonesian',
-                        token: '27bw8h6l8feyh6kdsd22',
+                        token: 'eat-ethnic-indonesian',
                         emoji: '🍚',
                         title: 'Indonesian Restaurants',
                         duration: 90,
@@ -1010,7 +1011,7 @@ module.exports = [
                     },
                     {
                         name: 'Iraqi',
-                        token: 'mwzzl9xgdkz6qosacwqi',
+                        token: 'eat-ethnic-iraqi',
                         emoji: '🥙',
                         title: 'Iraqi Restaurants',
                         duration: 90,
@@ -1019,7 +1020,7 @@ module.exports = [
                     },
                     {
                         name: 'Jewish',
-                        token: 'btrp3dbgsb3x5z6mufyl',
+                        token: 'eat-ethnic-jewish',
                         emoji: '🥯',
                         title: 'Jewish Restaurants',
                         duration: 90,
@@ -1028,7 +1029,7 @@ module.exports = [
                     },
                     {
                         name: 'Cuban',
-                        token: 'fkzkax17hnlpqfejf9pq',
+                        token: 'eat-ethnic-cuban',
                         emoji: '🥪',
                         title: 'Cuban Restaurants',
                         duration: 90,
@@ -1037,7 +1038,7 @@ module.exports = [
                     },
                     {
                         name: 'Colombian',
-                        token: 'ed3ze3z8bq3ytfu7xmgu',
+                        token: 'eat-ethnic-colombian',
                         emoji: '🌮',
                         title: 'Colombian Restaurants',
                         duration: 90,
@@ -1046,7 +1047,7 @@ module.exports = [
                     },
                     {
                         name: 'Mauritian',
-                        token: '599jygy5uwskb0bk5uvp',
+                        token: 'eat-ethnic-mauritian',
                         emoji: '🍛',
                         title: 'Mauritian Restaurants',
                         duration: 90,
@@ -1055,7 +1056,7 @@ module.exports = [
                     },
                     {
                         name: 'Slovak',
-                        token: 'g4wybpx99fi6ldc2zsln',
+                        token: 'eat-ethnic-slovak',
                         emoji: '🥘',
                         title: 'Slovak Restaurants',
                         duration: 90,
@@ -1064,7 +1065,7 @@ module.exports = [
                     },
                     {
                         name: 'Belarusian',
-                        token: '6nxpvms1tq1kawt3rmo2',
+                        token: 'eat-ethnic-belarusian',
                         emoji: '🥘',
                         title: 'Belarusian Restaurants',
                         duration: 90,
@@ -1073,7 +1074,7 @@ module.exports = [
                     },
                     {
                         name: 'Armenian',
-                        token: 's2yb0wsrlurjc526bnw8',
+                        token: 'eat-ethnic-armenian',
                         emoji: '🥙',
                         title: 'Armenian Restaurants',
                         duration: 90,
@@ -1082,7 +1083,7 @@ module.exports = [
                     },
                     {
                         name: 'Modern European',
-                        token: 'vw47w5vmzi8c8csg3kj2',
+                        token: 'eat-ethnic-modern-european',
                         emoji: '🍽️',
                         title: 'Modern European Restaurants',
                         duration: 90,
@@ -1091,7 +1092,7 @@ module.exports = [
                     },
                     {
                         name: 'Eastern European',
-                        token: '83vlblducffpt2eyi2x7',
+                        token: 'eat-ethnic-eastern-european',
                         emoji: '🥘',
                         title: 'Eastern European Restaurants',
                         duration: 90,
@@ -1100,7 +1101,7 @@ module.exports = [
                     },
                     {
                         name: 'Scottish',
-                        token: 'clzj925sgdgsezqux2lb',
+                        token: 'eat-ethnic-scottish',
                         emoji: '🥘',
                         title: 'Scottish Restaurants',
                         duration: 90,
@@ -1109,7 +1110,7 @@ module.exports = [
                     },
                     {
                         name: 'Ukrainian',
-                        token: 'jlugqv9prc63m4t121ep',
+                        token: 'eat-ethnic-ukrainian',
                         emoji: '🥘',
                         title: 'Ukrainian Restaurants',
                         duration: 90,
@@ -1118,7 +1119,7 @@ module.exports = [
                     },
                     {
                         name: 'Malay',
-                        token: 'p4hwmte999xm6du5f81h',
+                        token: 'eat-ethnic-malay',
                         emoji: '🍜',
                         title: 'Malay Restaurants',
                         duration: 90,
@@ -1127,7 +1128,7 @@ module.exports = [
                     },
                     {
                         name: 'New American',
-                        token: 'g5hecenr6r8omwkmsczh',
+                        token: 'eat-ethnic-new-american',
                         emoji: '🍔',
                         title: 'New American Restaurants',
                         duration: 90,
@@ -1136,7 +1137,7 @@ module.exports = [
                     },
                     {
                         name: 'Latin American',
-                        token: 'bwnwe4oce3jqrawj9bjm',
+                        token: 'eat-ethnic-latin-american',
                         emoji: '🌮',
                         title: 'Latin American Restaurants',
                         duration: 90,
@@ -1145,7 +1146,7 @@ module.exports = [
                     },
                     {
                         name: 'Poutine',
-                        token: 'f1wuznxsxlhugffwh9h7',
+                        token: 'eat-ethnic-poutine',
                         emoji: '🍟',
                         title: 'Poutine Restaurants',
                         duration: 60,
@@ -1154,7 +1155,7 @@ module.exports = [
                     },
                     {
                         name: 'Tatar',
-                        token: 'm384uwxw6z85v4ck4tog',
+                        token: 'eat-ethnic-tatar',
                         emoji: '🥘',
                         title: 'Tatar Restaurants',
                         duration: 90,
@@ -1163,7 +1164,7 @@ module.exports = [
                     },
                     {
                         name: 'Bulgarian',
-                        token: 'pr5rzhqx2js7ryvucg17',
+                        token: 'eat-ethnic-bulgarian',
                         emoji: '🥘',
                         title: 'Bulgarian Restaurants',
                         duration: 90,
@@ -1172,7 +1173,7 @@ module.exports = [
                     },
                     {
                         name: 'Bosnian',
-                        token: '4cftt8wbw6v1b8656bli',
+                        token: 'eat-ethnic-bosnian',
                         emoji: '🥘',
                         title: 'Bosnian Restaurants',
                         duration: 90,
@@ -1181,7 +1182,7 @@ module.exports = [
                     },
                     {
                         name: 'Himalayan',
-                        token: 'j9xl21fl4kd1qe8znarh',
+                        token: 'eat-ethnic-himalayan',
                         emoji: '🍛',
                         title: 'Himalayan Restaurants',
                         duration: 90,
@@ -1190,7 +1191,7 @@ module.exports = [
                     },
                     {
                         name: 'Venezuelan',
-                        token: '2xevjgp1l1s5vdpuuej4',
+                        token: 'eat-ethnic-venezuelan',
                         emoji: '🌮',
                         title: 'Venezuelan Restaurants',
                         duration: 90,
@@ -1199,7 +1200,7 @@ module.exports = [
                     },
                     {
                         name: 'Austrian',
-                        token: '2ckjocb3pdwp3ir819z8',
+                        token: 'eat-ethnic-austrian',
                         emoji: '🥨',
                         title: 'Austrian Restaurants',
                         duration: 90,
@@ -1208,7 +1209,7 @@ module.exports = [
                     },
                     {
                         name: 'Satay',
-                        token: 'vems6y79efzrpcps1zk3',
+                        token: 'eat-ethnic-satay',
                         emoji: '🍖',
                         title: 'Satay Restaurants',
                         duration: 90,
@@ -1217,7 +1218,7 @@ module.exports = [
                     },
                     {
                         name: 'Kurdish',
-                        token: 'r97sjytxljvuf6e338vh',
+                        token: 'eat-ethnic-kurdish',
                         emoji: '🥙',
                         title: 'Kurdish Restaurants',
                         duration: 90,
@@ -1226,7 +1227,7 @@ module.exports = [
                     },
                     {
                         name: 'South American',
-                        token: '9intmh161i5oxbejk5qq',
+                        token: 'eat-ethnic-south-american',
                         emoji: '🌮',
                         title: 'South American Restaurants',
                         duration: 90,
@@ -1235,7 +1236,7 @@ module.exports = [
                     },
                     {
                         name: 'Cambodian',
-                        token: 'ovb1jod8j2tw9d7bjwwg',
+                        token: 'eat-ethnic-cambodian',
                         emoji: '🍜',
                         title: 'Cambodian Restaurants',
                         duration: 90,
@@ -1244,7 +1245,7 @@ module.exports = [
                     },
                     {
                         name: 'Scandinavian',
-                        token: 'y8v39273jzovohugr9q6',
+                        token: 'eat-ethnic-scandinavian',
                         emoji: '🐟',
                         title: 'Scandinavian Restaurants',
                         duration: 90,
@@ -1253,7 +1254,7 @@ module.exports = [
                     },
                     {
                         name: 'Honduran',
-                        token: 'qeytqq6cixk4c8pu72n3',
+                        token: 'eat-ethnic-honduran',
                         emoji: '🌮',
                         title: 'Honduran Restaurants',
                         duration: 90,
@@ -1262,7 +1263,7 @@ module.exports = [
                     },
                     {
                         name: 'Egyptian',
-                        token: '58m8guv4ibzvutwk0fcq',
+                        token: 'eat-ethnic-egyptian',
                         emoji: '🥙',
                         title: 'Egyptian Restaurants',
                         duration: 90,
@@ -1271,7 +1272,7 @@ module.exports = [
                     },
                     {
                         name: 'Finnish',
-                        token: '92oqmpvuerfytftzo216',
+                        token: 'eat-ethnic-finnish',
                         emoji: '🐟',
                         title: 'Finnish Restaurants',
                         duration: 90,
@@ -1280,7 +1281,7 @@ module.exports = [
                     },
                     {
                         name: 'Danish',
-                        token: '27rinughj2cojdzntrnf',
+                        token: 'eat-ethnic-danish',
                         emoji: '🥨',
                         title: 'Danish Restaurants',
                         duration: 90,
@@ -1289,7 +1290,7 @@ module.exports = [
                     },
                     {
                         name: 'Belgian',
-                        token: 'zbf29wugpxqmzssflog9',
+                        token: 'eat-ethnic-belgian',
                         emoji: '🧇',
                         title: 'Belgian Restaurants',
                         fsq_ids: [13077],
@@ -1301,7 +1302,7 @@ module.exports = [
     },
     {
         name: 'Drink',
-        token: '56e4z24p72uh251qu43c',
+        token: 'drink-parent',
         emoji: '🥤',
         title: 'Places to Drink',
         notification: 'Drink',
@@ -1312,7 +1313,7 @@ module.exports = [
         sub: [
             {
                 name: 'Any',
-                token: 'xm6kv6t53jc92ijfhay5',
+                token: 'drink-any',
                 emoji: '🥤',
                 title: 'Places to Drink',
                 notification: 'Drink',
@@ -1321,7 +1322,7 @@ module.exports = [
             },
             {
                 name: 'Coffee',
-                token: 'doeutc3h0xbb57r8lkrf',
+                token: 'drink-coffee',
                 emoji: '☕',
                 title: 'Coffee Places',
                 notification: 'Coffee',
@@ -1331,7 +1332,7 @@ module.exports = [
             },
             {
                 name: 'Tea',
-                token: 's4h7ljxiqvfqoecaa5h3',
+                token: 'drink-tea',
                 emoji: '🫖',
                 title: 'Tea Places',
                 notification: 'Tea',
@@ -1341,7 +1342,7 @@ module.exports = [
             },
             {
                 name: 'Juice',
-                token: 'pb4vql9fiy9865s5dp2c',
+                token: 'drink-juice',
                 emoji: '🧃',
                 title: 'Juice Places',
                 notification: 'Juice',
@@ -1351,7 +1352,7 @@ module.exports = [
             },
             {
                 name: 'Bubble Tea',
-                token: 'yt9c1hhnazao5cxe8dhu',
+                token: 'drink-bubble-tea',
                 emoji: '🧋',
                 title: 'Bubble Tea Places',
                 notification: 'Bubble Tea',
@@ -1361,7 +1362,7 @@ module.exports = [
             },
             {
                 name: 'Alcohol',
-                token: 'kllzjvpedvbb6xk5wcxs',
+                token: 'drink-alcohol',
                 emoji: '🍷',
                 title: 'Alcohol Places',
                 notification: 'Alcohol',
@@ -1371,7 +1372,7 @@ module.exports = [
                 sub: [
                     {
                         name: 'Any',
-                        token: 'dazs9tqcv4x38yuqqp6d',
+                        token: 'drink-alcohol-any',
                         emoji: '🍷',
                         title: 'Alcohol Places',
                         notification: 'Alcohol',
@@ -1380,7 +1381,7 @@ module.exports = [
                     },
                     {
                         name: 'Beer',
-                        token: '5nu1lu68oxbynnfc84pm',
+                        token: 'drink-alcohol-beer',
                         emoji: '🍺',
                         title: 'Beer Places',
                         notification: 'Beer',
@@ -1390,7 +1391,7 @@ module.exports = [
                     },
                     {
                         name: 'Wine',
-                        token: 'yeu9pc9lyzxpk9eg0czt',
+                        token: 'drink-alcohol-wine',
                         emoji: '🍷',
                         title: 'Wine Places',
                         notification: 'Wine',
@@ -1400,7 +1401,7 @@ module.exports = [
                     },
                     {
                         name: 'Whiskey',
-                        token: 'in8k2t207gu988obc4dw',
+                        token: 'drink-alcohol-whiskey',
                         emoji: '🥃',
                         title: 'Whiskey Places',
                         notification: 'Whiskey',
@@ -1410,7 +1411,7 @@ module.exports = [
                     },
                     {
                         name: 'Sake',
-                        token: 'oto83hvu73g4eeft5l8p',
+                        token: 'drink-alcohol-sake',
                         emoji: '🍶',
                         title: 'Sake Places',
                         notification: 'Sake',
@@ -1420,7 +1421,7 @@ module.exports = [
                     },
                     {
                         name: 'Cocktail',
-                        token: '0hyi3iph82wpp4k5hgqs',
+                        token: 'drink-alcohol-cocktail',
                         emoji: '🍸',
                         title: 'Cocktail Places',
                         notification: 'Drink Cocktail',
@@ -1430,7 +1431,7 @@ module.exports = [
                     },
                     {
                         name: 'Champagne',
-                        token: 'cpzz37vwdeeibf7i7y6h',
+                        token: 'drink-alcohol-champagne',
                         emoji: '🍾',
                         title: 'Champagne Places',
                         notification: 'Champagne',
@@ -1444,7 +1445,7 @@ module.exports = [
     },
     {
         name: 'Walk',
-        token: 'j1ejbt5y8x1ccthv9836',
+        token: 'walk-parent',
         emoji: '🚶',
         title: 'Places to Walk',
         notification: 'Walk',
@@ -1455,7 +1456,7 @@ module.exports = [
         sub: [
             {
                 name: 'Any',
-                token: '4pjl38axz5o7kky91yom',
+                token: 'walk-any',
                 emoji: '🚶',
                 title: 'Places to Walk',
                 notification: 'Walk',
@@ -1464,7 +1465,7 @@ module.exports = [
             },
             {
                 name: 'Park',
-                token: 'lwjpy40l56jrxhsjpo5l',
+                token: 'walk-park',
                 emoji: '🌳',
                 title: 'Walk at Park',
                 notification: 'Walk at Park',
@@ -1474,7 +1475,7 @@ module.exports = [
             },
             {
                 name: 'Forest',
-                token: 'py7wp9jbrlphcafgjmvl',
+                token: 'walk-forest',
                 emoji: '🌲',
                 title: 'Walk at Forest',
                 notification: 'Walk at Forest',
@@ -1484,7 +1485,7 @@ module.exports = [
             },
             {
                 name: 'Garden',
-                token: 'gg87gt2ebpszod2w42zi',
+                token: 'walk-garden',
                 emoji: '🌸',
                 title: 'Walk at Garden',
                 notification: 'Walk at Garden',
@@ -1494,7 +1495,7 @@ module.exports = [
             },
             {
                 name: 'Community',
-                token: 'rrbsokdcv5d2por14198',
+                token: 'walk-community',
                 emoji: '🏘️',
                 title: 'Walk at Community',
                 notification: 'Walk at Community',
@@ -1504,7 +1505,7 @@ module.exports = [
             },
             {
                 name: 'Campus',
-                token: 'xs1ep0246q68otquc1er',
+                token: 'walk-campus',
                 emoji: '🎓',
                 title: 'Walk on Campus',
                 notification: 'Walk on Campus',
@@ -1514,7 +1515,7 @@ module.exports = [
             },
             {
                 name: 'Mall',
-                token: '6mk4zndk2jtg3fr9vz87',
+                token: 'walk-mall',
                 emoji: '🏬',
                 title: 'Walk at Mall',
                 notification: 'Walk at Mall',
@@ -1524,7 +1525,7 @@ module.exports = [
             },
             {
                 name: 'Hiking Trail',
-                token: '0k3msk3qu93ifghwc368',
+                token: 'walk-hiking-trail',
                 emoji: '⛰️',
                 title: 'Walk at Hiking Trail',
                 notification: 'Walk at Hiking Trail',
@@ -1534,7 +1535,7 @@ module.exports = [
             },
             {
                 name: 'Beach',
-                token: 'wtou9l60xd6fhbjdp1bk',
+                token: 'walk-beach',
                 emoji: '🏖️',
                 title: 'Walk at Beach',
                 notification: 'Walk at Beach',
@@ -1546,7 +1547,7 @@ module.exports = [
     },
     {
         name: 'Exercise',
-        token: 'l71xyjyvhjt3lkfzwuj9',
+        token: 'exercise-parent',
         emoji: '💪',
         title: 'Places to Exercise',
         notification: 'Exercise',
@@ -1557,7 +1558,7 @@ module.exports = [
         sub: [
             {
                 name: 'Any',
-                token: 'p1t6fq3f31ljpnpu1vqj',
+                token: 'exercise-any',
                 emoji: '💪',
                 title: 'Places to Exercise',
                 notification: 'Exercise',
@@ -1569,7 +1570,7 @@ module.exports = [
             },
             {
                 name: 'Gym',
-                token: 'e8fp1gn425kyhrwu97l3',
+                token: 'exercise-gym',
                 emoji: '🏋️',
                 title: 'Gyms',
                 notification: 'Gym',
@@ -1579,7 +1580,7 @@ module.exports = [
             },
             {
                 name: 'Running',
-                token: 'y6s2lwp7ololwdp6jdw6',
+                token: 'exercise-running',
                 emoji: '🏃',
                 title: 'Places to Run',
                 notification: 'Run',
@@ -1589,7 +1590,7 @@ module.exports = [
             },
             {
                 name: 'Bicycle',
-                token: '612hlfrllgfk13y0un53',
+                token: 'exercise-bicycle',
                 emoji: '🚴',
                 title: 'Places to Bike',
                 notification: 'Bicycle',
@@ -1599,7 +1600,7 @@ module.exports = [
             },
             {
                 name: 'Swimming',
-                token: 'bxq537uxycpuxtf3bmzn',
+                token: 'exercise-swimming',
                 emoji: '🏊',
                 title: 'Places to Swim',
                 notification: 'Swim',
@@ -1609,7 +1610,7 @@ module.exports = [
             },
             {
                 name: 'Yoga',
-                token: 'euv1cbcitqi526igxu27',
+                token: 'exercise-yoga',
                 emoji: '🧘',
                 title: 'Yoga Places',
                 notification: 'Yoga',
@@ -1619,7 +1620,7 @@ module.exports = [
             },
             {
                 name: 'Pilates',
-                token: 'eu8cxl8e307vhc3ozywt',
+                token: 'exercise-pilates',
                 emoji: '🤸',
                 title: 'Pilates Places',
                 notification: 'Pilates',
@@ -1629,7 +1630,7 @@ module.exports = [
             },
             {
                 name: 'Tennis',
-                token: '6df4d3latoool6qo4wwv',
+                token: 'exercise-tennis',
                 emoji: '🎾',
                 title: 'Tennis Places',
                 notification: 'Tennis',
@@ -1639,7 +1640,7 @@ module.exports = [
             },
             {
                 name: 'Basketball',
-                token: 'q59yi743ox4nsby8iuwf',
+                token: 'exercise-basketball',
                 emoji: '🏀',
                 title: 'Basketball Places',
                 notification: 'Basketball',
@@ -1649,7 +1650,7 @@ module.exports = [
             },
             {
                 name: 'Baseball',
-                token: 'mx4qf59by3oojenuvfwi',
+                token: 'exercise-baseball',
                 emoji: '⚾',
                 title: 'Baseball Places',
                 notification: 'Baseball',
@@ -1659,7 +1660,7 @@ module.exports = [
             },
             {
                 name: 'Football',
-                token: 'f0v81yjjkqvdrjdhsiou',
+                token: 'exercise-football',
                 emoji: '🏈',
                 title: 'Football Places',
                 notification: 'Football',
@@ -1669,7 +1670,7 @@ module.exports = [
             },
             {
                 name: 'Hockey',
-                token: 'en1mrugz2b6jkb3r45vn',
+                token: 'exercise-hockey',
                 emoji: '🏒',
                 title: 'Hockey Places',
                 notification: 'Hockey',
@@ -1679,7 +1680,7 @@ module.exports = [
             },
             {
                 name: 'Soccer',
-                token: 'xlmkn8bxfpc44sizgev3',
+                token: 'exercise-soccer',
                 emoji: '⚽',
                 title: 'Soccer Places',
                 notification: 'Soccer',
@@ -1689,7 +1690,7 @@ module.exports = [
             },
             {
                 name: 'Volleyball',
-                token: 'l9jza2l0lnfokz79po7w',
+                token: 'exercise-volleyball',
                 emoji: '🏐',
                 title: 'Volleyball Places',
                 notification: 'Volleyball',
@@ -1699,7 +1700,7 @@ module.exports = [
             },
             {
                 name: 'Skating',
-                token: '8h0w0zb8nn5k1m2nr2kr',
+                token: 'exercise-skating',
                 emoji: '⛸️',
                 title: 'Skating Places',
                 notification: 'Skating',
@@ -1709,7 +1710,7 @@ module.exports = [
             },
             {
                 name: 'Golf',
-                token: 's4me928faeceq98e76rn',
+                token: 'exercise-golf',
                 emoji: '⛳',
                 title: 'Golf Places',
                 notification: 'Golf',
@@ -1719,7 +1720,7 @@ module.exports = [
             },
             {
                 name: 'Skiing',
-                token: 'bspseuuskvarnr2hhnbx',
+                token: 'exercise-skiing',
                 emoji: '⛷️',
                 title: 'Skiing Places',
                 notification: 'Ski',
@@ -1731,7 +1732,7 @@ module.exports = [
     },
     {
         name: 'Watch',
-        token: 'lybtbffzrl7n80krq3ko',
+        token: 'watch-parent',
         emoji: '👀',
         title: 'Places to Watch',
         notification: 'Watch',
@@ -1742,7 +1743,7 @@ module.exports = [
         sub: [
             {
                 name: 'Any',
-                token: 'd6pxjg2at6eh28zdcjbi',
+                token: 'watch-any',
                 emoji: '👀',
                 title: 'Places to Watch',
                 notification: 'Watch',
@@ -1751,7 +1752,7 @@ module.exports = [
             },
             {
                 name: 'Movie',
-                token: 'dwuu7gfx7w9u8wmig9cw',
+                token: 'watch-movie',
                 emoji: '🎬',
                 title: 'Movie Theaters',
                 notification: 'Movie',
@@ -1761,7 +1762,7 @@ module.exports = [
             },
             {
                 name: 'Comedy',
-                token: '0gu3wq9n5xo4j3rdfvom',
+                token: 'watch-comedy',
                 emoji: '😂',
                 title: 'Comedy Places',
                 notification: 'Comedy',
@@ -1771,7 +1772,7 @@ module.exports = [
             },
             {
                 name: 'Theater',
-                token: 'k5gp97ajx906mhy8s88f',
+                token: 'watch-theater',
                 emoji: '🎭',
                 title: 'Theaters',
                 notification: 'Theater',
@@ -1783,7 +1784,7 @@ module.exports = [
     },
     {
         name: 'Fun',
-        token: '8sih2bak8k77j8whiorq',
+        token: 'fun-parent',
         emoji: '🎮',
         title: 'Fun Places',
         notification: 'Fun',
@@ -1797,7 +1798,7 @@ module.exports = [
         sub: [
             {
                 name: 'Any',
-                token: 'zm8x5nlonfxe1l3ykanb',
+                token: 'fun-any',
                 emoji: '🎮',
                 title: 'Fun Places',
                 notification: 'Fun',
@@ -1810,7 +1811,7 @@ module.exports = [
             },
             {
                 name: 'Bowling',
-                token: 'oy5yrcv9wu5uk7725zc8',
+                token: 'fun-bowling',
                 emoji: '🎳',
                 title: 'Bowling Places',
                 notification: 'Bowling',
@@ -1820,7 +1821,7 @@ module.exports = [
             },
             {
                 name: 'Mini Golf',
-                token: 'k6z1xcxq8lysfeh89gnz',
+                token: 'fun-mini-golf',
                 emoji: '⛳',
                 title: 'Mini Golf Places',
                 notification: 'Mini Golf',
@@ -1830,7 +1831,7 @@ module.exports = [
             },
             {
                 name: 'Arcade',
-                token: 'y0zdtclefv30b01byvmt',
+                token: 'fun-arcade',
                 emoji: '🕹️',
                 title: 'Arcades',
                 notification: 'Arcade',
@@ -1840,7 +1841,7 @@ module.exports = [
             },
             {
                 name: 'Laser Tag',
-                token: 'vhd7g3zkhcttc3r56ekr',
+                token: 'fun-laser-tag',
                 emoji: '🎯',
                 title: 'Laser Tag Places',
                 notification: 'Laser Tag',
@@ -1850,7 +1851,7 @@ module.exports = [
             },
             {
                 name: 'Go Kart',
-                token: 'enotyvmzrzps1ngxvxna',
+                token: 'fun-go-kart',
                 emoji: '🏎️',
                 title: 'Go Kart Places',
                 notification: 'Go Kart',
@@ -1860,7 +1861,7 @@ module.exports = [
             },
             {
                 name: 'Escape Room',
-                token: 'sshosm7nxxvcf65ni11w',
+                token: 'fun-escape-room',
                 emoji: '🔐',
                 title: 'Escape Rooms',
                 notification: 'Escape Room',
@@ -1870,7 +1871,7 @@ module.exports = [
             },
             {
                 name: 'Karaoke',
-                token: 'px79mj33d7khd948zg7z',
+                token: 'fun-karaoke',
                 emoji: '🎤',
                 title: 'Karaoke Places',
                 notification: 'Karaoke',
@@ -1880,7 +1881,7 @@ module.exports = [
             },
             {
                 name: 'Pool Hall',
-                token: 'snnyics8zxz92g23m1kd',
+                token: 'fun-pool-hall',
                 emoji: '🎱',
                 title: 'Pool Halls',
                 notification: 'Pool',
@@ -1890,7 +1891,7 @@ module.exports = [
             },
             {
                 name: 'Amusement Park',
-                token: 'xzlzgzeq9bhc27c5pepe',
+                token: 'fun-amusement-park',
                 emoji: '🎡',
                 title: 'Amusement Parks',
                 notification: 'Amusement Park',
@@ -1900,7 +1901,7 @@ module.exports = [
             },
             {
                 name: 'Water Park',
-                token: 'fagzun66kxli37rilj67',
+                token: 'fun-water-park',
                 emoji: '🌊',
                 title: 'Water Parks',
                 notification: 'Water Park',
@@ -1910,7 +1911,7 @@ module.exports = [
             },
             {
                 name: 'Circus',
-                token: '9z4l5tldlgxe9rntj88r',
+                token: 'fun-circus',
                 emoji: '🎪',
                 title: 'Circus Places',
                 notification: 'Circus',
@@ -1920,7 +1921,7 @@ module.exports = [
             },
             {
                 name: 'VR Cafe',
-                token: 'zdjh6g8oqu36knpo9f8n',
+                token: 'fun-vr-cafe',
                 emoji: '🕶️',
                 title: 'VR Cafes',
                 notification: 'VR Cafe',
@@ -1930,7 +1931,7 @@ module.exports = [
             },
             {
                 name: 'Gaming Cafe',
-                token: 'ggxciedvne3qjns0xpzw',
+                token: 'fun-gaming-cafe',
                 emoji: '🎮',
                 title: 'Gaming Cafes',
                 notification: 'Gaming Cafe',
@@ -1940,7 +1941,7 @@ module.exports = [
             },
             {
                 name: 'Disc Golf',
-                token: '9w1bdmyd4i67oj5zf5kt',
+                token: 'fun-disc-golf',
                 emoji: '🥏',
                 title: 'Disc Golf Places',
                 notification: 'Disc Golf',
@@ -1950,7 +1951,7 @@ module.exports = [
             },
             {
                 name: 'Roller Rink',
-                token: '8t3xrcxqrr385p4qziwt',
+                token: 'fun-roller-rink',
                 emoji: '🛼',
                 title: 'Roller Rinks',
                 notification: 'Roller Rink',
@@ -1960,7 +1961,7 @@ module.exports = [
             },
             {
                 name: 'Casino',
-                token: 'ipyv7n2gfe4gjf3hderu',
+                token: 'fun-casino',
                 emoji: '🎰',
                 title: 'Casinos',
                 notification: 'Casino',
@@ -1972,7 +1973,7 @@ module.exports = [
     },
     {
         name: 'Dance',
-        token: '33epm1wevi2nogqoz2fo',
+        token: 'dance-parent',
         emoji: '💃',
         title: 'Places to Dance',
         notification: 'Dance',
@@ -1983,7 +1984,7 @@ module.exports = [
         sub: [
             {
                 name: 'Any',
-                token: 'uxi9dp6zlg6s65mp2kl5',
+                token: 'dance-any',
                 emoji: '💃',
                 title: 'Places to Dance',
                 notification: 'Dance',
@@ -1992,7 +1993,7 @@ module.exports = [
             },
             {
                 name: 'Night Club',
-                token: 'rbfn96hfph0f28evonc4',
+                token: 'dance-night-club',
                 emoji: '🕺',
                 title: 'Night Clubs',
                 notification: 'Club',
@@ -2002,7 +2003,7 @@ module.exports = [
             },
             {
                 name: 'Salsa',
-                token: '39ndtg37uwq36wtenvy7',
+                token: 'dance-salsa',
                 emoji: '💃',
                 title: 'Salsa Dance Places',
                 notification: 'Salsa Dancing',
@@ -2012,7 +2013,7 @@ module.exports = [
             },
             {
                 name: 'Country',
-                token: '6pp96yixvxgfkz304ow2',
+                token: 'dance-country',
                 emoji: '🤠',
                 title: 'Country Dance Places',
                 notification: 'Country Dancing',
@@ -2022,7 +2023,7 @@ module.exports = [
             },
             {
                 name: 'Samba',
-                token: 'r8xqfcro2ybn844gmj45',
+                token: 'dance-samba',
                 emoji: '💃',
                 title: 'Samba Dance Places',
                 notification: 'Samba Dancing',
@@ -2032,7 +2033,7 @@ module.exports = [
             },
             {
                 name: 'Dance Studio',
-                token: 'wuw8kbwrqiozp9lekox3',
+                token: 'dance-dance-studio',
                 emoji: '🎭',
                 title: 'Dance Studios',
                 notification: 'Dance Studio',
@@ -2044,7 +2045,7 @@ module.exports = [
     },
     {
         name: 'Attend',
-        token: 'x5sib5qmycjnyz5m4xe7',
+        token: 'attend-parent',
         emoji: '👥',
         title: 'Places to Attend',
         notification: 'Attend',
@@ -2055,7 +2056,7 @@ module.exports = [
         sub: [
             {
                 name: 'Any',
-                token: 'eot8y8aqo18ibchszusp',
+                token: 'attend-any',
                 emoji: '👥',
                 title: 'Places to Attend',
                 notification: 'Attend',
@@ -2064,7 +2065,7 @@ module.exports = [
             },
             {
                 name: 'Sports',
-                token: 'otr5eofkniv74mdbfaq5',
+                token: 'attend-sports',
                 emoji: '🏟️',
                 title: 'Sport Stadiums',
                 notification: 'Attend Sport',
@@ -2074,7 +2075,7 @@ module.exports = [
                 sub: [
                     {
                         name: 'Any',
-                        token: 'tbvz6ob85a65umuljf5y',
+                        token: 'attend-sports-any',
                         emoji: '🏟️',
                         title: 'Sport Stadiums',
                         notification: 'Attend Sport',
@@ -2082,7 +2083,7 @@ module.exports = [
                     },
                     {
                         name: 'Football',
-                        token: '8wfdy1y7xj7lhyehmlfb',
+                        token: 'attend-sports-football',
                         emoji: '🏈',
                         title: 'Football Stadiums',
                         notification: 'Football',
@@ -2091,7 +2092,7 @@ module.exports = [
                     },
                     {
                         name: 'Basketball',
-                        token: 'cmv7uhmqzo30g5eof1uf',
+                        token: 'attend-sports-basketball',
                         emoji: '🏀',
                         title: 'Basketball Stadiums',
                         notification: 'Basketball',
@@ -2100,7 +2101,7 @@ module.exports = [
                     },
                     {
                         name: 'Baseball',
-                        token: 'ekm4mswtxmi98hkstyvw',
+                        token: 'attend-sports-baseball',
                         emoji: '⚾',
                         title: 'Baseball Stadiums',
                         notification: 'Baseball',
@@ -2109,7 +2110,7 @@ module.exports = [
                     },
                     {
                         name: 'Soccer',
-                        token: 'z5l6gqggzuchgbatvg4g',
+                        token: 'attend-sports-soccer',
                         emoji: '⚽',
                         title: 'Soccer Stadiums',
                         notification: 'Soccer',
@@ -2118,7 +2119,7 @@ module.exports = [
                     },
                     {
                         name: 'Tennis',
-                        token: '5zu7vf2m4zfrdvfjmt1s',
+                        token: 'attend-sports-tennis',
                         emoji: '🎾',
                         title: 'Tennis Stadiums',
                         notification: 'Tennis',
@@ -2127,7 +2128,7 @@ module.exports = [
                     },
                     {
                         name: 'Hockey',
-                        token: 'xq29rhyft6nowls47o44',
+                        token: 'attend-sports-hockey',
                         emoji: '🏒',
                         title: 'Hockey Arenas',
                         notification: 'Hockey',
@@ -2136,7 +2137,7 @@ module.exports = [
                     },
                     {
                         name: 'Track',
-                        token: 'kcbnpk0f1xgk9v7ft9py',
+                        token: 'attend-sports-track',
                         emoji: '🏃',
                         title: 'Track Stadiums',
                         notification: 'Track',
@@ -2145,7 +2146,7 @@ module.exports = [
                     },
                     {
                         name: 'Rugby',
-                        token: 'wum1yq9x0iq4tmgygtfv',
+                        token: 'attend-sports-rugby',
                         emoji: '🏉',
                         title: 'Rugby Stadiums',
                         notification: 'Rugby',
@@ -2156,7 +2157,7 @@ module.exports = [
             },
             {
                 name: 'Music',
-                token: 'f0g37pwihzj1x41s85u5',
+                token: 'attend-music',
                 emoji: '🎵',
                 title: 'Music Venues',
                 notification: 'Attend Music',
@@ -2166,7 +2167,7 @@ module.exports = [
                 sub: [
                     {
                         name: 'Any',
-                        token: '70c9lnp9kensw6cs1a6x',
+                        token: 'attend-music-any',
                         emoji: '🎵',
                         title: 'Music Venues',
                         notification: 'Attend Music',
@@ -2174,7 +2175,7 @@ module.exports = [
                     },
                     {
                         name: 'Rock',
-                        token: 'yddek4l4qq0uou37x1dx',
+                        token: 'attend-music-rock',
                         emoji: '🎸',
                         title: 'Rock Music Places',
                         notification: 'Rock',
@@ -2183,7 +2184,7 @@ module.exports = [
                     },
                     {
                         name: 'Jazz and Blues',
-                        token: 'ssunawhkhfa05212ejmq',
+                        token: 'attend-music-jazz-and-blues',
                         emoji: '🎷',
                         title: 'Jazz and Blues Places',
                         notification: 'Jazz and Blues',
@@ -2192,7 +2193,7 @@ module.exports = [
                     },
                     {
                         name: 'Symphony',
-                        token: 'ganlzfdq98zwpcd85htl',
+                        token: 'attend-music-symphony',
                         emoji: '🎻',
                         title: 'Concert Halls',
                         notification: 'Symphony',
@@ -2201,7 +2202,7 @@ module.exports = [
                     },
                     {
                         name: 'Opera',
-                        token: 'qkg65kgsbsegjfm2pk92',
+                        token: 'attend-music-opera',
                         emoji: '🎭',
                         title: 'Opera Houses',
                         notification: 'Opera',
@@ -2214,7 +2215,7 @@ module.exports = [
     },
     {
         name: 'Relax',
-        token: 'fwhxf6pwe22sqgm5ggv9',
+        token: 'relax-parent',
         emoji: '😌',
         title: 'Places to Relax',
         notification: 'Relax',
@@ -2228,7 +2229,7 @@ module.exports = [
         sub: [
             {
                 name: 'Any',
-                token: 'ypt7r0simxaaep8jvx3r',
+                token: 'relax-any',
                 emoji: '😌',
                 title: 'Places to Relax',
                 notification: 'Relax',
@@ -2240,7 +2241,7 @@ module.exports = [
             },
             {
                 name: 'Nature',
-                token: '1ov47xlh7k1i4qwnfzbo',
+                token: 'relax-nature',
                 emoji: '🌿',
                 title: 'Relax in Nature',
                 notification: 'Relax in Nature',
@@ -2250,7 +2251,7 @@ module.exports = [
                 sub: [
                     {
                         name: 'Park',
-                        token: 'e96ub5ejylznenixnnst',
+                        token: 'relax-nature-park',
                         emoji: '🌳',
                         title: 'Relax at Park',
                         notification: 'Relax at Park',
@@ -2260,7 +2261,7 @@ module.exports = [
                     },
                     {
                         name: 'Forest',
-                        token: 'rsgz7t41l7vkvj98pmgr',
+                        token: 'relax-nature-forest',
                         emoji: '🌲',
                         title: 'Relax at Forest',
                         notification: 'Relax at Forest',
@@ -2270,7 +2271,7 @@ module.exports = [
                     },
                     {
                         name: 'Beach',
-                        token: 'rl7mryysgayk9hqgy3qd',
+                        token: 'relax-nature-beach',
                         emoji: '🏖️',
                         title: 'Relax at Beach',
                         notification: 'Relax at Beach',
@@ -2280,7 +2281,7 @@ module.exports = [
                     },
                     {
                         name: 'Garden',
-                        token: 'h4cs7btszb2evyyr6mx8',
+                        token: 'relax-nature-garden',
                         emoji: '🌸',
                         title: 'Relax at Garden',
                         notification: 'Relax at Garden',
@@ -2292,7 +2293,7 @@ module.exports = [
             },
             {
                 name: 'Sauna',
-                token: 'joe3hg9ab4ngn8m7azrp',
+                token: 'relax-sauna',
                 emoji: '🧖',
                 title: 'Relax at Sauna',
                 notification: 'Relax at Sauna',
@@ -2302,7 +2303,7 @@ module.exports = [
             },
             {
                 name: 'Spa',
-                token: 'zub9qi2zotxpftsmxvle',
+                token: 'relax-spa',
                 emoji: '💆',
                 title: 'Relax at Spa',
                 notification: 'Relax at Spa',
@@ -2312,7 +2313,7 @@ module.exports = [
             },
             {
                 name: 'Yoga',
-                token: 'e7mxi6l59cmaywwa7ey3',
+                token: 'relax-yoga',
                 emoji: '🧘',
                 title: 'Relax at Yoga',
                 notification: 'Relax at Yoga',
@@ -2322,7 +2323,7 @@ module.exports = [
             },
             {
                 name: 'Spiritual',
-                token: '2rku7ky3ej1y4v9c7w4u',
+                token: 'relax-spiritual',
                 emoji: '🙏',
                 title: 'Spiritual Places',
                 notification: 'Spiritual',
@@ -2334,7 +2335,7 @@ module.exports = [
     },
     {
         name: 'Discover',
-        token: 'o1muo268otefdef5y6q0',
+        token: 'discover-parent',
         emoji: '🔍',
         title: 'Places to Discover',
         notification: 'Discover',
@@ -2348,7 +2349,7 @@ module.exports = [
         sub: [
             {
                 name: 'Any',
-                token: 'gcrg7abxciicjanblxf4',
+                token: 'discover-any',
                 emoji: '🔍',
                 title: 'Places to Discover',
                 notification: 'Discover',
@@ -2360,7 +2361,7 @@ module.exports = [
             },
             {
                 name: 'Museum',
-                token: 'x20chnaihp0uznyfe2fr',
+                token: 'discover-museum',
                 emoji: '🏛️',
                 title: 'Museums',
                 notification: 'Museum',
@@ -2370,7 +2371,7 @@ module.exports = [
             },
             {
                 name: 'Art Gallery',
-                token: 'dgfcp0ra9ov688lj38rl',
+                token: 'discover-art-gallery',
                 emoji: '🎨',
                 title: 'Art Galleries',
                 notification: 'Art Gallery',
@@ -2380,7 +2381,7 @@ module.exports = [
             },
             {
                 name: 'Public Art',
-                token: 'bvorynk6lhwmxf5itm2p',
+                token: 'discover-public-art',
                 emoji: '🗿',
                 title: 'Public Art Places',
                 notification: 'Public Art',
@@ -2390,7 +2391,7 @@ module.exports = [
             },
             {
                 name: 'Aquarium',
-                token: '2ditixf3cm75u31xlh5h',
+                token: 'discover-aquarium',
                 emoji: '🐠',
                 title: 'Aquariums',
                 notification: 'Aquarium',
@@ -2400,7 +2401,7 @@ module.exports = [
             },
             {
                 name: 'Planetarium',
-                token: 'zib44x3t4r7g92y41f6t',
+                token: 'discover-planetarium',
                 emoji: '🌌',
                 title: 'Planetariums',
                 notification: 'Planetarium',
@@ -2410,7 +2411,7 @@ module.exports = [
             },
             {
                 name: 'Zoo',
-                token: '14jyu67tjiznvshnlte1',
+                token: 'discover-zoo',
                 emoji: '🦁',
                 title: 'Zoos',
                 notification: 'Zoo',
@@ -2422,7 +2423,7 @@ module.exports = [
     },
     {
         name: 'Travel',
-        token: 'dsoh3x9ck8gh7rzj34md',
+        token: 'travel-parent',
         emoji: '✈️',
         title: 'Travel To',
         notification: 'Travel',
@@ -2433,7 +2434,7 @@ module.exports = [
     },
     {
         name: 'Shop',
-        token: '7isu5mu6ebsliqfvdirt',
+        token: 'shop-parent',
         emoji: '🛍️',
         title: 'Shopping Places',
         notification: 'Shop',
@@ -2448,7 +2449,7 @@ module.exports = [
         sub: [
             {
                 name: 'Any',
-                token: 'ajhfxnmowxjljwle6bwf',
+                token: 'shop-any',
                 emoji: '🛍️',
                 title: 'Shopping Places',
                 notification: 'Shop',
@@ -2461,7 +2462,7 @@ module.exports = [
             },
             {
                 name: 'Electronics',
-                token: 'fndvqyft2ygqosinzqhl',
+                token: 'shop-electronics',
                 emoji: '📱',
                 title: 'Electronics Stores',
                 notification: 'Shop Electronics',
@@ -2471,7 +2472,7 @@ module.exports = [
             },
             {
                 name: 'Shoe',
-                token: 'ic2kgc5gsszxtc9epawv',
+                token: 'shop-shoe',
                 emoji: '👟',
                 title: 'Shoe Stores',
                 notification: 'Shop Shoes',
@@ -2481,7 +2482,7 @@ module.exports = [
             },
             {
                 name: 'Cosmetics',
-                token: '1461xllma16pdu4d6egc',
+                token: 'shop-cosmetics',
                 emoji: '💄',
                 title: 'Cosmetics Stores',
                 notification: 'Shop Cosmetics',
@@ -2491,7 +2492,7 @@ module.exports = [
             },
             {
                 name: 'Jewelry',
-                token: '1ljbpkeck19coigvbbak',
+                token: 'shop-jewelry',
                 emoji: '💍',
                 title: 'Jewelry Stores',
                 notification: 'Shop Jewelry',
@@ -2501,7 +2502,7 @@ module.exports = [
             },
             {
                 name: 'Fashion',
-                token: 'rkspfot6yzxgh1blrk81',
+                token: 'shop-fashion',
                 emoji: '👗',
                 title: 'Fashion Stores',
                 notification: 'Shop Fashion',
@@ -2511,7 +2512,7 @@ module.exports = [
             },
             {
                 name: 'Video Games',
-                token: '2t619z0mubsgiy5thbal',
+                token: 'shop-video-games',
                 emoji: '🎮',
                 title: 'Video Game Stores',
                 notification: 'Shop Video Games',
@@ -2521,7 +2522,7 @@ module.exports = [
             },
             {
                 name: 'Home Appliances',
-                token: 'hvo8tmc74sm0msxwwj9v',
+                token: 'shop-home-appliances',
                 emoji: '🏠',
                 title: 'Home Appliance Stores',
                 notification: 'Shop Home Appliances',
@@ -2531,7 +2532,7 @@ module.exports = [
             },
             {
                 name: 'Sporting Goods',
-                token: 'yliyqttg7io169clj5tp',
+                token: 'shop-sporting-goods',
                 emoji: '⚽',
                 title: 'Sporting Good Stores',
                 notification: 'Shop Sporting Goods',
@@ -2541,7 +2542,7 @@ module.exports = [
             },
             {
                 name: 'Bookstore',
-                token: 'gbj0cng2tx7ylvx27do4',
+                token: 'shop-bookstore',
                 emoji: '📚',
                 title: 'Bookstores',
                 notification: 'Bookstore',
@@ -2551,7 +2552,7 @@ module.exports = [
             },
             {
                 name: 'Pet Supplies',
-                token: 'q3uovuq5wsxklx70nrmd',
+                token: 'shop-pet-supplies',
                 emoji: '🐾',
                 title: 'Pet Supply Stores',
                 notification: 'Shop Pet Supplies',
@@ -2561,7 +2562,7 @@ module.exports = [
             },
             {
                 name: 'Watch',
-                token: '188tr2nbh3b7sl4w2sdl',
+                token: 'shop-watch',
                 emoji: '⌚',
                 title: 'Watch Stores',
                 notification: 'Shop Watches',
@@ -2571,7 +2572,7 @@ module.exports = [
             },
             {
                 name: 'Gift',
-                token: 'bmhe5vfothbmd4t290vu',
+                token: 'shop-gift',
                 emoji: '🎁',
                 title: 'Gift Stores',
                 notification: 'Shop Gifts',
@@ -2581,7 +2582,7 @@ module.exports = [
             },
             {
                 name: 'Furniture',
-                token: '3jkfc5ke28xlknhj4nht',
+                token: 'shop-furniture',
                 emoji: '🪑',
                 title: 'Furniture Stores',
                 notification: 'Shop Furniture',
@@ -2591,7 +2592,7 @@ module.exports = [
             },
             {
                 name: 'Perfume',
-                token: 'd8kwf49vxqsmbssqelu6',
+                token: 'shop-perfume',
                 emoji: '💐',
                 title: 'Perfume Stores',
                 notification: 'Shop Perfume',
@@ -2601,7 +2602,7 @@ module.exports = [
             },
             {
                 name: 'Men’s',
-                token: 'k0klrqbh1lu2zkvzgy58',
+                token: 'shop-men’s',
                 emoji: '👔',
                 title: "Men's Stores",
                 notification: "Shop Men's",
@@ -2611,7 +2612,7 @@ module.exports = [
             },
             {
                 name: 'Bridal',
-                token: 'm216g4dh4pfp8ogbut1h',
+                token: 'shop-bridal',
                 emoji: '👰',
                 title: 'Bridal Stores',
                 notification: 'Shop Bridal',
@@ -2621,7 +2622,7 @@ module.exports = [
             },
             {
                 name: 'Sunglasses',
-                token: 'ory97cywdtguxdrygqx8',
+                token: 'shop-sunglasses',
                 emoji: '🕶️',
                 title: 'Sunglasses Stores',
                 notification: 'Shop Sunglasses',
@@ -2631,7 +2632,7 @@ module.exports = [
             },
             {
                 name: 'Baby',
-                token: 'bbwtruui28ivytptd2xl',
+                token: 'shop-baby',
                 emoji: '👶',
                 title: 'Baby Stores',
                 notification: 'Shop Baby',
@@ -2641,7 +2642,7 @@ module.exports = [
             },
             {
                 name: 'Outlet',
-                token: '7tk5st3asaui8kh9jmnw',
+                token: 'shop-outlet',
                 emoji: '🏬',
                 title: 'Outlet Stores',
                 notification: 'Shop Outlet',
@@ -2651,7 +2652,7 @@ module.exports = [
             },
             {
                 name: 'Hardware',
-                token: 'nb9t6u83r7e9m1r22twt',
+                token: 'shop-hardware',
                 emoji: '🔨',
                 title: 'Hardware Stores',
                 notification: 'Shop Hardware',
@@ -2661,7 +2662,7 @@ module.exports = [
             },
             {
                 name: 'Music',
-                token: '4fycvaf3eognwkkhkrl9',
+                token: 'shop-music',
                 emoji: '🎵',
                 title: 'Music Stores',
                 notification: 'Shop Music',
@@ -2671,7 +2672,7 @@ module.exports = [
             },
             {
                 name: 'Garden',
-                token: 'd76xifqrc9udof03j7ga',
+                token: 'shop-garden',
                 emoji: '🌺',
                 title: 'Garden Stores',
                 notification: 'Shop Garden',
@@ -2681,7 +2682,7 @@ module.exports = [
             },
             {
                 name: 'Antique',
-                token: 'wgnc02565dzbzq5zukd8',
+                token: 'shop-antique',
                 emoji: '🏺',
                 title: 'Antique Stores',
                 notification: 'Shop Antique',
@@ -2691,7 +2692,7 @@ module.exports = [
             },
             {
                 name: 'Record',
-                token: 'nf43j822z5rwm4kwggl3',
+                token: 'shop-record',
                 emoji: '💿',
                 title: 'Record Stores',
                 notification: 'Shop Records',
@@ -2701,7 +2702,7 @@ module.exports = [
             },
             {
                 name: 'Costume',
-                token: 'uei2zo5rpw6wcxmm9fpm',
+                token: 'shop-costume',
                 emoji: '🎭',
                 title: 'Costume Stores',
                 notification: 'Shop Costume',
@@ -2711,7 +2712,7 @@ module.exports = [
             },
             {
                 name: 'Crafts',
-                token: '5twjmtztodhcgsy9n842',
+                token: 'shop-crafts',
                 emoji: '🎨',
                 title: 'Craft Stores',
                 notification: 'Shop Crafts',
@@ -2723,7 +2724,7 @@ module.exports = [
     },
     {
         name: 'Kids',
-        token: 'fyplmxv154prd9uls506',
+        token: 'kids-parent',
         emoji: '👶',
         title: 'Places for Kids',
         notification: 'Kids',
@@ -2738,7 +2739,7 @@ module.exports = [
         sub: [
             {
                 name: 'Any',
-                token: 'ag6mzxvzta1k57744p38',
+                token: 'kids-any',
                 emoji: '👶',
                 title: 'Places for Kids',
                 notification: 'Kids',
@@ -2751,7 +2752,7 @@ module.exports = [
             },
             {
                 name: 'Playground',
-                token: '3n47okcxi2m8i1ib5cku',
+                token: 'kids-playground',
                 emoji: '🎢',
                 title: 'Playgrounds',
                 notification: 'Kids Playground',
@@ -2761,7 +2762,7 @@ module.exports = [
             },
             {
                 name: 'Amusement Park',
-                token: 'wjlpqpi6ey4bfimpvyuw',
+                token: 'kids-amusement-park',
                 emoji: '🎡',
                 title: 'Amusement Parks',
                 notification: 'Kids Amusement Park',
@@ -2771,7 +2772,7 @@ module.exports = [
             },
             {
                 name: 'Aquarium',
-                token: 'a4q379tal1tkds35vqiq',
+                token: 'kids-aquarium',
                 emoji: '🐠',
                 title: 'Aquariums',
                 notification: 'Kids Aquarium',
@@ -2781,7 +2782,7 @@ module.exports = [
             },
             {
                 name: 'Arcade',
-                token: 'pgh44vmi2z6pxnwcdiqz',
+                token: 'kids-arcade',
                 emoji: '🕹️',
                 title: 'Arcades',
                 notification: 'Kids Arcade',
@@ -2791,7 +2792,7 @@ module.exports = [
             },
             {
                 name: 'Bowling',
-                token: 'gbu6xzwuefbq4mjzt7oh',
+                token: 'kids-bowling',
                 emoji: '🎳',
                 title: 'Bowling Places',
                 notification: 'Kids Bowling',
@@ -2801,7 +2802,7 @@ module.exports = [
             },
             {
                 name: 'Circus',
-                token: 'cyppyymfivw6zlszos8h',
+                token: 'kids-circus',
                 emoji: '🎪',
                 title: 'Circus Places',
                 notification: 'Kids Circus',
@@ -2811,7 +2812,7 @@ module.exports = [
             },
             {
                 name: 'Escape Room',
-                token: 'm5fbyuo8f3vbi1l2yzue',
+                token: 'kids-escape-room',
                 emoji: '🔐',
                 title: 'Escape Rooms',
                 notification: 'Kids Escape Room',
@@ -2821,7 +2822,7 @@ module.exports = [
             },
             {
                 name: 'Fair',
-                token: 'y7jjaljb35tu1qkz88st',
+                token: 'kids-fair',
                 emoji: '🎪',
                 title: 'Fairs',
                 notification: 'Kids Fair',
@@ -2831,7 +2832,7 @@ module.exports = [
             },
             {
                 name: 'Go Kart',
-                token: 'nzf3comrfhrs29lz3phh',
+                token: 'kids-go-kart',
                 emoji: '🏎️',
                 title: 'Go Kart Places',
                 notification: 'Kids Go Kart',
@@ -2841,7 +2842,7 @@ module.exports = [
             },
             {
                 name: 'Laser Tag',
-                token: 'aq2lzq5ff2y2prs1o7j7',
+                token: 'kids-laser-tag',
                 emoji: '🎯',
                 title: 'Laser Tag Places',
                 notification: 'Kids Laser Tag',
@@ -2851,7 +2852,7 @@ module.exports = [
             },
             {
                 name: 'Mini Golf',
-                token: 'y84kutvgn8cbsrscvkqk',
+                token: 'kids-mini-golf',
                 emoji: '⛳',
                 title: 'Mini Golf Places',
                 notification: 'Kids Mini Golf',
@@ -2861,7 +2862,7 @@ module.exports = [
             },
             {
                 name: 'Movie Theater',
-                token: 's7ogr7gztiv1vkbgg6i5',
+                token: 'kids-movie-theater',
                 emoji: '🎬',
                 title: 'Movie Theaters',
                 notification: 'Kids Movie',
@@ -2871,7 +2872,7 @@ module.exports = [
             },
             {
                 name: 'Museum',
-                token: '8gvf1yc4nb3tsfy1ri1r',
+                token: 'kids-museum',
                 emoji: '🏛️',
                 title: 'Museums',
                 notification: 'Kids Museum',
@@ -2881,7 +2882,7 @@ module.exports = [
             },
             {
                 name: 'Planetarium',
-                token: '9n903knbamjjtdcnjd27',
+                token: 'kids-planetarium',
                 emoji: '🌌',
                 title: 'Planetariums',
                 notification: 'Kids Planetarium',
@@ -2891,7 +2892,7 @@ module.exports = [
             },
             {
                 name: 'Roller Rink',
-                token: '6dc7pi9x2iouvmlz6ub2',
+                token: 'kids-roller-rink',
                 emoji: '🛼',
                 title: 'Roller Rinks',
                 notification: 'Kids Roller Rink',
@@ -2901,7 +2902,7 @@ module.exports = [
             },
             {
                 name: 'Water Park',
-                token: '87xln6gqd7zrlfs2ud3v',
+                token: 'kids-water-park',
                 emoji: '🌊',
                 title: 'Water Parks',
                 notification: 'Kids Water Park',
@@ -2911,7 +2912,7 @@ module.exports = [
             },
             {
                 name: 'Zoo',
-                token: 'j73g6256bml4gxbemz6m',
+                token: 'kids-zoo',
                 emoji: '🦁',
                 title: 'Zoos',
                 notification: 'Kids Zoo',
@@ -2921,7 +2922,7 @@ module.exports = [
             },
             {
                 name: 'Indoor Play Area',
-                token: 'ki3pyto9wdlrmzi9ki29',
+                token: 'kids-indoor-play-area',
                 emoji: '🎪',
                 title: 'Indoor Play Areas',
                 notification: 'Kids Indoor Play Area',

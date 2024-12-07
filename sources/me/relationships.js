@@ -67,7 +67,7 @@ function main() {
                 sort_position: 80,
                 is_visible: true,
                 updated: timeNow(),
-            }
+            },
         ];
 
         for (let item of items) {
@@ -77,9 +77,7 @@ function main() {
                 item.created = timeNow();
                 await conn('relationship_status').insert(item);
             } else {
-                await conn('relationship_status')
-                    .where('id', check.id)
-                    .update(item);
+                await conn('relationship_status').where('id', check.id).update(item);
             }
         }
 

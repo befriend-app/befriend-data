@@ -22,7 +22,7 @@ function cloneObj(obj) {
     }
 }
 
-function createDirectoryIfNotExistsRecursive (dirname) {
+function createDirectoryIfNotExistsRecursive(dirname) {
     return new Promise(async (resolve, reject) => {
         let slash = '/';
 
@@ -31,13 +31,13 @@ function createDirectoryIfNotExistsRecursive (dirname) {
         let directories_needed = [];
         let directories_forwards = [];
 
-        while (minimize_dir = minimize_dir.substring(0, minimize_dir.lastIndexOf(slash))) {
+        while ((minimize_dir = minimize_dir.substring(0, minimize_dir.lastIndexOf(slash)))) {
             directories_backwards.push(minimize_dir);
         }
 
         //stop on first directory found
-        for(const d in directories_backwards) {
-            if(!(fs.existsSync(directories_backwards[d]))) {
+        for (const d in directories_backwards) {
+            if (!fs.existsSync(directories_backwards[d])) {
                 directories_needed.push(directories_backwards[d]);
             } else {
                 break;
@@ -45,18 +45,17 @@ function createDirectoryIfNotExistsRecursive (dirname) {
         }
 
         //no directories missing
-        if(!directories_needed.length) {
+        if (!directories_needed.length) {
             return resolve();
         }
 
         // make all directories in ascending order
         directories_forwards = directories_needed.reverse();
 
-        for(const d in directories_forwards) {
+        for (const d in directories_forwards) {
             try {
                 await require('fs').promises.mkdir(directories_forwards[d]);
-            } catch(e) {
-            }
+            } catch (e) {}
         }
 
         resolve();
@@ -154,7 +153,7 @@ function getFileSize(file_path) {
         fs.stat(file_path, (err, stats) => {
             if (err) {
                 console.error('Error getting file size:', err);
-                return reject(err)
+                return reject(err);
             }
 
             return resolve(stats.size);

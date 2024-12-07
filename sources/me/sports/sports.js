@@ -22,8 +22,8 @@ function main() {
                 has_teams: item.has_teams,
                 is_play: typeof item.is_play !== 'undefined' ? item.is_play : true,
                 is_active: true,
-                updated: timeNow()
-            }
+                updated: timeNow(),
+            };
 
             let check = await conn(table_name).where('token', itemData.token).first();
 
@@ -32,9 +32,7 @@ function main() {
 
                 await conn(table_name).insert(itemData);
             } else {
-                await conn(table_name)
-                    .where('id', check.id)
-                    .update(itemData);
+                await conn(table_name).where('id', check.id).update(itemData);
             }
         }
 
@@ -53,7 +51,7 @@ module.exports = {
             category: 'Team Sports',
             has_teams: true,
             is_active: true,
-            popularity: 1000
+            popularity: 1000,
         },
         {
             token: 'spo_bask',
@@ -61,7 +59,7 @@ module.exports = {
             category: 'Team Sports',
             has_teams: true,
             is_active: true,
-            popularity: 950
+            popularity: 950,
         },
         {
             token: 'spo_cric',
@@ -69,7 +67,7 @@ module.exports = {
             category: 'Team Sports',
             has_teams: true,
             is_active: true,
-            popularity: 940
+            popularity: 940,
         },
         {
             token: 'spo_base',
@@ -77,7 +75,7 @@ module.exports = {
             category: 'Team Sports',
             has_teams: true,
             is_active: true,
-            popularity: 900
+            popularity: 900,
         },
         {
             token: 'spo_amfo',
@@ -85,7 +83,7 @@ module.exports = {
             category: 'Team Sports',
             has_teams: true,
             is_active: true,
-            popularity: 890
+            popularity: 890,
         },
         {
             token: 'spo_rugb',
@@ -93,7 +91,7 @@ module.exports = {
             category: 'Team Sports',
             has_teams: true,
             is_active: true,
-            popularity: 850
+            popularity: 850,
         },
         {
             token: 'spo_volle',
@@ -101,7 +99,7 @@ module.exports = {
             category: 'Team Sports',
             has_teams: true,
             is_active: true,
-            popularity: 840
+            popularity: 840,
         },
         {
             token: 'spo_iceh',
@@ -109,7 +107,7 @@ module.exports = {
             category: 'Team Sports',
             has_teams: true,
             is_active: true,
-            popularity: 820
+            popularity: 820,
         },
         {
             token: 'spo_fiel',
@@ -117,7 +115,7 @@ module.exports = {
             category: 'Team Sports',
             has_teams: true,
             is_active: true,
-            popularity: 780
+            popularity: 780,
         },
         {
             token: 'spo_hand',
@@ -125,7 +123,7 @@ module.exports = {
             category: 'Team Sports',
             has_teams: true,
             is_active: true,
-            popularity: 760
+            popularity: 760,
         },
         {
             token: 'spo_watep',
@@ -133,7 +131,7 @@ module.exports = {
             category: 'Team Sports',
             has_teams: true,
             is_active: true,
-            popularity: 650
+            popularity: 650,
         },
         {
             token: 'spo_ulti',
@@ -141,7 +139,7 @@ module.exports = {
             category: 'Team Sports',
             has_teams: false,
             is_active: true,
-            popularity: 600
+            popularity: 600,
         },
         {
             token: 'spo_netb',
@@ -149,7 +147,7 @@ module.exports = {
             category: 'Team Sports',
             has_teams: true,
             is_active: true,
-            popularity: 580
+            popularity: 580,
         },
         {
             token: 'spo_lacr',
@@ -157,7 +155,7 @@ module.exports = {
             category: 'Team Sports',
             has_teams: true,
             is_active: true,
-            popularity: 560
+            popularity: 560,
         },
         {
             token: 'spo_korf',
@@ -165,7 +163,7 @@ module.exports = {
             category: 'Team Sports',
             has_teams: false,
             is_active: true,
-            popularity: 400
+            popularity: 400,
         },
         {
             token: 'spo_tenn',
@@ -173,7 +171,7 @@ module.exports = {
             category: 'Individual Sports',
             has_teams: false,
             is_active: true,
-            popularity: 920
+            popularity: 920,
         },
         {
             token: 'spo_golf',
@@ -181,7 +179,7 @@ module.exports = {
             category: 'Individual Sports',
             has_teams: false,
             is_active: true,
-            popularity: 900
+            popularity: 900,
         },
         {
             token: 'spo_tabl',
@@ -189,7 +187,7 @@ module.exports = {
             category: 'Individual Sports',
             has_teams: false,
             is_active: true,
-            popularity: 850
+            popularity: 850,
         },
         {
             token: 'spo_badm',
@@ -197,7 +195,7 @@ module.exports = {
             category: 'Individual Sports',
             has_teams: false,
             is_active: true,
-            popularity: 840
+            popularity: 840,
         },
         {
             token: 'spo_trck',
@@ -205,7 +203,7 @@ module.exports = {
             category: 'Individual Sports',
             has_teams: false,
             is_active: true,
-            popularity: 830
+            popularity: 830,
         },
         {
             token: 'spo_gymn',
@@ -213,7 +211,7 @@ module.exports = {
             category: 'Individual Sports',
             has_teams: false,
             is_active: true,
-            popularity: 800
+            popularity: 800,
         },
         {
             token: 'spo_cycl',
@@ -221,7 +219,7 @@ module.exports = {
             category: 'Individual Sports',
             has_teams: false,
             is_active: true,
-            popularity: 780
+            popularity: 780,
         },
         {
             token: 'spo_squa',
@@ -229,7 +227,7 @@ module.exports = {
             category: 'Individual Sports',
             has_teams: false,
             is_active: true,
-            popularity: 650
+            popularity: 650,
         },
         {
             token: 'spo_bowl',
@@ -237,7 +235,7 @@ module.exports = {
             category: 'Individual Sports',
             has_teams: false,
             is_active: true,
-            popularity: 600
+            popularity: 600,
         },
         {
             token: 'spo_arch',
@@ -245,7 +243,7 @@ module.exports = {
             category: 'Individual Sports',
             has_teams: false,
             is_active: true,
-            popularity: 580
+            popularity: 580,
         },
         {
             token: 'spo_fenc',
@@ -253,7 +251,7 @@ module.exports = {
             category: 'Individual Sports',
             has_teams: false,
             is_active: true,
-            popularity: 550
+            popularity: 550,
         },
         {
             token: 'spo_weig',
@@ -261,7 +259,7 @@ module.exports = {
             category: 'Individual Sports',
             has_teams: false,
             is_active: true,
-            popularity: 520
+            popularity: 520,
         },
         {
             token: 'spo_boxi',
@@ -269,7 +267,7 @@ module.exports = {
             category: 'Combat Sports',
             has_teams: false,
             is_active: true,
-            popularity: 900
+            popularity: 900,
         },
         {
             token: 'spo_mma',
@@ -278,7 +276,7 @@ module.exports = {
             has_teams: false,
             is_active: true,
             popularity: 880,
-            is_play: false
+            is_play: false,
         },
         {
             token: 'spo_wres',
@@ -286,7 +284,7 @@ module.exports = {
             category: 'Combat Sports',
             has_teams: false,
             is_active: true,
-            popularity: 820
+            popularity: 820,
         },
         {
             token: 'spo_judo',
@@ -294,7 +292,7 @@ module.exports = {
             category: 'Combat Sports',
             has_teams: false,
             is_active: true,
-            popularity: 780
+            popularity: 780,
         },
         {
             token: 'spo_kara',
@@ -302,7 +300,7 @@ module.exports = {
             category: 'Combat Sports',
             has_teams: false,
             is_active: true,
-            popularity: 760
+            popularity: 760,
         },
         {
             token: 'spo_taek',
@@ -310,7 +308,7 @@ module.exports = {
             category: 'Combat Sports',
             has_teams: false,
             is_active: true,
-            popularity: 740
+            popularity: 740,
         },
         {
             token: 'spo_kick',
@@ -318,7 +316,7 @@ module.exports = {
             category: 'Combat Sports',
             has_teams: false,
             is_active: true,
-            popularity: 700
+            popularity: 700,
         },
         {
             token: 'spo_muay',
@@ -326,7 +324,7 @@ module.exports = {
             category: 'Combat Sports',
             has_teams: false,
             is_active: true,
-            popularity: 680
+            popularity: 680,
         },
         {
             token: 'spo_f1',
@@ -335,7 +333,7 @@ module.exports = {
             has_teams: true,
             is_active: true,
             popularity: 920,
-            is_play: false
+            is_play: false,
         },
         {
             token: 'spo_moto',
@@ -344,7 +342,7 @@ module.exports = {
             has_teams: true,
             is_active: true,
             popularity: 850,
-            is_play: false
+            is_play: false,
         },
         {
             token: 'spo_nasc',
@@ -353,7 +351,7 @@ module.exports = {
             has_teams: true,
             is_active: true,
             popularity: 820,
-            is_play: false
+            is_play: false,
         },
         {
             token: 'spo_rall',
@@ -362,7 +360,7 @@ module.exports = {
             has_teams: true,
             is_active: true,
             popularity: 780,
-            is_play: false
+            is_play: false,
         },
         {
             token: 'spo_indy',
@@ -371,7 +369,7 @@ module.exports = {
             has_teams: true,
             is_active: true,
             popularity: 750,
-            is_play: false
+            is_play: false,
         },
         {
             token: 'spo_motx',
@@ -380,7 +378,7 @@ module.exports = {
             has_teams: false,
             is_active: true,
             popularity: 700,
-            is_play: false
+            is_play: false,
         },
         {
             token: 'spo_swim',
@@ -388,7 +386,7 @@ module.exports = {
             category: 'Water Sports',
             has_teams: false,
             is_active: true,
-            popularity: 900
+            popularity: 900,
         },
         {
             token: 'spo_surf',
@@ -396,7 +394,7 @@ module.exports = {
             category: 'Water Sports',
             has_teams: false,
             is_active: true,
-            popularity: 820
+            popularity: 820,
         },
         {
             token: 'spo_dive',
@@ -404,7 +402,7 @@ module.exports = {
             category: 'Water Sports',
             has_teams: false,
             is_active: true,
-            popularity: 780
+            popularity: 780,
         },
         {
             token: 'spo_sail',
@@ -412,7 +410,7 @@ module.exports = {
             category: 'Water Sports',
             has_teams: false,
             is_active: true,
-            popularity: 750
+            popularity: 750,
         },
         {
             token: 'spo_rows',
@@ -420,7 +418,7 @@ module.exports = {
             category: 'Water Sports',
             has_teams: false,
             is_active: true,
-            popularity: 720
+            popularity: 720,
         },
         {
             token: 'spo_cano',
@@ -428,7 +426,7 @@ module.exports = {
             category: 'Water Sports',
             has_teams: false,
             is_active: true,
-            popularity: 680
+            popularity: 680,
         },
         {
             token: 'spo_wind',
@@ -436,7 +434,7 @@ module.exports = {
             category: 'Water Sports',
             has_teams: false,
             is_active: true,
-            popularity: 600
+            popularity: 600,
         },
         {
             token: 'spo_alpi',
@@ -444,7 +442,7 @@ module.exports = {
             category: 'Winter Sports',
             has_teams: false,
             is_active: true,
-            popularity: 850
+            popularity: 850,
         },
         {
             token: 'spo_snow',
@@ -452,7 +450,7 @@ module.exports = {
             category: 'Winter Sports',
             has_teams: false,
             is_active: true,
-            popularity: 820
+            popularity: 820,
         },
         {
             token: 'spo_figu',
@@ -460,7 +458,7 @@ module.exports = {
             category: 'Winter Sports',
             has_teams: false,
             is_active: true,
-            popularity: 800
+            popularity: 800,
         },
         {
             token: 'spo_cros',
@@ -468,7 +466,7 @@ module.exports = {
             category: 'Winter Sports',
             has_teams: false,
             is_active: true,
-            popularity: 750
+            popularity: 750,
         },
         {
             token: 'spo_biat',
@@ -476,7 +474,7 @@ module.exports = {
             category: 'Winter Sports',
             has_teams: false,
             is_active: true,
-            popularity: 700
+            popularity: 700,
         },
         {
             token: 'spo_curl',
@@ -484,7 +482,7 @@ module.exports = {
             category: 'Winter Sports',
             has_teams: true,
             is_active: true,
-            popularity: 650
+            popularity: 650,
         },
         {
             token: 'spo_spee',
@@ -492,7 +490,7 @@ module.exports = {
             category: 'Winter Sports',
             has_teams: false,
             is_active: true,
-            popularity: 600
+            popularity: 600,
         },
         {
             token: 'spo_rock',
@@ -500,7 +498,7 @@ module.exports = {
             category: 'Outdoor Sports',
             has_teams: false,
             is_active: true,
-            popularity: 750
+            popularity: 750,
         },
         {
             token: 'spo_hiki',
@@ -508,7 +506,7 @@ module.exports = {
             category: 'Outdoor Sports',
             has_teams: false,
             is_active: true,
-            popularity: 800
+            popularity: 800,
         },
         {
             token: 'spo_moun',
@@ -516,7 +514,7 @@ module.exports = {
             category: 'Outdoor Sports',
             has_teams: false,
             is_active: true,
-            popularity: 780
+            popularity: 780,
         },
         {
             token: 'spo_skat',
@@ -524,7 +522,7 @@ module.exports = {
             category: 'Outdoor Sports',
             has_teams: false,
             is_active: true,
-            popularity: 820
+            popularity: 820,
         },
         {
             token: 'spo_bmx',
@@ -532,7 +530,7 @@ module.exports = {
             category: 'Outdoor Sports',
             has_teams: false,
             is_active: true,
-            popularity: 750
+            popularity: 750,
         },
         {
             token: 'spo_park',
@@ -540,9 +538,9 @@ module.exports = {
             category: 'Outdoor Sports',
             has_teams: false,
             is_active: true,
-            popularity: 700
-        }
-    ]
+            popularity: 700,
+        },
+    ],
 };
 
 //script executed directly

@@ -30,8 +30,7 @@ function main() {
             }
         }
 
-        let languages = await conn(table_1)
-            .whereNull('deleted');
+        let languages = await conn(table_1).whereNull('deleted');
 
         let languages_countries = await conn(table_2);
 
@@ -41,7 +40,7 @@ function main() {
         }, {});
 
         let languages_countries_dict = languages_countries.reduce((acc, language) => {
-            if(!(language.country_id in acc)) {
+            if (!(language.country_id in acc)) {
                 acc[language.country_id] = {};
             }
 
@@ -51,21 +50,19 @@ function main() {
         }, {});
 
         //add countries
-        let countries = await conn('open_countries')
-            .orderBy('country_name');
+        let countries = await conn('open_countries').orderBy('country_name');
 
-        for(let i = 0; i < countries.length; i++) {
+        for (let i = 0; i < countries.length; i++) {
             let country = countries[i];
             console.log({
                 country: country.country_name,
-                process: `${i+1}/${countries.length}`,
+                process: `${i + 1}/${countries.length}`,
             });
 
             //check if already processed
-            let check = await conn(table_2)
-                .where('country_id', country.id);
+            let check = await conn(table_2).where('country_id', country.id);
 
-            if(check.length) {
+            if (check.length) {
                 continue;
             }
 
@@ -89,10 +86,10 @@ function main() {
                 //organize
                 let batch_insert = [];
 
-                for(let i = 0; i < top_languages.length; i++) {
+                for (let i = 0; i < top_languages.length; i++) {
                     let l = top_languages[i];
 
-                    if(!(l.token in languages_dict)) {
+                    if (!(l.token in languages_dict)) {
                         continue;
                     }
 
@@ -101,12 +98,12 @@ function main() {
                         language_id: languages_dict[l.token].id,
                         sort_position: i + 1,
                         created: timeNow(),
-                        updated: timeNow()
+                        updated: timeNow(),
                     });
                 }
 
                 await batchInsert(table_2, batch_insert);
-            } catch(e) {
+            } catch (e) {
                 console.error(e);
             }
         }

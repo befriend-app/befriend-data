@@ -10,19 +10,18 @@ async function getExistingData() {
 
     const [leagues, leaguesCountries, countries, sports] = await Promise.all([
         conn('sports_leagues').whereNull('deleted').select('id', 'token', 'name', 'sport_id'),
-        conn('sports_leagues_countries').whereNull('deleted').select('id', 'league_id', 'country_id', 'position'),
-        conn('open_countries').orderBy('country_name'),
-        conn('sports')
-            .where('has_teams', true)
+        conn('sports_leagues_countries')
             .whereNull('deleted')
-            .select('id', 'token', 'name')
+            .select('id', 'league_id', 'country_id', 'position'),
+        conn('open_countries').orderBy('country_name'),
+        conn('sports').where('has_teams', true).whereNull('deleted').select('id', 'token', 'name'),
     ]);
 
     // Create lookup dictionaries
     const leagues_dict = {
         byToken: {},
         byName: {},
-        byId: {}
+        byId: {},
     };
 
     const countries_dict = {};
@@ -36,7 +35,7 @@ async function getExistingData() {
     for (let assoc of leaguesCountries) {
         if (!countries_dict[assoc.country_id]) {
             countries_dict[assoc.country_id] = {
-                byLeagueId: {}
+                byLeagueId: {},
             };
         }
         countries_dict[assoc.country_id].byLeagueId[assoc.league_id] = assoc;
@@ -48,7 +47,7 @@ async function getExistingData() {
         countries,
         sports,
         leagues_dict,
-        countries_dict
+        countries_dict,
     };
 }
 
@@ -69,7 +68,7 @@ async function getTopLeaguesForCountry(country, sports) {
 
     try {
         return await aiService.claude.promptCache(prompt, {
-            country: country.country_name
+            country: country.country_name,
         });
     } catch (e) {
         console.error(`Error getting top leagues for ${country.country_name}:`, e);
@@ -102,14 +101,14 @@ async function updateLeagueShortNames() {
         let batch = batches[i];
 
         console.log({
-            process_batch: `${i+1}/${batches.length}`
+            process_batch: `${i + 1}/${batches.length}`,
         });
 
         const prompt = `
             For each sports league in this list, provide a short name or abbreviation.
             The short name should be commonly used and recognized.
             Only return valid JSON in the format: [{token: "league_token", short_name: "abbreviation"}]
-            Leagues: ${JSON.stringify(batch.map(l => ({ token: l.token, name: l.name })))}
+            Leagues: ${JSON.stringify(batch.map((l) => ({ token: l.token, name: l.name })))}
         `;
 
         try {
@@ -122,7 +121,7 @@ async function updateLeagueShortNames() {
                     updates.push({
                         token: item.token,
                         short_name: item.short_name,
-                        updated: timeNow()
+                        updated: timeNow(),
                     });
                 }
             }
@@ -130,13 +129,11 @@ async function updateLeagueShortNames() {
             // Batch update the database
             if (updates.length) {
                 for (const update of updates) {
-                    await conn('sports_leagues')
-                        .where('token', update.token)
-                        .update({
-                            short_name: update.short_name,
-                            processed_short_name: true,
-                            updated: update.updated,
-                        });
+                    await conn('sports_leagues').where('token', update.token).update({
+                        short_name: update.short_name,
+                        processed_short_name: true,
+                        updated: update.updated,
+                    });
                     updated++;
                 }
             }
@@ -144,8 +141,7 @@ async function updateLeagueShortNames() {
             console.log(`Processed ${updates.length} short names`);
 
             // Add delay between batches
-            await new Promise(resolve => setTimeout(resolve, 1000));
-
+            await new Promise((resolve) => setTimeout(resolve, 1000));
         } catch (e) {
             console.error('Error updating short names for batch:', e);
         }
@@ -175,12 +171,12 @@ async function processCountryLeagues(country, sports, leagues_dict, countries_di
         const league = top_leagues[i];
 
         // Find corresponding sport
-        const sport = sports.find(s => s.token === league.sport_token);
+        const sport = sports.find((s) => s.token === league.sport_token);
         if (!sport) continue;
 
         // Check if league exists or needs to be created
-        let existingLeague = leagues_dict.byToken[league.token] ||
-            leagues_dict.byName[league.name.toLowerCase()];
+        let existingLeague =
+            leagues_dict.byToken[league.token] || leagues_dict.byName[league.name.toLowerCase()];
 
         let leagueId;
 
@@ -191,7 +187,7 @@ async function processCountryLeagues(country, sports, leagues_dict, countries_di
                 name: league.name,
                 sport_id: sport.id,
                 created: timeNow(),
-                updated: timeNow()
+                updated: timeNow(),
             };
 
             // Insert league
@@ -215,9 +211,9 @@ async function processCountryLeagues(country, sports, leagues_dict, countries_di
         const countryAssocData = {
             country_id: country.id,
             league_id: leagueId,
-            position: league.position || (i + 1),
+            position: league.position || i + 1,
             created: timeNow(),
-            updated: timeNow()
+            updated: timeNow(),
         };
 
         await conn(table_countries).insert(countryAssocData);
@@ -231,13 +227,8 @@ async function main() {
         console.log('Add and update sports leagues by country');
 
         // Get all existing data
-        const {
-            leagues,
-            countries,
-            sports,
-            leagues_dict,
-            countries_dict
-        } = await getExistingData();
+        const { leagues, countries, sports, leagues_dict, countries_dict } =
+            await getExistingData();
 
         // Process countries
         for (let i = 0; i < countries.length; i++) {
@@ -252,7 +243,7 @@ async function main() {
                 country,
                 sports,
                 leagues_dict,
-                countries_dict
+                countries_dict,
             );
 
             if (leaguesAdded) {

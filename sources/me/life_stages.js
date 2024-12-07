@@ -52,13 +52,11 @@ function main() {
                 token: 'retired',
                 name: 'Retired',
                 sort_position: 8,
-            }
+            },
         ];
 
         for (let stage of life_stages) {
-            let check = await conn('life_stages')
-                .where('token', stage.token)
-                .first();
+            let check = await conn('life_stages').where('token', stage.token).first();
 
             if (!check) {
                 stage.created = timeNow();
@@ -69,9 +67,7 @@ function main() {
             } else {
                 stage.updated = timeNow();
 
-                await conn('life_stages')
-                    .where('id', check.id)
-                    .update(stage);
+                await conn('life_stages').where('id', check.id).update(stage);
             }
         }
 

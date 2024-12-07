@@ -3,7 +3,12 @@ const fs = require('fs');
 const path = require('path');
 const readline = require('readline');
 const zlib = require('zlib');
-const { loadScriptEnv, timeNow, generateToken, createDirectoryIfNotExistsRecursive } = require('../../services/shared');
+const {
+    loadScriptEnv,
+    timeNow,
+    generateToken,
+    createDirectoryIfNotExistsRecursive,
+} = require('../../services/shared');
 const dbService = require('../../services/db');
 const { deleteFile, getFileSize, joinPaths, getRepoRoot } = require('../../services/shared');
 
@@ -20,58 +25,58 @@ const DATA_FILES = {
 
 const GENRE_MAPPINGS = {
     // Fiction
-    'fiction': 'gen_fiction',
+    fiction: 'gen_fiction',
     'general fiction': 'gen_fiction',
     'literary fiction': 'gen_literary',
 
     // Mystery/Crime
-    'mystery': 'gen_mystery',
-    'detective': 'gen_mystery',
-    'crime': 'gen_mystery',
-    'thriller': 'gen_thriller',
-    'suspense': 'gen_thriller',
+    mystery: 'gen_mystery',
+    detective: 'gen_mystery',
+    crime: 'gen_mystery',
+    thriller: 'gen_thriller',
+    suspense: 'gen_thriller',
 
     // SciFi/Fantasy
     'science fiction': 'gen_scifi',
     'sci-fi': 'gen_scifi',
-    'fantasy': 'gen_fantasy',
+    fantasy: 'gen_fantasy',
     'high fantasy': 'gen_fantasy',
 
     // Romance
-    'romance': 'gen_romance',
+    romance: 'gen_romance',
     'love stories': 'gen_romance',
 
     // Horror
-    'horror': 'gen_horror',
+    horror: 'gen_horror',
     'ghost stories': 'gen_horror',
 
     // Historical
     'historical fiction': 'gen_historical',
-    'history': 'gen_history',
+    history: 'gen_history',
 
     // Non-fiction categories
-    'biography': 'gen_biography',
-    'autobiography': 'gen_biography',
-    'memoir': 'gen_biography',
-    'science': 'gen_science',
-    'technology': 'gen_technology',
-    'business': 'gen_business',
-    'economics': 'gen_business',
+    biography: 'gen_biography',
+    autobiography: 'gen_biography',
+    memoir: 'gen_biography',
+    science: 'gen_science',
+    technology: 'gen_technology',
+    business: 'gen_business',
+    economics: 'gen_business',
     'self-help': 'gen_selfhelp',
-    'philosophy': 'gen_philosophy',
-    'poetry': 'gen_poetry',
-    'drama': 'gen_drama',
-    'art': 'gen_art',
-    'cooking': 'gen_cooking',
-    'travel': 'gen_travel',
-    'religion': 'gen_religion',
-    'psychology': 'gen_psychology',
-    'politics': 'gen_politics',
-    'education': 'gen_education',
-    'sports': 'gen_sports',
-    'comics': 'gen_comics',
+    philosophy: 'gen_philosophy',
+    poetry: 'gen_poetry',
+    drama: 'gen_drama',
+    art: 'gen_art',
+    cooking: 'gen_cooking',
+    travel: 'gen_travel',
+    religion: 'gen_religion',
+    psychology: 'gen_psychology',
+    politics: 'gen_politics',
+    education: 'gen_education',
+    sports: 'gen_sports',
+    comics: 'gen_comics',
     'graphic novel': 'gen_comics',
-    'children': 'gen_childrens'
+    children: 'gen_childrens',
 };
 
 const genres = [
@@ -79,168 +84,168 @@ const genres = [
         token: 'gen_fiction',
         name: 'Fiction',
         position: 1,
-        is_featured: true
+        is_featured: true,
     },
     {
         token: 'gen_nonfiction',
         name: 'Non-Fiction',
         position: 2,
-        is_featured: true
+        is_featured: true,
     },
     {
         token: 'gen_mystery',
         name: 'Mystery & Crime',
         position: 3,
-        is_featured: true
+        is_featured: true,
     },
     {
         token: 'gen_scifi',
         name: 'Science Fiction',
         position: 4,
-        is_featured: true
+        is_featured: true,
     },
     {
         token: 'gen_fantasy',
         name: 'Fantasy',
         position: 5,
-        is_featured: true
+        is_featured: true,
     },
     {
         token: 'gen_romance',
         name: 'Romance',
         position: 6,
-        is_featured: true
+        is_featured: true,
     },
     {
         token: 'gen_literary',
         name: 'Literary Fiction',
         position: 7,
-        is_featured: true
+        is_featured: true,
     },
     {
         token: 'gen_thriller',
         name: 'Thriller',
         position: 8,
-        is_featured: true
+        is_featured: true,
     },
     {
         token: 'gen_horror',
         name: 'Horror',
         position: 9,
-        is_featured: true
+        is_featured: true,
     },
     {
         token: 'gen_historical',
         name: 'Historical Fiction',
         position: 10,
-        is_featured: true
+        is_featured: true,
     },
     {
         token: 'gen_biography',
         name: 'Biography',
         position: 11,
-        is_featured: true
+        is_featured: true,
     },
     {
         token: 'gen_history',
         name: 'History',
         position: 12,
-        is_featured: true
+        is_featured: true,
     },
     {
         token: 'gen_science',
         name: 'Science',
         position: 13,
-        is_featured: true
+        is_featured: true,
     },
     {
         token: 'gen_technology',
         name: 'Technology',
         position: 14,
-        is_featured: true
+        is_featured: true,
     },
     {
         token: 'gen_business',
         name: 'Business & Economics',
         position: 15,
-        is_featured: true
+        is_featured: true,
     },
     {
         token: 'gen_selfhelp',
         name: 'Self-Help',
         position: 16,
-        is_featured: true
+        is_featured: true,
     },
     {
         token: 'gen_philosophy',
         name: 'Philosophy',
-        position: 17
+        position: 17,
     },
     {
         token: 'gen_poetry',
         name: 'Poetry',
-        position: 18
+        position: 18,
     },
     {
         token: 'gen_drama',
         name: 'Drama',
-        position: 19
+        position: 19,
     },
     {
         token: 'gen_art',
         name: 'Art & Photography',
-        position: 20
+        position: 20,
     },
     {
         token: 'gen_cooking',
         name: 'Cooking',
-        position: 21
+        position: 21,
     },
     {
         token: 'gen_travel',
         name: 'Travel',
-        position: 22
+        position: 22,
     },
     {
         token: 'gen_religion',
         name: 'Religion & Spirituality',
-        position: 23
+        position: 23,
     },
     {
         token: 'gen_psychology',
         name: 'Psychology',
-        position: 24
+        position: 24,
     },
     {
         token: 'gen_politics',
         name: 'Politics & Current Events',
-        position: 25
+        position: 25,
     },
     {
         token: 'gen_education',
         name: 'Education',
-        position: 26
+        position: 26,
     },
     {
         token: 'gen_sports',
         name: 'Sports & Recreation',
-        position: 27
+        position: 27,
     },
     {
         token: 'gen_reference',
         name: 'Reference',
-        position: 28
+        position: 28,
     },
     {
         token: 'gen_comics',
         name: 'Comics & Graphic Novels',
-        position: 29
+        position: 29,
     },
     {
         token: 'gen_childrens',
         name: `Children's`,
-        position: 30
-    }
+        position: 30,
+    },
 ];
 
 // Track existing data
@@ -256,16 +261,16 @@ const state = {
         genres: { added: 0 },
         relationships: {
             authors: { added: 0 },
-            genres: { added: 0 }
-        }
-    }
+            genres: { added: 0 },
+        },
+    },
 };
 
 async function createReadStream(filePath, startLine = 0) {
     const fileStream = fs.createReadStream(filePath).pipe(zlib.createGunzip());
     const rl = readline.createInterface({
         input: fileStream,
-        crlfDelay: Infinity
+        crlfDelay: Infinity,
     });
 
     // Skip to start line if needed
@@ -292,7 +297,7 @@ function downloadFile(url, destPath) {
         const response = await axios({
             url,
             method: 'GET',
-            responseType: 'stream'
+            responseType: 'stream',
         });
 
         const totalBytes = parseInt(response.headers['content-length'], 10);
@@ -300,12 +305,14 @@ function downloadFile(url, destPath) {
         let lastLogTime = Date.now();
         const logInterval = 1000;
 
-        response.data.on('data', chunk => {
+        response.data.on('data', (chunk) => {
             receivedBytes += chunk.length;
             const now = Date.now();
             if (now - lastLogTime >= logInterval) {
                 const progress = (receivedBytes / totalBytes) * 100;
-                console.log(`Progress: ${progress.toFixed(1)}% (${(receivedBytes / 1024 / 1024).toFixed(2)}MB / ${(totalBytes / 1024 / 1024).toFixed(2)}MB)`);
+                console.log(
+                    `Progress: ${progress.toFixed(1)}% (${(receivedBytes / 1024 / 1024).toFixed(2)}MB / ${(totalBytes / 1024 / 1024).toFixed(2)}MB)`,
+                );
                 lastLogTime = now;
             }
         });
@@ -344,7 +351,7 @@ async function loadExistingData() {
     console.log({
         existing_books: Object.keys(state.books).length,
         existing_authors: Object.keys(state.authors).length,
-        existing_genres: Object.keys(state.genres).length
+        existing_genres: Object.keys(state.genres).length,
     });
 }
 
@@ -366,13 +373,13 @@ async function downloadDataFiles() {
         // Get local and remote file sizes
         const [localSize, remoteSize] = await Promise.all([
             getFileSize(filePath),
-            checkRemoteFileSize(fileUrl)
+            checkRemoteFileSize(fileUrl),
         ]);
 
         console.log({
             file: filename,
             local_size: localSize ? (localSize / 1024 / 1024).toFixed(2) + 'MB' : null,
-            remote_size: (remoteSize / 1024 / 1024).toFixed(2) + 'MB'
+            remote_size: (remoteSize / 1024 / 1024).toFixed(2) + 'MB',
         });
 
         // Download if file doesn't exist or sizes don't match
@@ -388,9 +395,11 @@ async function downloadDataFiles() {
                 const newSize = await getFileSize(filePath);
 
                 if (newSize !== remoteSize) {
-                    throw new Error(`Size mismatch after download: expected ${remoteSize}, got ${newSize}`);
+                    throw new Error(
+                        `Size mismatch after download: expected ${remoteSize}, got ${newSize}`,
+                    );
                 }
-            } catch(e) {
+            } catch (e) {
                 console.error(`Failed to download ${filename}:`, e.message);
                 // await deleteFile(filePath);
             }
@@ -401,7 +410,8 @@ async function downloadDataFiles() {
 }
 
 function normalizeGenre(name) {
-    return name.toLowerCase()
+    return name
+        .toLowerCase()
         .replace(/[^a-z0-9]+/g, '_')
         .replace(/^_+|_+$/g, '');
 }
@@ -421,18 +431,18 @@ async function insertGenres() {
 
     let genreRecords = [];
 
-    for(let genre of genres) {
-        if(!(genre.token in state.genres)) {
+    for (let genre of genres) {
+        if (!(genre.token in state.genres)) {
             genreRecords.push({
                 ...genre,
                 is_active: true,
                 created: timeNow(),
-                updated: timeNow()
+                updated: timeNow(),
             });
         }
     }
 
-    if(genreRecords.length){
+    if (genreRecords.length) {
         await dbService.batchInsert('book_genres', genreRecords, true);
 
         // Update state with inserted genres
@@ -509,14 +519,14 @@ async function processAuthors() {
                 last_modified: data.last_modified?.value || null,
                 is_active: true,
                 created: timeNow(),
-                updated: timeNow()
+                updated: timeNow(),
             };
 
-            if(author.birth_date?.length > 30) {
+            if (author.birth_date?.length > 30) {
                 author.birth_date = null;
             }
 
-            if(author.death_date?.length > 30) {
+            if (author.death_date?.length > 30) {
                 author.death_date = null;
             }
 
@@ -530,7 +540,7 @@ async function processAuthors() {
                 state.stats.authors.added += batch.length;
                 batch = [];
             }
-        } catch(e) {
+        } catch (e) {
             console.error('Error processing author:', e.message);
         }
     }
@@ -578,14 +588,14 @@ async function processBooks() {
                 description: data.description?.value || data.description || null,
                 first_publish_date: data.first_publish_date?.substring(0, 32) || null,
                 cover_id: data.covers?.[0]?.toString() || null,
-                rating_average: ratingCount > 0 ? (ratingSum / ratingCount) : null,
+                rating_average: ratingCount > 0 ? ratingSum / ratingCount : null,
                 rating_count: ratingCount || null,
                 is_active: true,
                 created: timeNow(),
-                updated: timeNow()
+                updated: timeNow(),
             };
 
-            if(book.description) {
+            if (book.description) {
                 book.description = book.description.substring(0, 60000);
             }
 
@@ -595,7 +605,7 @@ async function processBooks() {
                 await processBooksBatch(batch);
                 batch = [];
             }
-        } catch(e) {
+        } catch (e) {
             console.error('Error processing book:', e.message);
         }
     }
@@ -606,7 +616,7 @@ async function processBooks() {
 }
 
 async function processBooksBatch(batch) {
-    let bookRecords = batch.map(item => item.book);
+    let bookRecords = batch.map((item) => item.book);
     await dbService.batchInsert('books', bookRecords, true);
 
     let authorRelations = [];
@@ -616,7 +626,7 @@ async function processBooksBatch(batch) {
         let { book, subjects, authors } = batch[i];
         state.books[book.ol_id] = {
             id: book.id,
-            ol_id: book.ol_id
+            ol_id: book.ol_id,
         };
 
         // Map subjects to our predefined genres
@@ -635,7 +645,7 @@ async function processBooksBatch(batch) {
                             book_id: bookRecords[i].id,
                             genre_id: genre.id,
                             created: timeNow(),
-                            updated: timeNow()
+                            updated: timeNow(),
                         };
 
                         state.books_genres[book.ol_id][genre.id] = true;
@@ -663,7 +673,7 @@ async function processBooksBatch(batch) {
                             book_id: bookRecords[i].id,
                             author_id: author.id,
                             created: timeNow(),
-                            updated: timeNow()
+                            updated: timeNow(),
                         };
 
                         state.books_authors[book.ol_id][ol_id] = true;
@@ -678,7 +688,7 @@ async function processBooksBatch(batch) {
     if (authorRelations.length || genreRelations.length) {
         await Promise.all([
             authorRelations.length && dbService.batchInsert('books_authors', authorRelations, true),
-            genreRelations.length && dbService.batchInsert('books_genres', genreRelations, true)
+            genreRelations.length && dbService.batchInsert('books_genres', genreRelations, true),
         ]);
 
         state.stats.relationships.authors.added += authorRelations.length;
@@ -707,9 +717,8 @@ async function main() {
 
         console.log('Import completed:', {
             stats: state.stats,
-            processing_time_minutes: ((timeNow() - startTime) / 1000 / 60).toFixed(2)
+            processing_time_minutes: ((timeNow() - startTime) / 1000 / 60).toFixed(2),
         });
-
     } catch (error) {
         console.error('Error in main execution:', error);
         throw error;

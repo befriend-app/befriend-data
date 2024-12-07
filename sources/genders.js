@@ -55,9 +55,7 @@ function main() {
             } else {
                 delete gender.created;
 
-                await conn('genders')
-                    .where('id', gender_check.id)
-                    .update(gender)
+                await conn('genders').where('id', gender_check.id).update(gender);
             }
         }
 

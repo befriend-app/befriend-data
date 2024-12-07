@@ -16,8 +16,8 @@ const CONCURRENT_REQUESTS = 10;
 let tables = {
     movies: 'movies',
     genres: 'movie_genres',
-    movies_genres: 'movies_genres'
-}
+    movies_genres: 'movies_genres',
+};
 
 let movies_dict = {};
 let genres_dict = {};
@@ -53,7 +53,7 @@ async function loadData() {
             acc[g.tmdb_id] = g;
             return acc;
         }, {});
-    } catch(e) {
+    } catch (e) {
         console.error(e);
     }
 }
@@ -62,19 +62,19 @@ async function addMoviesGenres(items) {
     //add genres
     let batch_genres = [];
 
-    for(let movie of items) {
+    for (let movie of items) {
         let movie_genres = movies_genres_dict[movie.tmdb_id];
 
-        if(movie_genres?.length) {
-            for(let tmdb_genre_id of movie_genres) {
+        if (movie_genres?.length) {
+            for (let tmdb_genre_id of movie_genres) {
                 let dbGenre = genres_dict[tmdb_genre_id];
 
-                if(dbGenre) {
+                if (dbGenre) {
                     batch_genres.push({
                         movie_id: movie.id,
                         genre_id: dbGenre.id,
                         created: timeNow(),
-                        updated: timeNow()
+                        updated: timeNow(),
                     });
                 }
             }
@@ -85,7 +85,7 @@ async function addMoviesGenres(items) {
         try {
             await dbService.batchInsert(tables.movies_genres, batch_genres);
             movies_genres_added += batch_genres.length;
-        } catch(e) {
+        } catch (e) {
             console.error(e);
         }
     }
@@ -97,7 +97,7 @@ async function processDateRange(dateRange) {
         const lastDate = new Date(lastProcessedDate);
         lastDate.setMonth(lastDate.getMonth() - 3);
         let lastDateStr = lastDate.toISOString().split('T')[0];
-        if(dateRange.end < lastDateStr) {
+        if (dateRange.end < lastDateStr) {
             return;
         }
     }
@@ -154,10 +154,11 @@ async function processDateRange(dateRange) {
                     movies_dict[movie.id] = data;
 
                     pageAdded++;
-                } else if (movie.popularity !== existing.popularity
-                    || movie.vote_count !== existing.vote_count) {
-
-                    if(!existing.id) {
+                } else if (
+                    movie.popularity !== existing.popularity ||
+                    movie.vote_count !== existing.vote_count
+                ) {
+                    if (!existing.id) {
                         continue;
                     }
 
@@ -179,9 +180,8 @@ async function processDateRange(dateRange) {
                 batchInsert: pageBatchInsert,
                 batchUpdate: pageBatchUpdate,
                 added: pageAdded,
-                updated: pageUpdated
+                updated: pageUpdated,
             };
-
         } catch (e) {
             console.error(`Error processing page ${page}:`, e.message);
             throw e;
@@ -236,9 +236,8 @@ async function processDateRange(dateRange) {
             return {
                 totalPages,
                 added: totalAdded,
-                updated: totalUpdated
+                updated: totalUpdated,
             };
-
         } catch (e) {
             console.error('Error processing batch:', e);
             throw e;
@@ -253,18 +252,17 @@ async function processDateRange(dateRange) {
 
             console.log(
                 `Processed pages ${current_page}-${current_page + CONCURRENT_REQUESTS - 1}/${result.totalPages}`,
-                { added, updated }
+                { added, updated },
             );
 
             current_page += CONCURRENT_REQUESTS;
             hasMorePages = current_page <= Math.min(result.totalPages, MAX_PAGES);
 
             // Add a small delay between batches to avoid rate limiting
-            await new Promise(resolve => setTimeout(resolve, 1000));
-
+            await new Promise((resolve) => setTimeout(resolve, 1000));
         } catch (e) {
             console.error('Error in main loop:', e);
-            await new Promise(resolve => setTimeout(resolve, 5000));
+            await new Promise((resolve) => setTimeout(resolve, 5000));
         }
     }
 
@@ -295,7 +293,7 @@ async function addMovies() {
                 // Process entire year at once for older content
                 dateRange = {
                     start: `${year}-01-01`,
-                    end: `${year}-12-31`
+                    end: `${year}-12-31`,
                 };
                 await processDateRange(dateRange);
             } else {
@@ -399,9 +397,9 @@ async function main() {
 
     console.log({
         processing_time: {
-            minutes: (((timeNow() - ts) / 1000) / 60).toFixed(2),
-            seconds: (((timeNow() - ts) / 1000)).toFixed(1)
-        }
+            minutes: ((timeNow() - ts) / 1000 / 60).toFixed(2),
+            seconds: ((timeNow() - ts) / 1000).toFixed(1),
+        },
     });
 }
 

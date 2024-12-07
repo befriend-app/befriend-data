@@ -15,8 +15,8 @@ module.exports = {
             },
         },
         tv: {
-            date: 'tv_shows_last_air_date'
-        }
+            date: 'tv_shows_last_air_date',
+        },
     },
     getProcess: function (key) {
         return new Promise(async (resolve, reject) => {

@@ -75,9 +75,7 @@ function main() {
                 item.created = timeNow();
                 await conn('kids_ages').insert(item);
             } else {
-                await conn('kids_ages')
-                    .where('id', check.id)
-                    .update(item);
+                await conn('kids_ages').where('id', check.id).update(item);
             }
         }
 

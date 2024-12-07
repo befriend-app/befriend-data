@@ -5,7 +5,6 @@ const dbService = require('../../services/db');
 const cacheService = require('../../services/cache');
 const { getProcess, keys: systemKeys, saveProcess } = require('../../services/system');
 
-
 loadScriptEnv();
 
 let startYear = 1940;
@@ -18,8 +17,8 @@ const CONCURRENT_REQUESTS = 40;
 let tables = {
     shows: 'tv_shows',
     genres: 'tv_genres',
-    shows_genres: 'tv_shows_genres'
-}
+    shows_genres: 'tv_shows_genres',
+};
 
 let shows_dict = {};
 let genres_dict = {};
@@ -28,12 +27,12 @@ let shows_genres_dict = {};
 let added = {
     shows: 0,
     genres: 0,
-    shows_genres: 0
+    shows_genres: 0,
 };
 
 let updated = {
     shows: 0,
-    genres: 0
+    genres: 0,
 };
 
 let lastProcessedDate = null;
@@ -61,7 +60,7 @@ async function loadData() {
             acc[g.tmdb_id] = g;
             return acc;
         }, {});
-    } catch(e) {
+    } catch (e) {
         console.error(e);
     }
 }
@@ -69,19 +68,19 @@ async function loadData() {
 async function addShowsGenres(items) {
     let batch_genres = [];
 
-    for(let show of items) {
+    for (let show of items) {
         let show_genres = shows_genres_dict[show.tmdb_id];
 
-        if(show_genres?.length) {
-            for(let tmdb_genre_id of show_genres) {
+        if (show_genres?.length) {
+            for (let tmdb_genre_id of show_genres) {
                 let dbGenre = genres_dict[tmdb_genre_id];
 
-                if(dbGenre) {
+                if (dbGenre) {
                     batch_genres.push({
                         show_id: show.id,
                         genre_id: dbGenre.id,
                         created: timeNow(),
-                        updated: timeNow()
+                        updated: timeNow(),
                     });
                 }
             }
@@ -92,7 +91,7 @@ async function addShowsGenres(items) {
         try {
             await dbService.batchInsert(tables.shows_genres, batch_genres);
             added.shows_genres += batch_genres.length;
-        } catch(e) {
+        } catch (e) {
             console.error(e);
         }
     }
@@ -103,7 +102,7 @@ async function processDateRange(dateRange) {
         const lastDate = new Date(lastProcessedDate);
         lastDate.setMonth(lastDate.getMonth() - 3);
         let lastDateStr = lastDate.toISOString().split('T')[0];
-        if(dateRange.end < lastDateStr) {
+        if (dateRange.end < lastDateStr) {
             return;
         }
     }
@@ -161,10 +160,11 @@ async function processDateRange(dateRange) {
                     pageBatchInsert.push(newShow);
                     shows_dict[show.id] = newShow;
                     pageAdded++;
-                } else if (show.popularity !== existing.popularity ||
+                } else if (
+                    show.popularity !== existing.popularity ||
                     show.vote_average !== existing.vote_average ||
-                    show.vote_count !== existing.vote_count) {
-
+                    show.vote_count !== existing.vote_count
+                ) {
                     if (!existing.id) continue;
 
                     pageBatchUpdate.push({
@@ -184,9 +184,8 @@ async function processDateRange(dateRange) {
                 batchInsert: pageBatchInsert,
                 batchUpdate: pageBatchUpdate,
                 added: pageAdded,
-                updated: pageUpdated
+                updated: pageUpdated,
             };
-
         } catch (e) {
             console.error(`Error processing page ${page}:`, e.message);
             throw e;
@@ -241,9 +240,8 @@ async function processDateRange(dateRange) {
             return {
                 totalPages,
                 added: totalAdded,
-                updated: totalUpdated
+                updated: totalUpdated,
             };
-
         } catch (e) {
             console.error('Error processing batch:', e);
             throw e;
@@ -258,18 +256,17 @@ async function processDateRange(dateRange) {
 
             console.log(
                 `Processed pages ${current_page}-${current_page + CONCURRENT_REQUESTS - 1}/${result.totalPages}`,
-                { added, updated }
+                { added, updated },
             );
 
             current_page += CONCURRENT_REQUESTS;
             hasMorePages = current_page <= Math.min(result.totalPages, MAX_PAGES);
 
             // Add a small delay between batches to avoid rate limiting
-            await new Promise(resolve => setTimeout(resolve, 1000));
-
+            await new Promise((resolve) => setTimeout(resolve, 1000));
         } catch (e) {
             console.error('Error in main loop:', e);
-            await new Promise(resolve => setTimeout(resolve, 5000));
+            await new Promise((resolve) => setTimeout(resolve, 5000));
         }
     }
 
@@ -298,7 +295,7 @@ async function addShows() {
             if (year < wholeYearProcessThru) {
                 dateRange = {
                     start: `${year}-01-01`,
-                    end: `${year}-12-31`
+                    end: `${year}-12-31`,
                 };
                 await processDateRange(dateRange);
             } else {
@@ -341,9 +338,7 @@ async function addShowDetails() {
     try {
         let conn = await dbService.conn();
 
-        let shows_to_process = await conn(tables.shows)
-            .whereNull('is_ended')
-            .whereNull('year_to');
+        let shows_to_process = await conn(tables.shows).whereNull('is_ended').whereNull('year_to');
 
         for (let i = 0; i < shows_to_process.length; i += CONCURRENT_REQUESTS) {
             const batch = shows_to_process.slice(i, i + CONCURRENT_REQUESTS);
@@ -351,12 +346,15 @@ async function addShowDetails() {
 
             const promises = batch.map(async (show) => {
                 try {
-                    const response = await axios.get(`https://api.themoviedb.org/3/tv/${show.tmdb_id}`, {
-                        headers: {
-                            accept: 'application/json',
-                            Authorization: `Bearer ${process.env.TMDB_API_KEY}`,
-                        }
-                    });
+                    const response = await axios.get(
+                        `https://api.themoviedb.org/3/tv/${show.tmdb_id}`,
+                        {
+                            headers: {
+                                accept: 'application/json',
+                                Authorization: `Bearer ${process.env.TMDB_API_KEY}`,
+                            },
+                        },
+                    );
 
                     let data = response.data;
 
@@ -373,14 +371,14 @@ async function addShowDetails() {
                     //in case of large diff between last air date and last season,
                     //use last season's date
 
-                    if(data.seasons?.length) {
+                    if (data.seasons?.length) {
                         data.seasons.sort(sortSeasons);
 
                         let last_season = data.seasons[0];
 
                         let years_diff = dayjs(last_air_date).diff(last_season.air_date, 'years');
 
-                        if(Math.abs(years_diff) > 0) {
+                        if (Math.abs(years_diff) > 0) {
                             year_to = last_season.air_date.substring(0, 4);
                         }
                     }
@@ -393,16 +391,16 @@ async function addShowDetails() {
                         is_ended: data.status.toLowerCase() === 'ended' ? true : null,
                         season_count: season_count,
                         episode_count: episode_count,
-                        updated: timeNow()
+                        updated: timeNow(),
                     });
                 } catch (e) {
-                    if(e?.status === 429) {
-                        console.log("Rate limited: wait a few moments");
+                    if (e?.status === 429) {
+                        console.log('Rate limited: wait a few moments');
 
                         await sleep(10000);
                     }
 
-                    if(e?.status === 404) {
+                    if (e?.status === 404) {
                         // Handle 404
                     }
                     console.error(`Error processing show ${show.tmdb_id}:`, e.message);
@@ -415,14 +413,12 @@ async function addShowDetails() {
                 await dbService.batchUpdate(tables.shows, batch_update_shows);
             }
 
-            console.log(
-                `Processed ${i + batch.length}/${shows_to_process.length} shows`,
-            );
+            console.log(`Processed ${i + batch.length}/${shows_to_process.length} shows`);
 
             // Add delay between batches
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            await new Promise((resolve) => setTimeout(resolve, 1000));
         }
-    } catch(e) {
+    } catch (e) {
         console.error(e);
     }
 }
@@ -511,9 +507,9 @@ async function main() {
 
     console.log({
         processing_time: {
-            minutes: (((timeNow() - ts) / 1000) / 60).toFixed(2),
-            seconds: (((timeNow() - ts) / 1000)).toFixed(1)
-        }
+            minutes: ((timeNow() - ts) / 1000 / 60).toFixed(2),
+            seconds: ((timeNow() - ts) / 1000).toFixed(1),
+        },
     });
 }
 
