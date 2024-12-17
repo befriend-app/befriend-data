@@ -1392,6 +1392,7 @@ module.exports = {
                         'token',
                         'name',
                         'sort_name',
+                        'spotify_id',
                         'spotify_followers',
                         'spotify_popularity',
                         'spotify_genres',
@@ -1472,8 +1473,10 @@ module.exports = {
                     genreDict[genre.id] = genre.token;
                 }
 
-                // Now get artist lookup dictionary
-                let artists = await conn('music_artists').select('id', 'token');
+                // Create artists lookup dictionary
+                let artists = await conn('music_artists')
+                    .select('id', 'token')
+                    .whereNull('deleted');
 
                 let artistDict = {};
                 for (let artist of artists) {
@@ -1493,24 +1496,33 @@ module.exports = {
 
                 let items = await query;
 
+                let filteredItems = [];
+
                 // Transform IDs to tokens
                 for (let item of items) {
+                    //skip deleted records
+                    if(!artistDict[item.artist_id]) {
+                        continue;
+                    }
+
                     item.artist_token = artistDict[item.artist_id];
                     item.genre_token = genreDict[item.genre_id];
 
                     delete item.artist_id;
                     delete item.genre_id;
+
+                    filteredItems.push(item);
                 }
 
-                const hasMore = items.length > limit;
+                const hasMore = filteredItems.length > limit;
 
                 if (hasMore) {
-                    items = items.slice(0, limit);
+                    filteredItems = filteredItems.slice(0, limit);
                 }
 
                 // Only update cache if no updated timestamp
-                if (!req.query.updated && items.length) {
-                    await cacheService.setCache(cache_key, items);
+                if (!req.query.updated && filteredItems.length) {
+                    await cacheService.setCache(cache_key, filteredItems);
                 }
 
                 res.json(
@@ -1518,7 +1530,7 @@ module.exports = {
                         timestamp: timeNow(),
                         next_offset: hasMore ? offset + limit : null,
                         has_more: hasMore,
-                        items: items,
+                        items: filteredItems,
                     },
                     200,
                 );
@@ -1549,7 +1561,9 @@ module.exports = {
 
                 let conn = await dbService.conn();
 
-                let items = await conn('me_sections').select(
+                let items = await conn('me_sections')
+                    .orderBy('position')
+                    .select(
                     'token',
                     'section_key',
                     'section_name',

@@ -535,8 +535,7 @@ async function main() {
         await loadArtists();
 
         //get artists from music brainz
-
-        // await getArtistsMB();
+        await getArtistsMB();
 
         //update artists w/ spotify data
         await updateArtistsSpotify(3);
@@ -545,7 +544,7 @@ async function main() {
         await deleteDuplicates();
 
         //add/merge spotify genres
-        // await require('./merge').main();
+        await require('./merge').main();
 
         //link artists to genres
         await updateArtistsGenres();
@@ -556,6 +555,7 @@ async function main() {
 
 module.exports = {
     main,
+    updateArtistsGenres
 };
 
 if (require.main === module) {
