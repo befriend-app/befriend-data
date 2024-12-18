@@ -25,6 +25,18 @@ router.get('/updates', function (req, res, next) {
     });
 });
 
+router.get('/earth', function (req, res, next) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            await api.getEarthGrid(req, res);
+        } catch (e) {
+            console.error(e);
+        }
+
+        resolve();
+    });
+});
+
 router.get('/activity-types', function (req, res, next) {
     return new Promise(async (resolve, reject) => {
         try {

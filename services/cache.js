@@ -53,6 +53,9 @@ module.exports = {
         session: function (session) {
             return `session:data:${session}`;
         },
+        earth_grid_offset: function (offset) {
+            return `data:earth_grid:offset:${offset}`;
+        },
         cities_offset: function (offset) {
             return `data:cities:offset:${offset}`;
         },

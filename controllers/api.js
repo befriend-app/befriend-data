@@ -72,6 +72,85 @@ module.exports = {
             resolve();
         });
     },
+    getEarthGrid: function (req, res) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const limit = 100 * 1000;
+                let offset = Math.floor((parseInt(req.query.offset) || 0) / limit) * limit;
+
+                const cache_key = cacheService.keys.earth_grid_offset(offset);
+
+                if (!req.query.updated) {
+                    let cache_data = await cacheService.getObj(cache_key);
+
+                    if (cache_data) {
+                        res.json(
+                            {
+                                timestamp: timeNow(),
+                                next_offset: cache_data.length ? offset + limit : null,
+                                has_more: !!cache_data.length,
+                                items: cache_data,
+                            },
+                            200,
+                        );
+
+                        return resolve();
+                    }
+                }
+
+                let conn = await dbService.conn();
+
+                let query = conn('earth_grid')
+                    .orderBy('id')
+                    .select(
+                        'token',
+                        'lat_key',
+                        'lon_key',
+                        'center_lat',
+                        'center_lon',
+                        'grid_size_km',
+                        'updated',
+                        'deleted'
+                    )
+                    .limit(limit + 1)
+                    .offset(offset);
+
+                // On subsequent requests
+                if (req.query.updated) {
+                    query = query.where('updated', '>', req.query.updated);
+                }
+
+                let items = await query;
+
+                // Check if there are more records
+                const hasMore = items.length > limit;
+
+                if (hasMore) {
+                    items = items.slice(0, limit); // Remove the extra item
+                }
+
+                // Only update cache if no updated timestamp
+                if (!req.query.updated && items.length) {
+                    await cacheService.setCache(cache_key, items);
+                }
+
+                res.json(
+                    {
+                        timestamp: timeNow(),
+                        next_offset: hasMore ? offset + limit : null,
+                        has_more: hasMore,
+                        items: items,
+                    },
+                    200,
+                );
+            } catch (e) {
+                console.error(e);
+                res.json('Error retrieving data', 400);
+            }
+
+            resolve();
+        });
+    },
     getActivityTypes: function (req, res) {
         return new Promise(async (resolve, reject) => {
             try {
