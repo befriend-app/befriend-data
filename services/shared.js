@@ -11,6 +11,7 @@ dayjs.extend(timezone);
 global.serverTimezoneString = process.env.TZ || 'America/Chicago';
 
 const earth_radius_km = 6371;
+const km_per_degree_lat = 111.32;
 const meters_to_miles = 0.000621371192;
 
 function cloneObj(obj) {
@@ -266,7 +267,9 @@ function timeNow(seconds) {
 module.exports = {
     cloneObj,
     createDirectoryIfNotExistsRecursive,
+    deg2rad,
     deleteFile,
+    earth_radius_km,
     generateToken,
     getDistanceMeters,
     getDistanceMiles,
@@ -276,6 +279,7 @@ module.exports = {
     isNumeric,
     isProdApp,
     joinPaths,
+    km_per_degree_lat,
     loadScriptEnv,
     normalizePort,
     pathExists,
