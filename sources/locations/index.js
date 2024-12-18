@@ -3,8 +3,8 @@ function main() {
         try {
             console.log('Loading locations');
 
-            await require('./add_countries').main();
-            await require('./add_cities').main();
+            await require('./countries').main();
+            await require('./cities').main();
 
             console.log('Locations loaded');
         } catch (e) {

@@ -1,7 +1,7 @@
 const axios = require('axios');
 const { loadScriptEnv, timeNow } = require('../../services/shared');
 const dbService = require('../../services/db');
-const { wikiCountries } = require('./wiki-countries');
+const { wikiCountries } = require('./meta/wiki-countries');
 
 loadScriptEnv();
 
