@@ -236,6 +236,10 @@ function normalizePort(val) {
     return false;
 }
 
+function padNumber(num, length = 2) {
+    return String(num).padStart(length, '0');
+}
+
 function pathExists(p) {
     return new Promise(async (resolve, reject) => {
         fs.access(p, fs.constants.F_OK, function (err) {
@@ -282,6 +286,7 @@ module.exports = {
     km_per_degree_lat,
     loadScriptEnv,
     normalizePort,
+    padNumber,
     pathExists,
     protectedNames,
     sleep,

@@ -1,4 +1,4 @@
-const { loadScriptEnv, timeNow, km_per_degree_lat } = require('../../services/shared');
+const { loadScriptEnv, timeNow, km_per_degree_lat, padNumber } = require('../../services/shared');
 const dbService = require('../../services/db');
 loadScriptEnv();
 
@@ -52,14 +52,14 @@ function getKeys(lat, lon) {
     };
 }
 
-function createGridCell(index, lat, lon, gridSizeKm) {
+function createGridCell(id, lat, lon, gridSizeKm) {
     const roundedLat = Math.round(lat * 1000) / 1000;
     const roundedLon = Math.round(lon * 1000) / 1000;
     const { lat_key, lon_key } = getKeys(roundedLat, roundedLon);
     const now = timeNow();
 
     return {
-        token: `${lat_key}_${lon_key}_${index}`,
+        token: `${lat_key}_${lon_key}_${(padNumber(id, 4))}`,
         lat_key: lat_key,
         lon_key: lon_key,
         center_lat: roundedLat,
@@ -76,7 +76,7 @@ async function initializeGrid(batchSize = 1000) {
 
     const startTime = timeNow();
     let totalCells = 0;
-    let cellIndex = 0;
+    let cellId = 1;
 
     try {
         const conn = await dbService.conn();
@@ -97,7 +97,7 @@ async function initializeGrid(batchSize = 1000) {
             const lonCenters = generateLonCenters(lonStep);
 
             for (const lon of lonCenters) {
-                const cell = createGridCell(cellIndex, lat, lon, GRID_SIZE_KM);
+                const cell = createGridCell(cellId, lat, lon, GRID_SIZE_KM);
 
                 if (!existingTokens.has(cell.token)) {
                     batch.push(cell);
@@ -110,7 +110,7 @@ async function initializeGrid(batchSize = 1000) {
                     }
                 }
 
-                cellIndex++;
+                cellId++;
             }
         }
 
