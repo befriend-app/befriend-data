@@ -59,6 +59,8 @@ function processActivity(activity, int, parent_ids, bool) {
 
         let insert;
 
+        let image = activity.image;
+
         if (!at_check) {
             insert = {
                 parent_activity_type_id: parent_id,
@@ -67,7 +69,7 @@ function processActivity(activity, int, parent_ids, bool) {
                 activity_name_full: activity_full_name,
                 activity_title: activity.title,
                 notification_name: notification_name,
-                activity_image: activity.image || null,
+                activity_image: image || null,
                 activity_emoji: activity.emoji || null,
                 sort_position: int,
                 default_duration_min: activity.duration,
@@ -104,8 +106,8 @@ function processActivity(activity, int, parent_ids, bool) {
                 update.activity_title = activity.title;
             }
 
-            if (activity.image !== at_check.activity_image) {
-                update.activity_image = activity.image;
+            if (image !== at_check.activity_image) {
+                update.activity_image = image;
             }
 
             if (activity.emoji !== at_check.activity_emoji) {
