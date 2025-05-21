@@ -3,7 +3,7 @@
     "productName": "Befriend Data",
     "version": "dev",
     "description": "Data API for Befriend Backend",
-    "license": "MIT",
+    "license": "LGPL-3.0-or-later",
     "repository": "befriend-app/befriend-data",
     "homepage": "https://befriend.app",
     "contributors": [
