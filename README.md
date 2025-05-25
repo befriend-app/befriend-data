@@ -1,9 +1,17 @@
 # Befriend Data
 
 This repository manages the initialization of data used by the [Befriend backend](https://github.com/befriend-app/befriend-backend) via `https://data.befriend.app`.
+
+## Repositories
+- [Backend](https://github.com/befriend-app/befriend-backend)
+- [Frontend](https://github.com/befriend-app/befriend-app)
+- [Web](https://github.com/befriend-app/befriend-web)
+
 ## Note
 
 This repository is **not intended for third-party deployment**. The data services rely on unique tokens and identifiers that are synchronized across the entire Befriend network. Running this in production would create duplicate data and prevent proper communication between networks.
+
+
 
 ## Overview
 
@@ -61,7 +69,7 @@ We welcome contributions:
 
 ## License
 
-MIT license.
+LGPL 3.0 or later.
 ## Contact
 
 For questions about joining the Befriend network or contributing to development:
